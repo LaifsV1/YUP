@@ -1,0 +1,273 @@
+\title{Proof Checker Notes}
+\author{Yu-Yang Lin}
+\date{\today}
+
+\documentclass[twoside,a4paper]{article}
+
+\usepackage{mathtools}
+\usepackage{syntax}
+\usepackage{bussproofs}
+\usepackage{boxproof}
+\usepackage[margin=2cm]{geometry}
+\usepackage{changepage}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\setlength{\parskip}{1em}
+\setlength\parindent{0pt}
+
+% Palatino for rm and math | Helvetica for ss | Courier for tt
+\usepackage{mathpazo} % math & rm
+\linespread{1.05}        % Palatino needs more leading (space between lines)
+\usepackage[scaled]{helvet} % ss
+\usepackage{courier} % tt
+\normalfont
+\usepackage[T1]{fontenc}
+
+
+\begin{document}
+\maketitle
+
+\section{Syntax Grammar}
+\begin{center}
+\begin{tabular}{rll}
+(types)& $\tau$ ::= bool | $\tau$ $\rightarrow$ $\tau $ | nat | list $\tau$
+\\
+(hypotheses)& A , B ::= A $\wedge$ B | A $\vee$ B | A $\supset$ B 
+| $\forall$ $x$ : $\tau$ . A | $\exists$ $x$ : $\tau$ . A
+| t = t : $\tau$
+\\
+(terms)& e , t ::= $x$ | t t | true | false 
+| [ ] | t :: t  %lists
+| zero | suc( t ) %natural numbers
+\\
+(term context)& $\psi$ ::= . | $\psi$, $x$ : $\tau$
+\end{tabular}
+
+\begin{tabular}{rll}
+$\psi$ &$\vdash$ & t : $\tau$\\
+$\psi$ &$\vdash$ & A prop
+\end{tabular}
+\end{center}
+
+\section{Rules for terms and hypotheses}
+
+Natural Numbers:
+\[
+\AxiomC{}
+\RightLabel{\quad (nat-zero)}
+\UnaryInfC{$\psi \vdash$ zero : nat}
+\DisplayProof
+\qquad
+\qquad
+\AxiomC{}
+\RightLabel{\quad (nat-suc-n)}
+\UnaryInfC{$\psi \vdash$ suc( t ) : nat}
+\DisplayProof
+\]
+
+Booleans:
+\[
+\AxiomC{}
+\RightLabel{\quad (bool-true)}
+\UnaryInfC{$\psi \vdash$ true : bool}
+\DisplayProof
+\qquad
+\qquad
+\AxiomC{}
+\RightLabel{\quad (bool-false)}
+\UnaryInfC{$\psi \vdash$ false : bool}
+\DisplayProof
+\]
+
+Lists:
+\[
+\AxiomC{}
+\RightLabel{\quad (list-empty)}
+\UnaryInfC{$\psi \vdash$ [ ] : list t}
+\DisplayProof
+\qquad
+\qquad
+\AxiomC{$\psi \vdash$ t' : t}
+\AxiomC{$\psi \vdash$ t'' : list t}
+\RightLabel{\quad (list-hd::tl)}
+\BinaryInfC{$\psi \vdash$ t' :: t'' : list t}
+\DisplayProof
+\]
+
+Variables:
+\[
+\AxiomC{$x : \tau \in \psi$}
+\RightLabel{\quad (var)}
+\UnaryInfC{$\psi \vdash x : \tau$}
+\DisplayProof
+\]
+
+Binary Relation Propositions:
+\[
+\AxiomC{$\psi \vdash$ A prop}
+\AxiomC{$\psi \vdash$ B prop}
+\RightLabel{\quad ($\wedge$-prop)}
+\BinaryInfC{$\psi \vdash$ A $\wedge$ B prop}
+\DisplayProof
+\]
+
+\[
+\AxiomC{$\psi \vdash$ A prop}
+\AxiomC{$\psi \vdash$ B prop}
+\RightLabel{\quad ($\vee$-prop)}
+\BinaryInfC{$\psi \vdash$ A $\vee$ B prop}
+\DisplayProof
+\]
+
+\[
+\AxiomC{$\psi \vdash$ A prop}
+\AxiomC{$\psi \vdash$ B prop}
+\RightLabel{\quad ($\supset$-prop)}
+\BinaryInfC{$\psi \vdash$ A $\supset$ B prop}
+\DisplayProof
+\]
+
+\[
+\AxiomC{$\psi \vdash $t$ : \tau$}
+\AxiomC{$\psi \vdash $t'$ : \tau$}
+\RightLabel{\quad (eq-prop)}
+\BinaryInfC{$\psi \vdash$ (t = t' : $\tau$) prop}
+\DisplayProof
+\]
+
+Quantifier Propositions:
+\[
+\AxiomC{$\psi , x : \tau \vdash$ A prop}
+\RightLabel{\quad ($\forall$-prop)}
+\UnaryInfC{$\psi \vdash \forall x : \tau .$ A prop}
+\DisplayProof
+\]
+
+\[
+\AxiomC{$\psi , x : \tau \vdash$ A prop}
+\RightLabel{\quad ($\exists$-prop)}
+\UnaryInfC{$\psi \vdash \exists x : \tau .$ A prop}
+\DisplayProof
+\]
+
+\begin{center}
+\tt
+\begin{tabular} {rl}
+check_term &: ctx -> term -> tp option
+\\
+check_prop &: ctx -> prop -> unit option
+\end{tabular}
+
+\begin{tabular} {rll}
+
+i.e.& \\
+& check_term &: $\psi \rightarrow$ t $\rightarrow \tau$ option
+\\
+& check_prop &: $\psi \rightarrow$ A $\rightarrow$ unit option
+\end{tabular}
+\end{center}
+
+
+\section{Rules for well-formedness of proofs}
+\begin{center}
+\begin{tabular}{rrrl}
+(proofs)& p , q &::=& by H 
+\\ &&|& (p , q) 
+\\ &&|& {\tt let} (H',H'') {\tt =} H {\tt in} p
+\\ &&|& (p , q ) {\tt either} 
+\\ &&|& {\tt match [}H{\tt  ] : (}A $\vee$ B{\tt ) with (}
+\\ &&&\qquad \qquad | A {\tt [}H'{\tt ]:} p {\tt ->} C 
+\\ &&&\qquad \qquad | B {\tt [}H''{\tt ]:} q {\tt ->} C {\tt)}
+\\
+(hypotheses context)& $\Gamma$ &::=& \quad $\cdot$ \quad 
+\\ &&| & $\Gamma$ , H : A
+\\ &&| & Assume A [ H ] , p
+\end{tabular}
+
+\begin{tabular} {rl}
+$\psi ; \Gamma$ &$\vdash$ p : A
+\\
+$\psi $ & $\vdash \Gamma$
+\end{tabular}
+
+{\tt
+check_proof : $\psi \rightarrow \Gamma \rightarrow $ P 
+$\rightarrow$ A $\rightarrow$ unit option
+}
+\end{center}
+
+Conjunction:
+\[
+\AxiomC{$\psi ; \Gamma ,$ H : A $\wedge$ B , H' : A , H'' : B 
+$\vdash$ p : C}
+\RightLabel{\quad ($\wedge$L)}
+\UnaryInfC{$\psi ; \Gamma ,$ H : A $\wedge$ B $\vdash$
+{\tt let (}H'{\tt,}H''{\tt) = }H {\tt  in }p}
+\DisplayProof
+\]
+
+\[
+\AxiomC{$\psi ; \Gamma \vdash$ p : A}
+\AxiomC{$\psi ; \Gamma \vdash$ q : B}
+\RightLabel{\quad ($\wedge$R)}
+\BinaryInfC{$\psi ; \Gamma \vdash$ (p , q) : A $\wedge$ B}
+\DisplayProof
+\]
+
+Disjunction:
+\[
+\AxiomC{$\psi ; \Gamma$ , H' : A $\vdash$ p : C}
+\AxiomC{$\psi ; \Gamma$ , H'' : B $\vdash$ p : C}
+\RightLabel{\quad ($\vee$L)}
+\BinaryInfC{$\psi ; \Gamma ,$  H : A 
+$ \vee$ B $\vdash $
+ {\tt  match [}H{\tt] with(}
+ A {\tt [}H'{\tt ]:} p
+ | B {\tt [}H''{\tt ]:} q {\tt)} : C
+}
+\DisplayProof
+\]
+
+\[
+\AxiomC{$\psi ; \Gamma \vdash$ A} %check if correct
+\RightLabel{\quad ($\vee$R)}
+\UnaryInfC{$\psi ; \Gamma \vdash$ A $\wedge$ B}
+\DisplayProof
+\]
+
+Implication:
+\[
+\AxiomC{$\psi ; \Gamma ,$ H : A $\supset$ B $\vdash$ p : A}
+\AxiomC{$\psi ; \Gamma ,$ H : A $\supset$ B , H' : B $\vdash$ q : C}
+\RightLabel{\quad ($\supset$L)}
+\BinaryInfC{$\psi ; \Gamma ,$ H : A $\supset$ B $\vdash$
+(p, B [ H' ] via H, q) : C}
+\DisplayProof
+\]
+
+\[
+\AxiomC{$\psi ; \Gamma$ , H : A $\vdash$ p : B}
+\RightLabel{\quad ($\supset$R)}
+\UnaryInfC{$\psi ; \Gamma \vdash$ ( Assume A [ H ] , p ) : A 
+$\supset$ B}
+\DisplayProof
+\]
+
+Using hypotheses:
+
+\[
+\AxiomC{}
+\RightLabel{\quad (by)}
+\UnaryInfC{$\psi ; \Gamma \vdash$ A $\wedge$ B}
+\DisplayProof
+\]
+
+\[
+\AxiomC{$\psi ; \Gamma \vdash$ p : A}
+\RightLabel{\quad (therefore)}
+\UnaryInfC{$\psi ; \Gamma \vdash$ p Therefore A : A}
+\DisplayProof
+\]
+
+\end{document}
