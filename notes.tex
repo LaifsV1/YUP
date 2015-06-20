@@ -217,8 +217,8 @@ $\vdash$ p : C}
 
 Disjunction:
 \[
-\AxiomC{$\psi ; \Gamma$ , H' : A $\vdash$ p : C}
-\AxiomC{$\psi ; \Gamma$ , H'' : B $\vdash$ p : C}
+\AxiomC{$\psi ; \Gamma$ , H : A $ \vee$ B , H' : A $\vdash$ p : C}
+\AxiomC{$\psi ; \Gamma$ , H : A $ \vee$ B , H'' : B $\vdash$ q : C}
 \RightLabel{\quad ($\vee$L)}
 \BinaryInfC{$\psi ; \Gamma ,$  H : A 
 $ \vee$ B $\vdash $
@@ -230,8 +230,15 @@ $ \vee$ B $\vdash $
 \]
 
 \[
-\AxiomC{$\psi ; \Gamma \vdash$ A} %check if correct
-\RightLabel{\quad ($\vee$R)}
+\AxiomC{$\psi ; \Gamma \vdash$ A}
+\RightLabel{\quad ($\vee R_1$)}
+\UnaryInfC{$\psi ; \Gamma \vdash$ A $\wedge$ B}
+\DisplayProof
+\]
+
+\[
+\AxiomC{$\psi ; \Gamma \vdash$ B}
+\RightLabel{\quad ($\vee R_2$)}
 \UnaryInfC{$\psi ; \Gamma \vdash$ A $\wedge$ B}
 \DisplayProof
 \]
@@ -259,7 +266,7 @@ Using hypotheses:
 \[
 \AxiomC{}
 \RightLabel{\quad (by)}
-\UnaryInfC{$\psi ; \Gamma \vdash$ A $\wedge$ B}
+\UnaryInfC{$\psi ; \Gamma , $ [ H ] : A $\vdash$ by H : A}
 \DisplayProof
 \]
 
