@@ -18,7 +18,7 @@
 
 % Palatino for rm and math | Helvetica for ss | Courier for tt
 \usepackage{mathpazo} % math & rm
-\linespread{1.05}        % Palatino needs more leading (space between lines)
+\linespread{1.05} % Palatino needs more leading (space between lines)
 \usepackage[scaled]{helvet} % ss
 \usepackage{courier} % tt
 \normalfont
@@ -31,7 +31,8 @@
 \section{Syntax Grammar}
 \begin{center}
 \begin{tabular}{rll}
-(types)& $\tau$ ::= bool | $\tau$ $\rightarrow$ $\tau $ | nat | list $\tau$
+(types)& $\tau$ ::= bool 
+| $\tau$ $\rightarrow$ $\tau $ | nat | list $\tau$
 \\
 (hypotheses)& A , B ::= A $\wedge$ B | A $\vee$ B | A $\supset$ B 
 | $\forall$ $x$ : $\tau$ . A | $\exists$ $x$ : $\tau$ . A
@@ -60,7 +61,7 @@ Natural Numbers:
 \DisplayProof
 \qquad
 \qquad
-\AxiomC{}
+\AxiomC{$\psi \vdash$ t : nat}
 \RightLabel{\quad (nat-suc-n)}
 \UnaryInfC{$\psi \vdash$ suc( t ) : nat}
 \DisplayProof
@@ -162,9 +163,9 @@ check_prop &: ctx -> prop -> unit option
 \begin{tabular} {rll}
 
 i.e.& \\
-& check_term &: $\psi \rightarrow$ t $\rightarrow \tau$ option
+& check_term &: $\psi$ $\rightarrow$ t $\rightarrow$ $\tau$ option
 \\
-& check_prop &: $\psi \rightarrow$ A $\rightarrow$ unit option
+& check_prop &: $\psi$ $\rightarrow$ A $\rightarrow$ unit option
 \end{tabular}
 \end{center}
 
@@ -232,14 +233,14 @@ $ \vee$ B $\vdash $
 \[
 \AxiomC{$\psi ; \Gamma \vdash$ A}
 \RightLabel{\quad ($\vee R_1$)}
-\UnaryInfC{$\psi ; \Gamma \vdash$ A $\wedge$ B}
+\UnaryInfC{$\psi ; \Gamma \vdash$ A $\vee$ B}
 \DisplayProof
 \]
 
 \[
 \AxiomC{$\psi ; \Gamma \vdash$ B}
 \RightLabel{\quad ($\vee R_2$)}
-\UnaryInfC{$\psi ; \Gamma \vdash$ A $\wedge$ B}
+\UnaryInfC{$\psi ; \Gamma \vdash$ A $\vee$ B}
 \DisplayProof
 \]
 
