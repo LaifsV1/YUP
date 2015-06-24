@@ -33,5 +33,12 @@ type ctx = ( var * tp ) list
 type hyps = ( var * prop ) list
 
 (* Proofs *)
-type pf = 
-
+type pf = AndL of (var * var) * var * pf		(*let (H',H'') = H in p*)
+		| AndR of pf * pf						(*p,q*)
+		| OrL of var * (var * pf) * (var * pf)	(*match [H] with [H']:p | [H'']:q*)
+		| OrR1 of pf * pf						(*A v B*)
+		| OrR2 of pf * pf						(*A v B*)
+		| ImpliesL of pf * (var * var) * var	(*p, [H'] via [H], q*)
+		| ImpliesR of var * pf					(*Assume [H], p*)
+		| By of var								(*by H*)
+		| Therefore of pf * prop				(*p Therefore A*)
