@@ -34,7 +34,8 @@
 (types)& $\tau$ ::= bool 
 | $\tau$ $\rightarrow$ $\tau $ | nat | list $\tau$
 \\
-(hypotheses)& A , B ::= A $\wedge$ B | A $\vee$ B | A $\supset$ B 
+(hypotheses)& A , B ::= $\top$ | $\bot$
+| A $\wedge$ B | A $\vee$ B | A $\supset$ B 
 | $\forall$ $x$ : $\tau$ . A | $\exists$ $x$ : $\tau$ . A
 | t = t : $\tau$
 \\
@@ -101,6 +102,29 @@ Variables:
 \AxiomC{$x : \tau \in \psi$}
 \RightLabel{\quad (var)}
 \UnaryInfC{$\psi \vdash x : \tau$}
+\DisplayProof
+\]
+
+Application:
+\[
+\AxiomC{$\psi \vdash$ t : $\tau \rightarrow \tau$'}
+\AxiomC{$\psi \vdash$ t' : $\tau$}
+\RightLabel{\quad (app)}
+\BinaryInfC{$\psi \vdash$ t t' : $\tau$'}
+\DisplayProof
+\]
+
+Truth and Falsity Propositions:
+\[
+\AxiomC{}
+\RightLabel{\quad ($\top$-prop)}
+\UnaryInfC{$\psi \vdash$ $\top$  prop}
+\DisplayProof
+\qquad
+\qquad
+\AxiomC{}
+\RightLabel{\quad ($\bot$-prop)}
+\UnaryInfC{$\psi \vdash$ $\bot$  prop}
 \DisplayProof
 \]
 
