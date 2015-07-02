@@ -176,20 +176,34 @@ Quantifier Propositions:
 \DisplayProof
 \]
 
+\section{Terms type checking and inference}
+
+Type Inference:
+\[\overset{-}\psi \vdash \overset{-}{t} \Rightarrow \overset{+}\tau\]
+Type Checking:
+\[\overset{-}\psi \vdash \overset{-}{t} \Leftarrow \overset{-}\tau\]
+
+
+
+Function Signatures:
 \begin{center}
 \tt
 \begin{tabular} {rl}
-check_term &: ctx -> term -> tp option
+check_term &: $\psi$ $\rightarrow$ t $\rightarrow$ $\tau$ option
 \\
-check_prop &: ctx -> prop -> unit option
+check_term &: $\psi$ $\rightarrow$ t $\rightarrow$ $\tau$ $\rightarrow$ unit option
+\\
+check_prop &: $\psi$ $\rightarrow$ A $\rightarrow$ unit option
 \end{tabular}
 
 \begin{tabular} {rll}
 
-i.e.& \\
-& check_term &: $\psi$ $\rightarrow$ t $\rightarrow$ $\tau$ option
+&val infer_term &: ctx -> term -> tp option
 \\
-& check_prop &: $\psi$ $\rightarrow$ A $\rightarrow$ unit option
+&val infer_term &: ctx -> term -> tp -> unit option
+\\
+&val check_prop &: ctx -> prop -> unit option
+
 \end{tabular}
 \end{center}
 

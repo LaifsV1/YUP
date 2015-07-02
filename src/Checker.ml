@@ -45,14 +45,8 @@ let rec check_prop (psi : ctx) (prop : prop) :(unit option) =
 		     (match tp',tp'' with
 		      | Some tau', Some tau'' -> if tau=tau' & tau=tau'' then Some () else None
 		      | _ -> None)
-  | Forall (x,tau,a) -> let (x',a') = (lookup psi x , check_prop psi a) in               (*forall-prop*)
-			(match x',a' with
-			 | Some tau', Some () -> if tau=tau' then Some () else None
-			 | _ -> None)
-  | Exists (x,tau,a) -> let (x',a') = (lookup psi x , check_prop psi a) in               (*exists-prop*)
-			(match x',a' with
-			 | Some tau', Some () -> if tau=tau' then Some () else None
-			 | _ -> None)
+  | Forall (x,tau,a) -> check_prop ((x,tau)::psi) a                                      (*forall-prop*)			
+  | Exists (x,tau,a) -> check_prop ((x,tau)::psi) a                                      (*exists-prop*)
 
 (*proof type checking*)
 let rec check_pf (psi : ctx) (gamma : hyps) (proof : pf) (prop : prop) :(unit option) = Some ()

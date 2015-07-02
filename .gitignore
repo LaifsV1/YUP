@@ -4,3 +4,6 @@
 *.exe
 *.cmo
 *.cmi
+*.aux
+*.log
+*.el
