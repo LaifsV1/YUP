@@ -52,8 +52,9 @@ $\psi$ &$\vdash$ & A prop
 \end{tabular}
 \end{center}
 
-\section{Rules for terms and hypotheses}
+\section{Specification rules of terms typing and hypotheses}
 
+\subsection{Terms}
 Natural Numbers:
 \[
 \AxiomC{}
@@ -114,6 +115,7 @@ Application:
 \DisplayProof
 \]
 
+\subsection{Propositions}
 Truth and Falsity Propositions:
 \[
 \AxiomC{}
@@ -176,20 +178,163 @@ Quantifier Propositions:
 \DisplayProof
 \]
 
-\section{Terms type checking and inference}
+\section{Implementation rules for type inference and checking}
 
-Type Inference:
+\subsection{Syntax grammar}
+\begin{center}
+\begin{tabular}{rll}
+(infer)& e ::= x 
+| e v | true | false | zero | suc( e )
+\\
+(check)& v ::= v :: v  | nil | e
+\end{tabular}
+\end{center}
+
+Type Inferece Rule:
 \[\overset{-}\psi \vdash \overset{-}{t} \Rightarrow \overset{+}\tau\]
-Type Checking:
+
+Type Checking Rule:
 \[\overset{-}\psi \vdash \overset{-}{t} \Leftarrow \overset{-}\tau\]
 
+\subsection{Term type inference}
+Variables:
+\[
+\AxiomC{$x : \tau \in \psi$}
+\RightLabel{\quad (var)}
+\UnaryInfC{$\psi \vdash x \Rightarrow \tau$}
+\DisplayProof
+\]
 
+Application:
+\[
+\AxiomC{$\psi \vdash$ t $\Rightarrow$ $\tau \rightarrow \tau$'}
+\AxiomC{$\psi \vdash$ t' $\Leftarrow$ $\tau$}
+\RightLabel{\quad (app)}
+\BinaryInfC{$\psi \vdash$ t t' $\Rightarrow$ $\tau$'}
+\DisplayProof
+\]
 
-Function Signatures:
+Natural Numbers:
+\[
+\AxiomC{}
+\RightLabel{\quad (nat-zero)}
+\UnaryInfC{$\psi \vdash$ zero $\Rightarrow$ nat}
+\DisplayProof
+\qquad
+\qquad
+\AxiomC{$\psi \vdash$ t $\Leftarrow$ nat}
+\RightLabel{\quad (nat-suc-n)}
+\UnaryInfC{$\psi \vdash$ suc( t ) $\Rightarrow$ nat}
+\DisplayProof
+\]
+
+Booleans:
+\[
+\AxiomC{}
+\RightLabel{\quad (bool-true)}
+\UnaryInfC{$\psi \vdash$ true $\Rightarrow$ bool}
+\DisplayProof
+\qquad
+\qquad
+\AxiomC{}
+\RightLabel{\quad (bool-false)}
+\UnaryInfC{$\psi \vdash$ false $\Rightarrow$ bool}
+\DisplayProof
+\]
+
+\subsection{Term type checking}
+Lists:
+\[
+\AxiomC{}
+\RightLabel{\quad (list-empty)}
+\UnaryInfC{$\psi \vdash$ [ ] $\Leftarrow$ list t}
+\DisplayProof
+\qquad
+\qquad
+\AxiomC{$\psi \vdash$ t' $\Leftarrow$ t}
+\AxiomC{$\psi \vdash$ t'' $\Leftarrow$ list t}
+\RightLabel{\quad (list-hd::tl)}
+\BinaryInfC{$\psi \vdash$ t' :: t'' $\Leftarrow$ list t}
+\DisplayProof
+\]
+
+Inference Case:
+\[
+\AxiomC{$\psi \vdash$ t $\Rightarrow \tau$'}
+\AxiomC{$\tau = \tau'$}
+\RightLabel{\quad (app)}
+\BinaryInfC{$\psi \vdash$ t $\Leftarrow$ $\tau$}
+\DisplayProof
+\]
+
+\subsection{Propositions type checking}
+Truth and Falsity Propositions:
+\[
+\AxiomC{}
+\RightLabel{\quad ($\top$-prop)}
+\UnaryInfC{$\psi \vdash$ $\top$ $\Leftarrow$  prop}
+\DisplayProof
+\qquad
+\qquad
+\AxiomC{}
+\RightLabel{\quad ($\bot$-prop)}
+\UnaryInfC{$\psi \vdash$ $\bot$ $\Leftarrow$ prop}
+\DisplayProof
+\]
+
+Binary Relation Propositions:
+\[
+\AxiomC{$\psi \vdash$ A prop}
+\AxiomC{$\psi \vdash$ B prop}
+\RightLabel{\quad ($\wedge$-prop)}
+\BinaryInfC{$\psi \vdash$ A $\wedge$ B prop}
+\DisplayProof
+\]
+
+\[
+\AxiomC{$\psi \vdash$ A prop}
+\AxiomC{$\psi \vdash$ B prop}
+\RightLabel{\quad ($\vee$-prop)}
+\BinaryInfC{$\psi \vdash$ A $\vee$ B prop}
+\DisplayProof
+\]
+
+\[
+\AxiomC{$\psi \vdash$ A prop}
+\AxiomC{$\psi \vdash$ B prop}
+\RightLabel{\quad ($\supset$-prop)}
+\BinaryInfC{$\psi \vdash$ A $\supset$ B prop}
+\DisplayProof
+\]
+
+\[
+\AxiomC{$\psi \vdash $t$ : \tau$}
+\AxiomC{$\psi \vdash $t'$ : \tau$}
+\RightLabel{\quad (eq-prop)}
+\BinaryInfC{$\psi \vdash$ (t = t' : $\tau$) prop}
+\DisplayProof
+\]
+
+Quantifier Propositions:
+\[
+\AxiomC{$\psi , x : \tau \vdash$ A prop}
+\RightLabel{\quad ($\forall$-prop)}
+\UnaryInfC{$\psi \vdash \forall x : \tau .$ A prop}
+\DisplayProof
+\]
+
+\[
+\AxiomC{$\psi , x : \tau \vdash$ A prop}
+\RightLabel{\quad ($\exists$-prop)}
+\UnaryInfC{$\psi \vdash \exists x : \tau .$ A prop}
+\DisplayProof
+\]
+
+\subsection{Function signatures}
 \begin{center}
 \tt
 \begin{tabular} {rl}
-check_term &: $\psi$ $\rightarrow$ t $\rightarrow$ $\tau$ option
+infer_term &: $\psi$ $\rightarrow$ t $\rightarrow$ $\tau$ option
 \\
 check_term &: $\psi$ $\rightarrow$ t $\rightarrow$ $\tau$ $\rightarrow$ unit option
 \\
@@ -200,7 +345,7 @@ check_prop &: $\psi$ $\rightarrow$ A $\rightarrow$ unit option
 
 &val infer_term &: ctx -> term -> tp option
 \\
-&val infer_term &: ctx -> term -> tp -> unit option
+&val check_term &: ctx -> term -> tp -> unit option
 \\
 &val check_prop &: ctx -> prop -> unit option
 
@@ -209,6 +354,7 @@ check_prop &: $\psi$ $\rightarrow$ A $\rightarrow$ unit option
 
 
 \section{Rules for well-formedness of proofs}
+\subsection{Syntax grammar}
 \begin{center}
 \begin{tabular}{rrrl}
 (proofs)& p , q &::=& by H 
@@ -229,13 +375,9 @@ $\psi ; \Gamma$ &$\vdash$ p : A
 \\
 $\psi $ & $\vdash \Gamma$
 \end{tabular}
-
-{\tt
-check_proof : $\psi \rightarrow \Gamma \rightarrow $ P 
-$\rightarrow$ A $\rightarrow$ unit option
-}
 \end{center}
 
+\subsection{Rules}
 Conjunction:
 \[
 \AxiomC{$\psi ; \Gamma ,$ H : A $\wedge$ B , H' : A , H'' : B 
@@ -269,16 +411,16 @@ $ \vee$ B $\vdash $
 \]
 
 \[
-\AxiomC{$\psi ; \Gamma \vdash$ A}
+\AxiomC{$\psi ; \Gamma \vdash$ p : A}
 \RightLabel{\quad ($\vee R_1$)}
-\UnaryInfC{$\psi ; \Gamma \vdash$ A $\vee$ B}
+\UnaryInfC{$\psi ; \Gamma \vdash$ {\tt Left} p : A $\vee$ B}
 \DisplayProof
 \]
 
 \[
-\AxiomC{$\psi ; \Gamma \vdash$ B}
+\AxiomC{$\psi ; \Gamma \vdash$ q : B}
 \RightLabel{\quad ($\vee R_2$)}
-\UnaryInfC{$\psi ; \Gamma \vdash$ A $\vee$ B}
+\UnaryInfC{$\psi ; \Gamma \vdash$ {\tt Right} q :  A $\vee$ B}
 \DisplayProof
 \]
 
@@ -316,4 +458,13 @@ Using hypotheses:
 \DisplayProof
 \]
 
+\subsection{Function signature}
+\begin{center}
+{\tt
+check_proof : $\psi \rightarrow \Gamma \rightarrow $ P 
+$\rightarrow$ A $\rightarrow$ unit option
+}
+\end{center}
+
 \end{document}
+
