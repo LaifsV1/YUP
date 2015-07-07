@@ -30,7 +30,9 @@ type ctx = ( var * tp ) list
 type hyps = ( var * prop ) list
 
 (* Proofs *)
-type pf = AndL of (var * var) * var * pf        (*let (H',H'') = H in p*)
+type pf = TruthR of pf                          (* Truth-R,  T : A*)
+        | FalsityL of var                       (* Falsity-L, Absurd : A *)
+        | AndL of (var * var) * var * pf        (*let (H',H'') = H in p*)
         | AndR of pf * pf                       (*p,q*)
         | OrL of var * (var * pf) * (var * pf)  (*match [H] with [H']:p | [H'']:q*)
         | OrR1 of pf                            (*A v B*)
@@ -39,3 +41,7 @@ type pf = AndL of (var * var) * var * pf        (*let (H',H'') = H in p*)
         | ImpliesR of var * pf                  (*Assume [H], p*)
         | By of var                             (*by H*)
         | Therefore of pf * prop                (*p Therefore A*)
+        | ExistsR of term * pf                  (*choose t, p*)
+        | ExistsL of (var * var) * var * pf     (*let (x',H') = H in p*)
+        | ForallR of (var * tp) * pf            (*Assume x:tau . p*)
+        | ForallL of var * var * pf             (*let H' = H in p*)

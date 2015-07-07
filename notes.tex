@@ -272,13 +272,13 @@ Truth and Falsity Propositions:
 \[
 \AxiomC{}
 \RightLabel{\quad ($\top$-prop)}
-\UnaryInfC{$\psi \vdash$ $\top$ $\Leftarrow$  prop}
+\UnaryInfC{$\psi \vdash$ $\top$ prop}
 \DisplayProof
 \qquad
 \qquad
 \AxiomC{}
 \RightLabel{\quad ($\bot$-prop)}
-\UnaryInfC{$\psi \vdash$ $\bot$ $\Leftarrow$ prop}
+\UnaryInfC{$\psi \vdash$ $\bot$ prop}
 \DisplayProof
 \]
 
@@ -308,25 +308,25 @@ Binary Relation Propositions:
 \]
 
 \[
-\AxiomC{$\psi \vdash $t$ : \tau$}
-\AxiomC{$\psi \vdash $t'$ : \tau$}
+\AxiomC{$\psi \vdash $t$ \Leftarrow \tau$}
+\AxiomC{$\psi \vdash $t'$ \Leftarrow \tau$}
 \RightLabel{\quad (eq-prop)}
-\BinaryInfC{$\psi \vdash$ (t = t' : $\tau$) prop}
+\BinaryInfC{$\psi \vdash$ (t = t' $\Leftarrow$ $\tau$) prop}
 \DisplayProof
 \]
 
 Quantifier Propositions:
 \[
-\AxiomC{$\psi , x : \tau \vdash$ A prop}
+\AxiomC{$\psi , x \Leftarrow \tau \vdash$ A prop}
 \RightLabel{\quad ($\forall$-prop)}
-\UnaryInfC{$\psi \vdash \forall x : \tau .$ A prop}
+\UnaryInfC{$\psi \vdash \forall x \Leftarrow \tau .$ A prop}
 \DisplayProof
 \]
 
 \[
-\AxiomC{$\psi , x : \tau \vdash$ A prop}
+\AxiomC{$\psi , x \Leftarrow \tau \vdash$ A prop}
 \RightLabel{\quad ($\exists$-prop)}
-\UnaryInfC{$\psi \vdash \exists x : \tau .$ A prop}
+\UnaryInfC{$\psi \vdash \exists x \Leftarrow \tau .$ A prop}
 \DisplayProof
 \]
 
@@ -378,6 +378,23 @@ $\psi $ & $\vdash \Gamma$
 \end{center}
 
 \subsection{Rules}
+Truth and Falsity:
+\[
+\AxiomC{}
+\RightLabel{\quad ($\top$R)}
+\UnaryInfC{$\psi ; \Gamma \vdash$ $\top$ : C}
+\DisplayProof
+\qquad
+\qquad
+\AxiomC{}
+\RightLabel{\quad ($\bot$L)}
+\UnaryInfC{$\psi ; \Gamma ,$  H : $\bot$ 
+$\vdash $
+{\tt match} H {\tt with} $\bot$ : C
+}
+\DisplayProof
+\]
+
 Conjunction:
 \[
 \AxiomC{$\psi ; \Gamma ,$ H : A $\wedge$ B , H' : A , H'' : B 
@@ -465,6 +482,8 @@ check_proof : $\psi \rightarrow \Gamma \rightarrow $ P
 $\rightarrow$ A $\rightarrow$ unit option
 }
 \end{center}
+
+
 
 \end{document}
 
