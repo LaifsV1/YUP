@@ -19,7 +19,7 @@
 % Palatino for rm and math | Helvetica for ss | Courier for tt
 \usepackage{mathpazo} % math & rm
 \linespread{1.05} % Palatino needs more leading (space between lines)
-\usepackage[scaled]{helvet} % ss
+\usepackage[scaled]{helvet} %
 \usepackage{courier} % tt
 \normalfont
 \usepackage[T1]{fontenc}
@@ -61,6 +61,8 @@ $\psi$ &$\vdash$ & A prop
 \end{center}
 
 \section{Specification rules of terms typing and hypotheses}
+
+Note: functions are included as term types, but not directly as term constructors. Instead, function terms are added into the term context ($\psi$) manually. This simplifies the checker since function type inference is not required.
 
 \subsection{Terms}
 Natural Numbers:
@@ -409,7 +411,7 @@ Conjunction:
 $\vdash$ p : C}
 \RightLabel{\quad ($\wedge$L)}
 \UnaryInfC{$\psi ; \Gamma ,$ H : A $\wedge$ B $\vdash$
-{\tt let (}H'{\tt,}H''{\tt) = }H {\tt  in }p}
+{\tt let (}H'{\tt,}H''{\tt) = }H {\tt  in }p : C}
 \DisplayProof
 \]
 
@@ -491,7 +493,7 @@ $\rightarrow$ A $\rightarrow$ unit option
 }
 \end{center}
 
-\section{Dealing with quantifiers}
+\section{Dealing with quantifiers in proofs}
 
 \subsection{Rules}
 Existentials:
@@ -532,6 +534,32 @@ H' : [x $\mapsto$ t] A  $\vdash$ p : C}
 \]
 
 \subsection{Substituting terms into variables}
+
+\begin{center}
+{\tt
+subs = $[x \mapsto z]$
+}
+\end{center}
+
+\begin{center}
+{\tt
+\begin{tabular}{rl}
+subs_term &: $x \rightarrow $ t $ \rightarrow $ t $\rightarrow$ t
+\\
+subs_prop &: $x\rightarrow$ t $\rightarrow$ A $\rightarrow[x]\rightarrow$ A
+\end{tabular}
+}
+\end{center}
+
+\begin{center}
+{\tt
+\begin{tabular}{rl}
+val subs_term &: var -> term -> term -> term
+\\
+val subs_prop &: var -> term -> prop -> var list -> prop
+\end{tabular}
+}
+\end{center}
 
 \section{$\boldsymbol \alpha$-equivalence}
 \subsection{Terms}
@@ -648,7 +676,7 @@ Equality:
 
 Quantifiers:
 \[
-\AxiomC{$\new$ $z$ . B [$x$ $\mapsto$ $z$] $\equiv$ B' [$y$ $\mapsto$ $z$]}
+\AxiomC{$\new$ $z$ . $(x$ $z)$ B $\equiv$ $(x$ $z)$ B'}
 \AxiomC{$\tau \equiv \tau'$}
 \RightLabel{\quad ($\exists\equiv$)}
 \BinaryInfC{$\exists x : \tau$. B $\equiv$ $\exists y : \tau' $. B' }
@@ -656,7 +684,7 @@ Quantifiers:
 \]
 
 \[
-\AxiomC{$\new$ $z$ . B [$x$ $\mapsto$ $z$] $\equiv$ B' [$y$ $\mapsto$ $z$]}
+\AxiomC{$\new$ $z$ . $(x$ $z)$ B $\equiv$ $(x$ $z)$ B'}
 \AxiomC{$\tau \equiv \tau'$}
 \RightLabel{\quad ($\forall\equiv$)}
 \BinaryInfC{$\forall x : \tau$. B $\equiv$ $\forall y : \tau' $. B' }
@@ -665,5 +693,31 @@ Quantifiers:
 
 \subsection{Swapping variable names}
 
-\end{document}
+\begin{center}
+{\tt
+swap = $(x$ $z)$
+}
+\end{center}
 
+\begin{center}
+{\tt
+\begin{tabular}{rl}
+swap_term &: $x \rightarrow z \rightarrow $ t $\rightarrow$ t
+\\
+swap_prop &: $x \rightarrow z \rightarrow $ A $\rightarrow$ A
+\end{tabular}
+}
+\end{center}
+
+\begin{center}
+{\tt
+\begin{tabular}{rl}
+val swap_term &: var -> var -> term -> term
+\\
+val swap_prop &: var -> var -> prop -> prop
+\end{tabular}
+}
+\end{center}
+
+
+\end{document}

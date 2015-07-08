@@ -25,12 +25,14 @@ let entails a b = (a = b) (*TODO*)
 (******************** ALPHA-EQUIVALENCE FUNCTIONS ********************)
 (* fresh function and global variable - this is a reserved string, users cannot have underscore variables. *)
 let fresh_var = ref 0
-let fresh () = fresh_var := !fresh_var + 1; "_var_" ^ string_of_int (!fresh_var) ^ "_" (*fresh variables format: _var_int_*)
+let fresh () = fresh_var := !fresh_var + 1; "_var_" ^ string_of_int (!fresh_var) ^ "_" (*format: _var_int_*)
 
-(*swap function just blindly swaps every variable that matches*)
+(* swap functions - swaps the names of every variable that matches *)
+(* [notes: section 6.3] *)
 let rec swap_term (x : var) (z : var) (t : term) :(term) =
   match t with
-  | Var y      -> if y = x then Var z else Var y
+  | Var y      -> if y = x then Var z
+		  else if y = z then Var x else Var y
   | App (e,v)  -> App (swap_term x z e, swap_term x z v)
   | Boolean b  -> Boolean b
   | Zero       -> Zero
@@ -51,6 +53,58 @@ let rec swap (x : var) (z : var) (a : prop) :(prop) =
   | Exists (y,tau,a) -> if y = x then Exists (z,tau,swap x z a)
 			else Exists (y,tau,swap x z a)
 
+(* free variables list functions - computes list of all free variables in prop/term *)
+let rec freevars_term (t_term : term) :(string list) =
+  match t_term with
+  | Var x      -> [ x ]
+  | App (e,v)  -> (freevars_term e) @ (freevars_term v)
+  | Boolean b  -> []
+  | Zero       -> []
+  | Suc n      -> freevars_term n
+  | Nil        -> []
+  | Cons (e,v) -> (freevars_term e) @ (freevars_term v)
+
+let rec freevars (a_prop : prop) :(string list) =
+  match a_prop with
+  | Truth | Falsity -> []
+  | And (a,b)
+  | Or (a,b)
+  | Implies (a,b) -> (freevars a) @ (freevars b)
+  | Eq (t,t',tau) -> (freevars_term t) @ (freevars_term t')
+  | Forall (y,tau,a)
+  | Exists (y,tau,a) -> List.filter (fun x -> x=y) (freevars a)
+
+(* substitution functions - substitutes variables in prop/term for given term *)
+(* [notes: section 5.2] *)
+let rec subs_term (x : var) (t : term) (t' : term) :(term) =
+  match t' with
+  | Var y      -> if y = x then t else Var y
+  | App (e,v)  -> App (subs_term x t e, subs_term x t v)
+  | Boolean b  -> Boolean b
+  | Zero       -> Zero
+  | Suc n      -> Suc (subs_term x t n)
+  | Nil        -> Nil
+  | Cons (e,v) -> Cons (subs_term x t e, subs_term x t v)
+
+let rec subs (x : var) (t_term : term) (a : prop) (fv : var list) :(prop) =
+  match a with
+  | Truth   -> Truth
+  | Falsity -> Falsity
+  | And (a,b)     -> And (subs x t_term a fv, subs x t_term b fv)
+  | Or (a,b)      -> Or  (subs x t_term a fv, subs x t_term b fv)
+  | Implies (a,b) -> Implies (subs x t_term a fv, subs x t_term b fv)
+  | Eq (t,t',tau) -> Eq (subs_term x t_term t, subs_term x t_term t', tau)
+  | Forall (y,tau,a) -> if List.mem y fv then
+			  let z = fresh ()
+			  in Forall (z,tau, subs x t_term (swap y z a) fv)
+			else Forall (y,tau, subs x t_term a fv)
+  | Exists (y,tau,a) -> if List.mem y fv then
+			  let z = fresh ()
+			  in Exists (z,tau, subs x t_term (swap y z a) fv)
+			else Exists (y,tau, subs x t_term a fv)
+
+(* term alpha-equivalence - note: this function doesn't check well-formedness *)
+(* [notes: section 6.1] *)
 let rec alpha_equiv_term (t : term) (e : term) :(unit option) =
   match t , e with
   | Var x , Var y -> if x = y then Some () else None                                      (*Var-equiv*)
@@ -62,14 +116,16 @@ let rec alpha_equiv_term (t : term) (e : term) :(unit option) =
   | Boolean _ , _          -> None
   | Zero , Zero -> Some ()                                                                (*Zero-equiv*)
   | Zero  , _      -> None
-  | Suc t , Suc t' -> alpha_equiv_term t t'                                               (*Suc-equiv*) (*note: not checking well-formedness*)
+  | Suc t , Suc t' -> alpha_equiv_term t t'                                               (*Suc-equiv*)
   | Suc _ , _      -> None
   | Nil , Nil -> Some ()                                                                  (*Nil-equiv*)
   | Nil , _   -> None
-  | Cons (e,v) , Cons (e',v') -> and_also (alpha_equiv_term e e')                         (*Cons-equiv*) (*note: not checking well-formedness*)
+  | Cons (e,v) , Cons (e',v') -> and_also (alpha_equiv_term e e')                         (*Cons-equiv*)
                                           (alpha_equiv_term v v')
   | Cons _     , _            -> None
 
+(* prop alpha-equivalence - note: this function doesn't check well-formedness *)
+(* [notes: section 6.2] *)
 let rec alpha_equiv_prop (a_prop : prop) (b_prop : prop) :(unit option) =
   match a_prop , b_prop with
   | Truth   , Truth   -> Some ()                                                          (*Truth-equiv*)
@@ -103,7 +159,7 @@ let rec alpha_equiv_prop (a_prop : prop) (b_prop : prop) :(unit option) =
 
 
 (******************** CHECK AND INFER FUNCTIONS ********************)
-(* term type inference [section 2 and 3 in notes], (psi |- t => tau) *)
+(* term type inference [notes: section 2 and 3], (psi |- t => tau) *)
 let rec infer_term (psi : ctx) (t : term) :(tp option) =
   match t with
   | Zero     -> Some Nat                                                                 (*nat-zero*)
@@ -121,7 +177,7 @@ let rec infer_term (psi : ctx) (t : term) :(tp option) =
   | Cons (v,v')     -> None                                                              (*list-hd::tl*)
   | Nil             -> None                                                              (*list-empty*)
                          
-(* term type checking [section 2 and 3 in notes], (psi |- t <= tau) *)
+(* term type checking [notes: section 2 and 3], (psi |- t <= tau) *)
 and check_term (psi : ctx) (t : term) (tau : tp) :(unit option) =
   match t , tau with
   | Cons (v,v') , List tau'   -> and_also (check_term psi v tau')                        (*list-hd::tl*)
@@ -133,7 +189,7 @@ and check_term (psi : ctx) (t : term) (tau : tp) :(unit option) =
                                   | Some tau'' -> if tau'' = tau' then (Some ()) else None
                                   | _         -> None)         
 
-(* proposition type checking [section 2 and 3 in notes] *)
+(* proposition type checking [notes: section 2 and 3] *)
 let rec check_prop (psi : ctx) (prop : prop) :(unit option) =
   match prop with
   | Truth   -> Some ()                                                                   (*top-prop*)
@@ -153,7 +209,7 @@ let rec check_prop (psi : ctx) (prop : prop) :(unit option) =
   | Forall (x,tau,a) -> check_prop ((x,tau)::psi) a                                      (*forall-prop*)            
   | Exists (x,tau,a) -> check_prop ((x,tau)::psi) a                                      (*exists-prop*)
 
-(* proof type checking [section 4 in notes] *)
+(* proof type checking [notes: section 4] *)
 let rec check_pf (psi : ctx) (gamma : hyps) (proof : pf) (prop : prop) :(unit option) =
   match proof , prop with
   | TruthR _ , Truth -> Some ()                                                          (*TruthR*)
