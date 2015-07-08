@@ -24,6 +24,14 @@
 \normalfont
 \usepackage[T1]{fontenc}
 
+%NEW quantifier (fresh)
+\usepackage{graphics} %needed for the NEW quantifier
+\newcommand\new[0]{\reflectbox{\ensuremath{\mathsf{N}}}} 
+%The quantifier itself, a reversed sans-serif N 
+%(by analogy with the reversed E of `exists' 
+%and the reversed A of `forall') 
+\newcommand\New[1]{\new #1.} 
+%A macro, as in \New{a}\phi
 
 \begin{document}
 \maketitle
@@ -86,14 +94,14 @@ Booleans:
 Lists:
 \[
 \AxiomC{}
-\RightLabel{\quad (list-empty)}
+\RightLabel{\quad (list-nil)}
 \UnaryInfC{$\psi \vdash$ [ ] : list t}
 \DisplayProof
 \qquad
 \qquad
 \AxiomC{$\psi \vdash$ t' : t}
 \AxiomC{$\psi \vdash$ t'' : list t}
-\RightLabel{\quad (list-hd::tl)}
+\RightLabel{\quad (list-cons)}
 \BinaryInfC{$\psi \vdash$ t' :: t'' : list t}
 \DisplayProof
 \]
@@ -246,14 +254,14 @@ Booleans:
 Lists:
 \[
 \AxiomC{}
-\RightLabel{\quad (list-empty)}
+\RightLabel{\quad (list-nil)}
 \UnaryInfC{$\psi \vdash$ [ ] $\Leftarrow$ list t}
 \DisplayProof
 \qquad
 \qquad
 \AxiomC{$\psi \vdash$ t' $\Leftarrow$ t}
 \AxiomC{$\psi \vdash$ t'' $\Leftarrow$ list t}
-\RightLabel{\quad (list-hd::tl)}
+\RightLabel{\quad (list-cons)}
 \BinaryInfC{$\psi \vdash$ t' :: t'' $\Leftarrow$ list t}
 \DisplayProof
 \]
@@ -353,7 +361,7 @@ check_prop &: $\psi$ $\rightarrow$ A $\rightarrow$ unit option
 \end{center}
 
 
-\section{Rules for well-formedness of proofs}
+\section{Well-formedness of proofs}
 \subsection{Syntax grammar}
 \begin{center}
 \begin{tabular}{rrrl}
@@ -483,7 +491,179 @@ $\rightarrow$ A $\rightarrow$ unit option
 }
 \end{center}
 
+\section{Dealing with quantifiers}
 
+\subsection{Rules}
+Existentials:
+
+\[
+\AxiomC{$\psi ; \Gamma \vdash$ t : $\tau$}
+\AxiomC{$\psi ; \Gamma \vdash$ p : [x $\mapsto$ t] A }
+\RightLabel{\quad ($\exists$ R)}
+\BinaryInfC{$\psi ; \Gamma \vdash$ Choose t ; p : $\exists x : \tau . $A}
+\DisplayProof
+\]
+
+\[
+\AxiomC{$\psi, y:\tau ; \Gamma, $ H $:\exists x : \tau . A, $ H': $[x \mapsto y] A \vdash$ p : C}
+\RightLabel{\quad ($\exists$ L)}
+\UnaryInfC{$\psi ; \Gamma , $ H $:\exists x:\tau. $ A $ \vdash$
+{\tt let} ($y$,H') = H {\tt in} p : C}
+\DisplayProof
+\]
+
+Universals:
+\[
+\AxiomC{$\psi , y : \tau  ; \Gamma , $ $\vdash$ p : [$x \mapsto y$] A}
+\RightLabel{\quad ($\forall$ R)}
+\UnaryInfC{$\psi ; \Gamma \vdash$ Assume $y:\tau$ . p : $\forall x : \tau . A $}
+\DisplayProof
+\]
+
+\[
+\AxiomC{$\psi ; \Gamma \vdash$ t : $\tau$}
+\AxiomC{$\psi ; \Gamma$ , 
+H : $\forall x : \tau $ . A ,
+H' : [x $\mapsto$ t] A  $\vdash$ p : C}
+\RightLabel{\quad ($\forall$ L)}
+\BinaryInfC{$\psi ; \Gamma , $ H $:\forall x:\tau. $ A $ \vdash$
+{\tt let} H' = H with t {\tt in} p : C}
+\DisplayProof
+\]
+
+\subsection{Substituting terms into variables}
+
+\section{$\boldsymbol \alpha$-equivalence}
+\subsection{Terms}
+
+Variables:
+\[
+\AxiomC{}
+\RightLabel{\quad (var$\equiv$)}
+\UnaryInfC{$x$ $\equiv$ $x$}
+\DisplayProof
+\]
+
+Booleans:
+\[
+\AxiomC{}
+\RightLabel{\quad (bool-true$\equiv$)}
+\UnaryInfC{true $\equiv$ true}
+\DisplayProof
+\quad
+\quad
+\AxiomC{}
+\RightLabel{\quad (bool-false$\equiv$)}
+\UnaryInfC{false $\equiv$ false}
+\DisplayProof
+\]
+
+Natural Numbers:
+\[
+\AxiomC{}
+\RightLabel{\quad (nat-zero$\equiv$)}
+\UnaryInfC{zero $\equiv$ zero}
+\DisplayProof
+\quad
+\quad
+\AxiomC{t  $\equiv$  t'}
+\RightLabel{\quad (nat-suc-n$\equiv$)}
+\UnaryInfC{suc( t ) $\equiv$ suc( t' )}
+\DisplayProof
+\]
+
+Lists:
+\[
+\AxiomC{}
+\RightLabel{\quad (list-nil$\equiv$)}
+\UnaryInfC{[] $\equiv$ []}
+\DisplayProof
+\quad
+\quad
+\AxiomC{e  $\equiv$  e'}
+\AxiomC{v  $\equiv$  v'}
+\RightLabel{\quad (list-cons$\equiv$)}
+\BinaryInfC{e::v $\equiv$ e'::v'}
+\DisplayProof
+\]
+
+Application:
+\[
+\AxiomC{e $\equiv$ e'}
+\AxiomC{v $\equiv$ v'}
+\RightLabel{\quad (var$\equiv$)}
+\BinaryInfC{e v $\equiv$ e' v'}
+\DisplayProof
+\]
+
+\subsection{Propositions}
+Truth and Falsity:
+\[
+\AxiomC{}
+\RightLabel{\quad ($\top\equiv$)}
+\UnaryInfC{$\top \equiv \top$}
+\DisplayProof
+\quad
+\quad
+\AxiomC{}
+\RightLabel{\quad ($\bot\equiv$)}
+\UnaryInfC{$\bot \equiv \bot$}
+\DisplayProof
+\]
+
+Binary Relations:
+\[
+\AxiomC{A $\equiv$ A'}
+\AxiomC{B $\equiv$ B'}
+\RightLabel{\quad ($\wedge\equiv$)}
+\BinaryInfC{ A $\wedge$ B $\equiv$ A' $\wedge$ B'}
+\DisplayProof
+\]
+
+\[
+\AxiomC{A $\equiv$ A'}
+\AxiomC{B $\equiv$ B'}
+\RightLabel{\quad ($\vee\equiv$)}
+\BinaryInfC{ A $\vee$ B $\equiv$ A' $\vee$ B'}
+\DisplayProof
+\]
+
+\[
+\AxiomC{A $\equiv$ A'}
+\AxiomC{B $\equiv$ B'}
+\RightLabel{\quad ($\supset\equiv$)}
+\BinaryInfC{ A $\supset$ B $\equiv$ A' $\supset$ B'}
+\DisplayProof
+\]
+
+Equality:
+\[
+\AxiomC{t$_1$ $\equiv$ t$_1'$}
+\AxiomC{t$_2$ $\equiv$ t$_2'$}
+\AxiomC{$\tau$ $\equiv$ $\tau$'}
+\RightLabel{\quad ($=\equiv$)}
+\TrinaryInfC{ (t$_1$ = t$_2$ : $\tau$) $\equiv$ (t$_1$' = t$_2$' : $\tau$')}
+\DisplayProof
+\]
+
+Quantifiers:
+\[
+\AxiomC{$\new$ $z$ . B [$x$ $\mapsto$ $z$] $\equiv$ B' [$y$ $\mapsto$ $z$]}
+\AxiomC{$\tau \equiv \tau'$}
+\RightLabel{\quad ($\exists\equiv$)}
+\BinaryInfC{$\exists x : \tau$. B $\equiv$ $\exists y : \tau' $. B' }
+\DisplayProof
+\]
+
+\[
+\AxiomC{$\new$ $z$ . B [$x$ $\mapsto$ $z$] $\equiv$ B' [$y$ $\mapsto$ $z$]}
+\AxiomC{$\tau \equiv \tau'$}
+\RightLabel{\quad ($\forall\equiv$)}
+\BinaryInfC{$\forall x : \tau$. B $\equiv$ $\forall y : \tau' $. B' }
+\DisplayProof
+\]
+
+\subsection{Swapping variable names}
 
 \end{document}
 
