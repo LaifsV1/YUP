@@ -32,7 +32,7 @@ let fresh () = fresh_var := !fresh_var + 1; "_var_" ^ string_of_int (!fresh_var)
 let rec swap_term (x : var) (z : var) (t : term) :(term) =
   match t with
   | Var y      -> if y = x then Var z
-		  else if y = z then Var x else Var y
+                  else if y = z then Var x else Var y
   | App (e,v)  -> App (swap_term x z e, swap_term x z v)
   | Boolean b  -> Boolean b
   | Zero       -> Zero
@@ -40,18 +40,18 @@ let rec swap_term (x : var) (z : var) (t : term) :(term) =
   | Nil        -> Nil
   | Cons (e,v) -> Cons (swap_term x z e, swap_term x z v)
 
-let rec swap (x : var) (z : var) (a : prop) :(prop) =
+let rec swap_prop (x : var) (z : var) (a : prop) :(prop) =
   match a with
   | Truth   -> Truth
   | Falsity -> Falsity
-  | And (a,b)     -> And (swap x z a, swap x z b)
-  | Or (a,b)      -> Or  (swap x z a, swap x z b)
-  | Implies (a,b) -> Implies (swap x z a, swap x z b)
+  | And (a,b)     -> And (swap_prop x z a, swap_prop x z b)
+  | Or (a,b)      -> Or  (swap_prop x z a, swap_prop x z b)
+  | Implies (a,b) -> Implies (swap_prop x z a, swap_prop x z b)
   | Eq (t,t',tau) -> Eq (swap_term x z t, swap_term x z t', tau)
-  | Forall (y,tau,a) -> if y = x then Forall (z,tau,swap x z a)
-			else Forall (y,tau,swap x z a)
-  | Exists (y,tau,a) -> if y = x then Exists (z,tau,swap x z a)
-			else Exists (y,tau,swap x z a)
+  | Forall (y,tau,a) -> if y = x then Forall (z,tau,swap_prop x z a)
+                        else Forall (y,tau,swap_prop x z a)
+  | Exists (y,tau,a) -> if y = x then Exists (z,tau,swap_prop x z a)
+                        else Exists (y,tau,swap_prop x z a)
 
 (* free variables list functions - computes list of all free variables in prop/term *)
 let rec freevars_term (t_term : term) :(string list) =
@@ -86,41 +86,41 @@ let rec subs_term (x : var) (t : term) (t' : term) :(term) =
   | Nil        -> Nil
   | Cons (e,v) -> Cons (subs_term x t e, subs_term x t v)
 
-let rec subs (x : var) (t_term : term) (a : prop) (fv : var list) :(prop) =
+let rec subs_prop (x : var) (t_term : term) (a : prop) (fv : var list) :(prop) =
   match a with
   | Truth   -> Truth
   | Falsity -> Falsity
-  | And (a,b)     -> And (subs x t_term a fv, subs x t_term b fv)
-  | Or (a,b)      -> Or  (subs x t_term a fv, subs x t_term b fv)
-  | Implies (a,b) -> Implies (subs x t_term a fv, subs x t_term b fv)
+  | And (a,b)     -> And (subs_prop x t_term a fv, subs_prop x t_term b fv)
+  | Or (a,b)      -> Or  (subs_prop x t_term a fv, subs_prop x t_term b fv)
+  | Implies (a,b) -> Implies (subs_prop x t_term a fv, subs_prop x t_term b fv)
   | Eq (t,t',tau) -> Eq (subs_term x t_term t, subs_term x t_term t', tau)
   | Forall (y,tau,a) -> if List.mem y fv then
-			  let z = fresh ()
-			  in Forall (z,tau, subs x t_term (swap y z a) fv)
-			else Forall (y,tau, subs x t_term a fv)
+                          let z = fresh ()
+                          in Forall (z,tau, subs_prop x t_term (swap_prop y z a) fv)
+                        else Forall (y,tau, subs_prop x t_term a fv)
   | Exists (y,tau,a) -> if List.mem y fv then
-			  let z = fresh ()
-			  in Exists (z,tau, subs x t_term (swap y z a) fv)
-			else Exists (y,tau, subs x t_term a fv)
+                          let z = fresh ()
+                          in Exists (z,tau, subs_prop x t_term (swap_prop y z a) fv)
+                        else Exists (y,tau, subs_prop x t_term a fv)
 
 (* term alpha-equivalence - note: this function doesn't check well-formedness *)
 (* [notes: section 6.1] *)
 let rec alpha_equiv_term (t : term) (e : term) :(unit option) =
   match t , e with
-  | Var x , Var y -> if x = y then Some () else None                                      (*Var-equiv*)
+  | Var x , Var y -> if x = y then Some () else None                                     (*Var-equiv*)
   | Var _ , _     -> None
-  | App (f,u) , App (f',u') -> and_also (alpha_equiv_term f f')                           (*App-equiv*)
+  | App (f,u) , App (f',u') -> and_also (alpha_equiv_term f f')                          (*App-equiv*)
                                         (alpha_equiv_term u u')
   | App _     , _           -> None
-  | Boolean b , Boolean b' -> if b = b' then Some () else None                            (*Boolean-equiv*)
+  | Boolean b , Boolean b' -> if b = b' then Some () else None                           (*Boolean-equiv*)
   | Boolean _ , _          -> None
-  | Zero , Zero -> Some ()                                                                (*Zero-equiv*)
+  | Zero , Zero -> Some ()                                                               (*Zero-equiv*)
   | Zero  , _      -> None
-  | Suc t , Suc t' -> alpha_equiv_term t t'                                               (*Suc-equiv*)
+  | Suc t , Suc t' -> alpha_equiv_term t t'                                              (*Suc-equiv*)
   | Suc _ , _      -> None
-  | Nil , Nil -> Some ()                                                                  (*Nil-equiv*)
+  | Nil , Nil -> Some ()                                                                 (*Nil-equiv*)
   | Nil , _   -> None
-  | Cons (e,v) , Cons (e',v') -> and_also (alpha_equiv_term e e')                         (*Cons-equiv*)
+  | Cons (e,v) , Cons (e',v') -> and_also (alpha_equiv_term e e')                        (*Cons-equiv*)
                                           (alpha_equiv_term v v')
   | Cons _     , _            -> None
 
@@ -128,32 +128,32 @@ let rec alpha_equiv_term (t : term) (e : term) :(unit option) =
 (* [notes: section 6.2] *)
 let rec alpha_equiv_prop (a_prop : prop) (b_prop : prop) :(unit option) =
   match a_prop , b_prop with
-  | Truth   , Truth   -> Some ()                                                          (*Truth-equiv*)
+  | Truth   , Truth   -> Some ()                                                         (*Truth-equiv*)
   | Truth   , _       -> None
-  | Falsity , Falsity -> Some ()                                                          (*Falsity-equiv*)
+  | Falsity , Falsity -> Some ()                                                         (*Falsity-equiv*)
   | Falsity , _       -> None
-  | And (a,b) , And (a',b') -> and_also (alpha_equiv_prop a a')                           (*And-equiv*)
+  | And (a,b) , And (a',b') -> and_also (alpha_equiv_prop a a')                          (*And-equiv*)
                                         (alpha_equiv_prop b b')
   | And _     , _           -> None
-  | Or (a,b) , Or (a',b') -> and_also (alpha_equiv_prop a a')                             (*Or-equiv*)
+  | Or (a,b) , Or (a',b') -> and_also (alpha_equiv_prop a a')                            (*Or-equiv*)
                                       (alpha_equiv_prop b b')
   | Or _     , _          -> None
-  | Implies (a,b) , Or (a',b') -> and_also (alpha_equiv_prop a a')                        (*Implies-equiv*)
+  | Implies (a,b) , Or (a',b') -> and_also (alpha_equiv_prop a a')                       (*Implies-equiv*)
                                            (alpha_equiv_prop b b')
   | Implies _     , _          -> None
-  | Eq (t1,t2,tau) , Eq (t1',t2',tau') -> if tau <> tau' then None                        (*Eq-equiv*)
+  | Eq (t1,t2,tau) , Eq (t1',t2',tau') -> if tau <> tau' then None                       (*Eq-equiv*)
                                           else and_also (alpha_equiv_term t1 t1')
                                                         (alpha_equiv_term t2 t2')
   | Eq _           , _                 -> None
-  | Forall (x,tau,a) , Forall (y,tau',a') -> if tau <> tau' then None                     (*Forall-equiv*)
+  | Forall (x,tau,a) , Forall (y,tau',a') -> if tau <> tau' then None                    (*Forall-equiv*)
                                              else let z = fresh () in
-						  alpha_equiv_prop (swap x z a)
-                                                                   (swap y z a')
+                                                  alpha_equiv_prop (swap_prop x z a)
+                                                                   (swap_prop y z a')
   | Forall _         , _                  -> None
-  | Exists (x,tau,a) , Exists (y,tau',a') -> if tau <> tau' then None                     (*Exists-equiv*)
+  | Exists (x,tau,a) , Exists (y,tau',a') -> if tau <> tau' then None                    (*Exists-equiv*)
                                              else let z = fresh () in
-						  alpha_equiv_prop (swap x z a)
-                                                                   (swap y z a')
+                                                  alpha_equiv_prop (swap_prop x z a)
+                                                                   (swap_prop y z a')
   | Exists _         , _                  -> None                                  
 
 
@@ -220,8 +220,8 @@ let rec check_pf (psi : ctx) (gamma : hyps) (proof : pf) (prop : prop) :(unit op
   | AndR (p,q) , And (a,b)  -> and_also (check_pf psi gamma p a)                         (*AndR*)
                                         (check_pf psi gamma q b)
   | AndR (p,q) , _          -> None
-  | AndL ((h,h'),h'',p) , c -> (match lookup_hyps gamma h'' with                         (*AndL*)
-                                | Some (And (a,b)) -> check_pf psi ((h,a)::(h',b)::gamma) p c
+  | AndL ((h',h''),h,p) , c -> (match lookup_hyps gamma h with                           (*AndL*)
+                                | Some (And (a,b)) -> check_pf psi ((h',a)::(h'',b)::gamma) p c
                                 | _                -> None)
   | OrR1 p  , Or (a,b)         -> check_pf psi gamma p a                                 (*OrR_1*)
   | OrR1 p  , _                -> None
@@ -241,9 +241,21 @@ let rec check_pf (psi : ctx) (gamma : hyps) (proof : pf) (prop : prop) :(unit op
                  | Some a -> if entails a b then Some () else None
                  | None   -> None)
   | Therefore (p,a) , b -> (match alpha_equiv_prop a b with                              (*Therefore*)
-			    | Some () -> check_pf psi gamma p b
-			    | None    -> None)
-  | ForallR _ , _ -> None (***TODO***)
-  | ForallL _ , _ -> None (***TODO***)
-  | ExistsR _ , _ -> None (***TODO***)
-  | ExistsL _ , _ -> None (***TODO***)
+                            | Some () -> check_pf psi gamma p b
+                            | None    -> None)
+  | ExistsR (t,p) , Exists (x,tau,a) -> and_also (check_term psi t tau)                  (*ExistsR*)
+                                                 (check_pf psi gamma p (subs_prop x t a (freevars a)))
+  | ExistsR _     , _                -> None
+  | ExistsL ((y,h'),h,p) , c         -> (match lookup_hyps gamma h with                  (*ExistsL*)
+                                         | Some (Exists (x,tau,a)) -> check_pf ((y,tau)::psi)
+                                                                               ((h',subs_prop x (Var y) a (freevars a))::gamma)
+                                                                               p c
+                                         | _                       -> None)
+  | ForallR ((y,tau),p) , Forall (x,tau',a) -> check_pf ((y,tau)::psi) gamma p           (*ForallR*)
+                                                        (subs_prop x (Var y) a (freevars a))
+  | ForallR _           , _ -> None
+  | ForallL (h',h,t,p)  , c -> (match lookup_hyps gamma h with
+                                | Some (Forall (x,tau,a)) -> and_also (check_term psi t tau)
+                                                                      (check_pf psi ((h',subs_prop x t a (freevars a))::gamma)
+                                                                                p c)            
+                                | _                       -> None)
