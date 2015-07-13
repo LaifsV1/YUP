@@ -54,7 +54,7 @@ let rec swap_prop (x : var) (z : var) (a : prop) :(prop) =
                         else Exists (y,tau,swap_prop x z a)
 
 (* free variables list functions - computes list of all free variables in prop/term *)
-let rec freevars_term (t_term : term) :(string list) =
+let rec freevars_term (t_term : term) :(var list) =
   match t_term with
   | Var x      -> [ x ]
   | App (e,v)  -> (freevars_term e) @ (freevars_term v)
@@ -64,7 +64,7 @@ let rec freevars_term (t_term : term) :(string list) =
   | Nil        -> []
   | Cons (e,v) -> (freevars_term e) @ (freevars_term v)
 
-let rec freevars (a_prop : prop) :(string list) =
+let rec freevars (a_prop : prop) :(var list) =
   match a_prop with
   | Truth | Falsity -> []
   | And (a,b)
@@ -76,32 +76,34 @@ let rec freevars (a_prop : prop) :(string list) =
 
 (* substitution functions - substitutes variables in prop/term for given term *)
 (* [notes: section 5.2] *)
-let rec subs_term (x : var) (t : term) (t' : term) :(term) =
+let rec subs_term' (x : var) (t : term) (t' : term) :(term) =
   match t' with
   | Var y      -> if y = x then t else Var y
-  | App (e,v)  -> App (subs_term x t e, subs_term x t v)
+  | App (e,v)  -> App (subs_term' x t e, subs_term' x t v)
   | Boolean b  -> Boolean b
   | Zero       -> Zero
-  | Suc n      -> Suc (subs_term x t n)
+  | Suc n      -> Suc (subs_term' x t n)
   | Nil        -> Nil
-  | Cons (e,v) -> Cons (subs_term x t e, subs_term x t v)
+  | Cons (e,v) -> Cons (subs_term' x t e, subs_term' x t v)
 
-let rec subs_prop (x : var) (t_term : term) (a : prop) (fv : var list) :(prop) =
+let rec subs_prop' (x : var) (t_term : term) (a : prop) (fv : var list) :(prop) =
   match a with
   | Truth   -> Truth
   | Falsity -> Falsity
-  | And (a,b)     -> And (subs_prop x t_term a fv, subs_prop x t_term b fv)
-  | Or (a,b)      -> Or  (subs_prop x t_term a fv, subs_prop x t_term b fv)
-  | Implies (a,b) -> Implies (subs_prop x t_term a fv, subs_prop x t_term b fv)
-  | Eq (t,t',tau) -> Eq (subs_term x t_term t, subs_term x t_term t', tau)
+  | And (a,b)     -> And (subs_prop' x t_term a fv, subs_prop' x t_term b fv)
+  | Or (a,b)      -> Or  (subs_prop' x t_term a fv, subs_prop' x t_term b fv)
+  | Implies (a,b) -> Implies (subs_prop' x t_term a fv, subs_prop' x t_term b fv)
+  | Eq (t,t',tau) -> Eq (subs_term' x t_term t, subs_term' x t_term t', tau)
   | Forall (y,tau,a) -> if List.mem y fv then
                           let z = fresh ()
-                          in Forall (z,tau, subs_prop x t_term (swap_prop y z a) fv)
-                        else Forall (y,tau, subs_prop x t_term a fv)
+                          in Forall (z,tau, subs_prop' x t_term (swap_prop y z a) fv)
+                        else Forall (y,tau, subs_prop' x t_term a fv)
   | Exists (y,tau,a) -> if List.mem y fv then
                           let z = fresh ()
-                          in Exists (z,tau, subs_prop x t_term (swap_prop y z a) fv)
-                        else Exists (y,tau, subs_prop x t_term a fv)
+                          in Exists (z,tau, subs_prop' x t_term (swap_prop y z a) fv)
+                        else Exists (y,tau, subs_prop' x t_term a fv)
+
+let subs_prop (x : var) (t_term : term) (a : prop) :(prop) = subs_prop' x t_term a (freevars_term t_term)
 
 (* term alpha-equivalence - note: this function doesn't check well-formedness *)
 (* [notes: section 6.1] *)
@@ -214,7 +216,7 @@ let rec check_pf (psi : ctx) (gamma : hyps) (proof : pf) (prop : prop) :(unit op
   match proof , prop with
   | TruthR _ , Truth -> Some ()                                                          (*TruthR*)
   | TruthR _ , _     -> None
-  | FalsityL h , c   -> (match lookup_hyps gamma h with                                  (*FalsityL/Absurd*)
+  | FalsityL h , _   -> (match lookup_hyps gamma h with                                  (*FalsityL/Absurd*)
                          | Some Falsity -> Some ()
                          | _            -> None)
   | AndR (p,q) , And (a,b)  -> and_also (check_pf psi gamma p a)                         (*AndR*)
@@ -244,18 +246,40 @@ let rec check_pf (psi : ctx) (gamma : hyps) (proof : pf) (prop : prop) :(unit op
                             | Some () -> check_pf psi gamma p b
                             | None    -> None)
   | ExistsR (t,p) , Exists (x,tau,a) -> and_also (check_term psi t tau)                  (*ExistsR*)
-                                                 (check_pf psi gamma p (subs_prop x t a (freevars a)))
+                                                 (check_pf psi gamma p (subs_prop x t a))
   | ExistsR _     , _                -> None
   | ExistsL ((y,h'),h,p) , c         -> (match lookup_hyps gamma h with                  (*ExistsL*)
                                          | Some (Exists (x,tau,a)) -> check_pf ((y,tau)::psi)
-                                                                               ((h',subs_prop x (Var y) a (freevars a))::gamma)
+                                                                               ((h',subs_prop x (Var y) a)::gamma)
                                                                                p c
                                          | _                       -> None)
   | ForallR ((y,tau),p) , Forall (x,tau',a) -> check_pf ((y,tau)::psi) gamma p           (*ForallR*)
-                                                        (subs_prop x (Var y) a (freevars a))
+                                                        (subs_prop x (Var y) a)
   | ForallR _           , _ -> None
   | ForallL (h',h,t,p)  , c -> (match lookup_hyps gamma h with
                                 | Some (Forall (x,tau,a)) -> and_also (check_term psi t tau)
-                                                                      (check_pf psi ((h',subs_prop x t a (freevars a))::gamma)
+                                                                      (check_pf psi ((h',subs_prop x t a)::gamma)
                                                                                 p c)            
                                 | _                       -> None)
+  | ByIndNat  (p,(h,q)) , Forall (n,Nat,pred) ->                                         (*ByInd-Nat*)
+     (match lookup_hyps gamma h with
+      | Some pred' -> (match alpha_equiv_prop pred pred' with
+                       | Some () -> and_also (check_pf psi            gamma p (subs_prop n Zero pred))
+                                             (check_pf ((n,Nat)::psi) gamma q (subs_prop n (Suc (Var n)) pred))
+                       | _       -> None)
+      | _          -> None)
+  | ByIndNat _          , _                    -> None
+  | ByIndList (p,(h,q)) , Forall (xs,List tau,pred) ->                                   (*ByInd-List*)
+     (match lookup_hyps gamma h with
+      | Some pred' -> (match alpha_equiv_prop pred pred' with
+                       | Some () -> let x = fresh () in
+                                    and_also (check_pf psi gamma p (subs_prop xs Nil pred))
+                                             (check_pf ((xs, List tau)::(x,tau)::psi) gamma q
+                                                       (subs_prop xs (Cons (Var x,Var xs)) pred))
+                       | _       -> None)
+      | _         -> None)
+  | ByIndList _         , _                         -> None
+  | ByIndBool (p,q)     , Forall (b,Bool,pred)      -> and_also                          (*ByInd-Bool*)
+                                                         (check_pf psi gamma p (subs_prop b (Boolean true) pred))
+                                                         (check_pf psi gamma q (subs_prop b (Boolean false) pred))
+  | ByIndBool _         , _                         -> None
