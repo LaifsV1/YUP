@@ -60,7 +60,7 @@ $\psi$ &$\vdash$ & A prop
 \end{tabular}
 \end{center}
 
-\section{Specification rules of terms typing and hypotheses}
+\section{Specification rules for terms and propositional hypotheses}
 
 Note: functions are included as term types, but not directly as term constructors. Instead, function terms are added into the term context ($\psi$) manually. This simplifies the checker since function type inference is not required.
 
@@ -493,7 +493,7 @@ $\rightarrow$ A $\rightarrow$ unit option
 }
 \end{center}
 
-\section{Dealing with quantifiers in proofs}
+\section{Quantifiers in proofs}
 
 \subsection{Rules}
 Existentials:
@@ -567,60 +567,60 @@ val subs_prop &: var -> term -> prop -> var list -> prop
 Variables:
 \[
 \AxiomC{}
-\RightLabel{\quad (var$\equiv$)}
-\UnaryInfC{$x$ $\equiv$ $x$}
+\RightLabel{\quad (var$\overset{\alpha}=$)}
+\UnaryInfC{$x$ $\overset{\alpha}=$ $x$}
 \DisplayProof
 \]
 
 Booleans:
 \[
 \AxiomC{}
-\RightLabel{\quad (bool-true$\equiv$)}
-\UnaryInfC{true $\equiv$ true}
+\RightLabel{\quad (bool-true$\overset{\alpha}=$)}
+\UnaryInfC{true $\overset{\alpha}=$ true}
 \DisplayProof
 \quad
 \quad
 \AxiomC{}
-\RightLabel{\quad (bool-false$\equiv$)}
-\UnaryInfC{false $\equiv$ false}
+\RightLabel{\quad (bool-false$\overset{\alpha}=$)}
+\UnaryInfC{false $\overset{\alpha}=$ false}
 \DisplayProof
 \]
 
 Natural Numbers:
 \[
 \AxiomC{}
-\RightLabel{\quad (nat-zero$\equiv$)}
-\UnaryInfC{zero $\equiv$ zero}
+\RightLabel{\quad (nat-zero$\overset{\alpha}=$)}
+\UnaryInfC{zero $\overset{\alpha}=$ zero}
 \DisplayProof
 \quad
 \quad
-\AxiomC{t  $\equiv$  t'}
-\RightLabel{\quad (nat-suc-n$\equiv$)}
-\UnaryInfC{suc( t ) $\equiv$ suc( t' )}
+\AxiomC{t  $\overset{\alpha}=$  t'}
+\RightLabel{\quad (nat-suc-n$\overset{\alpha}=$)}
+\UnaryInfC{suc( t ) $\overset{\alpha}=$ suc( t' )}
 \DisplayProof
 \]
 
 Lists:
 \[
 \AxiomC{}
-\RightLabel{\quad (list-nil$\equiv$)}
-\UnaryInfC{[] $\equiv$ []}
+\RightLabel{\quad (list-nil$\overset{\alpha}=$)}
+\UnaryInfC{[] $\overset{\alpha}=$ []}
 \DisplayProof
 \quad
 \quad
-\AxiomC{e  $\equiv$  e'}
-\AxiomC{v  $\equiv$  v'}
-\RightLabel{\quad (list-cons$\equiv$)}
-\BinaryInfC{e::v $\equiv$ e'::v'}
+\AxiomC{e  $\overset{\alpha}=$  e'}
+\AxiomC{v  $\overset{\alpha}=$  v'}
+\RightLabel{\quad (list-cons$\overset{\alpha}=$)}
+\BinaryInfC{e::v $\overset{\alpha}=$ e'::v'}
 \DisplayProof
 \]
 
 Application:
 \[
-\AxiomC{e $\equiv$ e'}
-\AxiomC{v $\equiv$ v'}
-\RightLabel{\quad (var$\equiv$)}
-\BinaryInfC{e v $\equiv$ e' v'}
+\AxiomC{e $\overset{\alpha}=$ e'}
+\AxiomC{v $\overset{\alpha}=$ v'}
+\RightLabel{\quad (var$\overset{\alpha}=$)}
+\BinaryInfC{e v $\overset{\alpha}=$ e' v'}
 \DisplayProof
 \]
 
@@ -628,66 +628,66 @@ Application:
 Truth and Falsity:
 \[
 \AxiomC{}
-\RightLabel{\quad ($\top\equiv$)}
-\UnaryInfC{$\top \equiv \top$}
+\RightLabel{\quad ($\top\overset{\alpha}=$)}
+\UnaryInfC{$\top \overset{\alpha}= \top$}
 \DisplayProof
 \quad
 \quad
 \AxiomC{}
-\RightLabel{\quad ($\bot\equiv$)}
-\UnaryInfC{$\bot \equiv \bot$}
+\RightLabel{\quad ($\bot\overset{\alpha}=$)}
+\UnaryInfC{$\bot \overset{\alpha}= \bot$}
 \DisplayProof
 \]
 
 Binary Relations:
 \[
-\AxiomC{A $\equiv$ A'}
-\AxiomC{B $\equiv$ B'}
-\RightLabel{\quad ($\wedge\equiv$)}
-\BinaryInfC{ A $\wedge$ B $\equiv$ A' $\wedge$ B'}
+\AxiomC{A $\overset{\alpha}=$ A'}
+\AxiomC{B $\overset{\alpha}=$ B'}
+\RightLabel{\quad ($\wedge\overset{\alpha}=$)}
+\BinaryInfC{ A $\wedge$ B $\overset{\alpha}=$ A' $\wedge$ B'}
 \DisplayProof
 \]
 
 \[
-\AxiomC{A $\equiv$ A'}
-\AxiomC{B $\equiv$ B'}
-\RightLabel{\quad ($\vee\equiv$)}
-\BinaryInfC{ A $\vee$ B $\equiv$ A' $\vee$ B'}
+\AxiomC{A $\overset{\alpha}=$ A'}
+\AxiomC{B $\overset{\alpha}=$ B'}
+\RightLabel{\quad ($\vee\overset{\alpha}=$)}
+\BinaryInfC{ A $\vee$ B $\overset{\alpha}=$ A' $\vee$ B'}
 \DisplayProof
 \]
 
 \[
-\AxiomC{A $\equiv$ A'}
-\AxiomC{B $\equiv$ B'}
-\RightLabel{\quad ($\supset\equiv$)}
-\BinaryInfC{ A $\supset$ B $\equiv$ A' $\supset$ B'}
+\AxiomC{A $\overset{\alpha}=$ A'}
+\AxiomC{B $\overset{\alpha}=$ B'}
+\RightLabel{\quad ($\supset\overset{\alpha}=$)}
+\BinaryInfC{ A $\supset$ B $\overset{\alpha}=$ A' $\supset$ B'}
 \DisplayProof
 \]
 
 Equality:
 \[
-\AxiomC{t$_1$ $\equiv$ t$_1'$}
-\AxiomC{t$_2$ $\equiv$ t$_2'$}
-\AxiomC{$\tau$ $\equiv$ $\tau$'}
-\RightLabel{\quad ($=\equiv$)}
-\TrinaryInfC{ (t$_1$ = t$_2$ : $\tau$) $\equiv$ (t$_1$' = t$_2$' : $\tau$')}
+\AxiomC{t$_1$ $\overset{\alpha}=$ t$_1'$}
+\AxiomC{t$_2$ $\overset{\alpha}=$ t$_2'$}
+\AxiomC{$\tau$ $\overset{\alpha}=$ $\tau$'}
+\RightLabel{\quad ($=\overset{\alpha}=$)}
+\TrinaryInfC{ (t$_1$ = t$_2$ : $\tau$) $\overset{\alpha}=$ (t$_1$' = t$_2$' : $\tau$')}
 \DisplayProof
 \]
 
 Quantifiers:
 \[
-\AxiomC{$\new$ $z$ . $(x$ $z)$ B $\equiv$ $(x$ $z)$ B'}
-\AxiomC{$\tau \equiv \tau'$}
-\RightLabel{\quad ($\exists\equiv$)}
-\BinaryInfC{$\exists x : \tau$. B $\equiv$ $\exists y : \tau' $. B' }
+\AxiomC{$\new$ $z$ . $(x$ $z)$ B $\overset{\alpha}=$ $(x$ $z)$ B'}
+\AxiomC{$\tau \overset{\alpha}= \tau'$}
+\RightLabel{\quad ($\exists\overset{\alpha}=$)}
+\BinaryInfC{$\exists x : \tau$. B $\overset{\alpha}=$ $\exists y : \tau' $. B' }
 \DisplayProof
 \]
 
 \[
-\AxiomC{$\new$ $z$ . $(x$ $z)$ B $\equiv$ $(x$ $z)$ B'}
-\AxiomC{$\tau \equiv \tau'$}
-\RightLabel{\quad ($\forall\equiv$)}
-\BinaryInfC{$\forall x : \tau$. B $\equiv$ $\forall y : \tau' $. B' }
+\AxiomC{$\new$ $z$ . $(x$ $z)$ B $\overset{\alpha}=$ $(x$ $z)$ B'}
+\AxiomC{$\tau \overset{\alpha}= \tau'$}
+\RightLabel{\quad ($\forall\overset{\alpha}=$)}
+\BinaryInfC{$\forall x : \tau$. B $\overset{\alpha}=$ $\forall y : \tau' $. B' }
 \DisplayProof
 \]
 
@@ -719,5 +719,60 @@ val swap_prop &: var -> var -> prop -> prop
 }
 \end{center}
 
+\section{Induction in proofs}
+
+\subsection{Rules}
+
+Natural Numbers:
+\[
+\AxiomC{
+$\psi ; \Gamma \vdash$ p : P(zero)
+}
+\AxiomC{
+$\psi$ , $n$ : nat ; $\Gamma$ , H : P($n$) $\vdash$ q : P(suc($n$))
+}
+\RightLabel{\quad (induction-nat)}
+\BinaryInfC{
+$\psi ; \Gamma$ , H : P($n$) $\vdash$
+(By Induction: case zero : p ; case suc($n$) : [H] , q) 
+: ($\forall$ $n$ : nat . P($n$))
+}
+\DisplayProof
+\]
+
+Lists:
+\[
+\AxiomC{
+$\psi ; \Gamma \vdash$ p : P( [] )
+}
+\AxiomC{
+$\psi$ , $xs$ : list $\tau$ , $x$ : $\tau$ ; 
+$\Gamma$ , H : P($xs$) $\vdash$ q : P($x$ :: $xs$)
+}
+\RightLabel{\quad (induction-list)}
+\BinaryInfC{
+$\psi ; \Gamma$ , H : P($xs$) $\vdash$
+(By Induction: case [] : p ; case ($x$ :: $xs$) : [H] , q) 
+: ($\forall$ $xs$ : list $\tau$ . P($xs$))
+}
+\DisplayProof
+\]
+
+Booleans:
+\[
+\AxiomC{
+$\psi ; \Gamma \vdash$ p : P( true )
+}
+\AxiomC{
+$\psi ; \Gamma \vdash$ q : P( false )
+}
+\RightLabel{\quad (induction-bool)}
+\BinaryInfC{
+$\psi ; \Gamma \vdash$ 
+(By Induction: case true : p ; case false : q ) 
+: ($\forall$ $b$ : bool . P( $b$ ))
+}
+\DisplayProof
+\]
 
 \end{document}
