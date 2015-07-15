@@ -30,7 +30,7 @@ type ctx = ( var * tp ) list
 type hyps = ( var * prop ) list
 
 (* Proofs *)
-type pf = TruthR of pf                          (* Truth-R,  T : A*)
+type pf = TruthR                                (* Truth-R,  T : A*)
         | FalsityL of var                       (* Falsity-L, Absurd : A *)
         | AndL of (var * var) * var * pf        (*let (H',H'') = H in p*)
         | AndR of pf * pf                       (*p,q*)
@@ -45,6 +45,6 @@ type pf = TruthR of pf                          (* Truth-R,  T : A*)
         | ExistsL of (var * var) * var * pf     (*let (x',H') = H in p*)
         | ForallR of (var * tp) * pf            (*Assume x:tau . p*)
         | ForallL of var * var * term * pf      (*let H' = H with t in p*)
-	| ByIndNat  of pf * (var * pf)          (*ByInduction:case zero p,case suc(n) q*)
-	| ByIndList of pf * (var * pf)          (*ByInduction:case nil p,case cons(y,ys) q*)
-	| ByIndBool of pf * pf                  (*ByInduction:case true p,case false q*)
+	| ByIndNat  of pf * (var * var * pf)    (*ByInduction:case zero p;case suc(n),H,q*)
+	| ByIndList of pf * ((var*var)*var*pf)  (*ByInduction:case nil p;case cons(y,ys),H,q*)
+	| ByIndBool of pf * pf                  (*ByInduction:case true p;case false q*)

@@ -11,6 +11,9 @@ let rec lookup_ctx (psi : ctx) (x : var) :(tp option) = (try Some (List.assoc x 
 (* lookup function for the hypotheses *)
 let rec lookup_hyps (gamma : hyps) (h : var) :(prop option) = (try Some (List.assoc h gamma) with Not_found -> None)
 
+(* function that returns a list of pairs that do not match the given key *)
+let remove_all_assoc (gamma : hyps) (h : var) :(hyps) = List.fold_right (fun (k,v) b -> if h=k then b else (k,v)::b) gamma []
+
 (* and_also function as a shorthand *)
 let and_also r r' =
   match r , r' with
@@ -156,7 +159,7 @@ let rec alpha_equiv_prop (a_prop : prop) (b_prop : prop) :(unit option) =
                                              else let z = fresh () in
                                                   alpha_equiv_prop (swap_prop x z a)
                                                                    (swap_prop y z a')
-  | Exists _         , _                  -> None                                  
+  | Exists _         , _                  -> None
 
 
 
@@ -172,13 +175,13 @@ let rec infer_term (psi : ctx) (t : term) :(tp option) =
   | App (e,v) -> (match infer_term psi e with                                            (*application*)
                   | Some (Arrow (a,b)) -> (match check_term psi v a with
                                            | Some () -> Some b
-                                           | _       -> None)                               
+                                           | _       -> None)
                   | _                  -> None)
   | Boolean (true)  -> Some Bool                                                         (*bool-true*)
   | Boolean (false) -> Some Bool                                                         (*bool-false*)
   | Cons (v,v')     -> None                                                              (*list-hd::tl*)
   | Nil             -> None                                                              (*list-empty*)
-                         
+
 (* term type checking [notes: section 2 and 3], (psi |- t <= tau) *)
 and check_term (psi : ctx) (t : term) (tau : tp) :(unit option) =
   match t , tau with
@@ -189,7 +192,7 @@ and check_term (psi : ctx) (t : term) (tau : tp) :(unit option) =
   | Nil           , tau'      -> None
   | t'            , tau'      -> (match infer_term psi t' with                           (*inference case*)
                                   | Some tau'' -> if tau'' = tau' then (Some ()) else None
-                                  | _         -> None)         
+                                  | _         -> None)
 
 (* proposition type checking [notes: section 2 and 3] *)
 let rec check_prop (psi : ctx) (prop : prop) :(unit option) =
@@ -208,17 +211,17 @@ let rec check_prop (psi : ctx) (prop : prop) :(unit option) =
   | Eq (t,t',tau) -> (match check_term psi t tau , check_term psi t' tau with            (*eq-prop*)
                       | Some (), Some () -> Some ()
                       | _                -> None)
-  | Forall (x,tau,a) -> check_prop ((x,tau)::psi) a                                      (*forall-prop*)            
+  | Forall (x,tau,a) -> check_prop ((x,tau)::psi) a                                      (*forall-prop*)
   | Exists (x,tau,a) -> check_prop ((x,tau)::psi) a                                      (*exists-prop*)
 
 (* proof type checking [notes: section 4] *)
 let rec check_pf (psi : ctx) (gamma : hyps) (proof : pf) (prop : prop) :(unit option) =
   match proof , prop with
-  | TruthR _ , Truth -> Some ()                                                          (*TruthR*)
-  | TruthR _ , _     -> None
-  | FalsityL h , _   -> (match lookup_hyps gamma h with                                  (*FalsityL/Absurd*)
-                         | Some Falsity -> Some ()
-                         | _            -> None)
+  | TruthR , Truth -> Some ()                                                            (*TruthR*)
+  | TruthR , _     -> None
+  | FalsityL h , _ -> (match lookup_hyps gamma h with                                    (*FalsityL/Absurd*)
+                       | Some Falsity -> Some ()
+                       | _            -> None)
   | AndR (p,q) , And (a,b)  -> and_also (check_pf psi gamma p a)                         (*AndR*)
                                         (check_pf psi gamma q b)
   | AndR (p,q) , _          -> None
@@ -259,27 +262,25 @@ let rec check_pf (psi : ctx) (gamma : hyps) (proof : pf) (prop : prop) :(unit op
   | ForallL (h',h,t,p)  , c -> (match lookup_hyps gamma h with
                                 | Some (Forall (x,tau,a)) -> and_also (check_term psi t tau)
                                                                       (check_pf psi ((h',subs_prop x t a)::gamma)
-                                                                                p c)            
+                                                                                p c)
                                 | _                       -> None)
-  | ByIndNat  (p,(h,q)) , Forall (n,Nat,pred) ->                                         (*ByInd-Nat*)
-     (match lookup_hyps gamma h with
-      | Some pred' -> (match alpha_equiv_prop pred pred' with
-                       | Some () -> and_also (check_pf psi            gamma p (subs_prop n Zero pred))
-                                             (check_pf ((n,Nat)::psi) gamma q (subs_prop n (Suc (Var n)) pred))
-                       | _       -> None)
-      | _          -> None)
+  | ByIndNat  (p,(n,h,q)) , Forall (m,Nat,pred) ->                                       (*ByInd-Nat*)
+     let new_gamma = remove_all_assoc gamma h in
+     let pred_0     = subs_prop m Zero          pred in
+     let pred_n     = subs_prop m (Var n)       pred in
+     let pred_suc_n = subs_prop m (Suc (Var n)) pred in
+     and_also (check_pf psi            new_gamma               p pred_0)
+	      (check_pf ((n,Nat)::psi) ((h,pred_n)::new_gamma) q pred_suc_n)
   | ByIndNat _          , _                    -> None
-  | ByIndList (p,(h,q)) , Forall (xs,List tau,pred) ->                                   (*ByInd-List*)
-     (match lookup_hyps gamma h with
-      | Some pred' -> (match alpha_equiv_prop pred pred' with
-                       | Some () -> let x = fresh () in
-                                    and_also (check_pf psi gamma p (subs_prop xs Nil pred))
-                                             (check_pf ((xs, List tau)::(x,tau)::psi) gamma q
-                                                       (subs_prop xs (Cons (Var x,Var xs)) pred))
-                       | _       -> None)
-      | _         -> None)
+  | ByIndList (p,((x,xs),h,q)) , Forall (ys,List tau,pred) ->                            (*ByInd-List*)
+     let new_gamma = remove_all_assoc gamma h in
+     let pred_nil  = subs_prop ys Nil           pred in
+     let pred_xs   = subs_prop ys (Var xs)      pred in
+     let pred_x_xs = subs_prop ys (Cons (Var x,Var xs)) pred in
+     and_also (check_pf psi                           new_gamma                p pred_nil)
+	      (check_pf ((x,tau)::(xs,List tau)::psi) ((h,pred_xs)::new_gamma) q pred_x_xs)
   | ByIndList _         , _                         -> None
-  | ByIndBool (p,q)     , Forall (b,Bool,pred)      -> and_also                          (*ByInd-Bool*)
-                                                         (check_pf psi gamma p (subs_prop b (Boolean true) pred))
-                                                         (check_pf psi gamma q (subs_prop b (Boolean false) pred))
+  | ByIndBool (p,q)     , Forall (b,Bool,pred)      ->                                   (*ByInd-Bool*)
+     and_also (check_pf psi gamma p (subs_prop b (Boolean true) pred))
+	      (check_pf psi gamma q (subs_prop b (Boolean false) pred))
   | ByIndBool _         , _                         -> None

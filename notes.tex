@@ -400,7 +400,7 @@ Truth and Falsity:
 \RightLabel{\quad ($\bot$L)}
 \UnaryInfC{$\psi ; \Gamma ,$  H : $\bot$ 
 $\vdash $
-{\tt match} H {\tt with} $\bot$ : C
+Absurd H : C
 }
 \DisplayProof
 \]
@@ -733,9 +733,9 @@ $\psi$ , $n$ : nat ; $\Gamma$ , H : P($n$) $\vdash$ q : P(suc($n$))
 }
 \RightLabel{\quad (induction-nat)}
 \BinaryInfC{
-$\psi ; \Gamma$ , H : P($n$) $\vdash$
-(By Induction: case zero : p ; case suc($n$) : [H] , q) 
-: ($\forall$ $n$ : nat . P($n$))
+$\psi ; \Gamma$ $\vdash$
+(Induction on nat: case zero : p ; case suc($n$) : [H] , q) 
+: ($\forall$ $m$ : nat . P($m$))
 }
 \DisplayProof
 \]
@@ -746,14 +746,14 @@ Lists:
 $\psi ; \Gamma \vdash$ p : P( [] )
 }
 \AxiomC{
-$\psi$ , $xs$ : list $\tau$ , $x$ : $\tau$ ; 
+$\psi$ , $x$ : $\tau$ , $xs$ : list $\tau$ ; 
 $\Gamma$ , H : P($xs$) $\vdash$ q : P($x$ :: $xs$)
 }
 \RightLabel{\quad (induction-list)}
 \BinaryInfC{
-$\psi ; \Gamma$ , H : P($xs$) $\vdash$
-(By Induction: case [] : p ; case ($x$ :: $xs$) : [H] , q) 
-: ($\forall$ $xs$ : list $\tau$ . P($xs$))
+$\psi ; \Gamma$ $\vdash$
+(Induction on list: case [] : p ; case ($x$ :: $xs$) : [H] , q) 
+: ($\forall$ $ys$ : list $\tau$ . P($ys$))
 }
 \DisplayProof
 \]
@@ -769,7 +769,7 @@ $\psi ; \Gamma \vdash$ q : P( false )
 \RightLabel{\quad (induction-bool)}
 \BinaryInfC{
 $\psi ; \Gamma \vdash$ 
-(By Induction: case true : p ; case false : q ) 
+(Induction on bool: case true : p ; case false : q ) 
 : ($\forall$ $b$ : bool . P( $b$ ))
 }
 \DisplayProof
