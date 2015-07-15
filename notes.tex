@@ -721,7 +721,7 @@ val swap_prop &: var -> var -> prop -> prop
 
 \section{Induction in proofs}
 
-\subsection{Rules}
+\subsection{Rules through predicates}
 
 Natural Numbers:
 \[
@@ -771,6 +771,60 @@ $\psi ; \Gamma \vdash$ q : P( false )
 $\psi ; \Gamma \vdash$ 
 (Induction on bool: case true : p ; case false : q ) 
 : ($\forall$ $b$ : bool . P( $b$ ))
+}
+\DisplayProof
+\]
+
+\subsection{Rules through substitution}
+
+Natural Numbers:
+\[
+\AxiomC{
+$\psi ; \Gamma \vdash$ p : [m $\mapsto$ zero] C
+}
+\AxiomC{
+$\psi$ , $n$ : nat ; $\Gamma$ , H : [m $\mapsto$ zero] C $\vdash$ q : [m $\mapsto$ suc($n$)] C
+}
+\RightLabel{\quad (induction-nat)}
+\BinaryInfC{
+$\psi ; \Gamma$ $\vdash$
+(Ind-Nat: zero : p ; suc($n$) : [H] , q) 
+: ($\forall$ $m$ : nat . C)
+}
+\DisplayProof
+\]
+
+Lists:
+\[
+\AxiomC{
+$\psi ; \Gamma \vdash$ p : [$ys$ $\mapsto$ [] ] C
+}
+\AxiomC{
+$\psi$ , $x$ : $\tau$ , $xs$ : list $\tau$ ; 
+$\Gamma$ , H : [$ys$ $\mapsto$ $xs$ ] C $\vdash$ q : [$ys$ $\mapsto$ $x$ :: $xs$ ] C
+}
+\RightLabel{\quad (induction-list)}
+\BinaryInfC{
+$\psi ; \Gamma$ $\vdash$
+(Ind-List: [] : p ; ($x$ :: $xs$) : [H] , q) 
+: ($\forall$ $ys$ : list $\tau$ . C)
+}
+\DisplayProof
+\]
+
+Booleans:
+\[
+\AxiomC{
+$\psi ; \Gamma \vdash$ p : [$b$ $\mapsto$ true ] C
+}
+\AxiomC{
+$\psi ; \Gamma \vdash$ q : [$b$ $\mapsto$ false ] C
+}
+\RightLabel{\quad (induction-bool)}
+\BinaryInfC{
+$\psi ; \Gamma \vdash$ 
+(Ind-Bool: true : p ; false : q ) 
+: ($\forall$ $b$ : bool . C)
 }
 \DisplayProof
 \]
