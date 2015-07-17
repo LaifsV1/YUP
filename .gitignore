@@ -9,3 +9,6 @@
 *.el
 *.bbl
 *.blg
+*.dsc
+_region_.pdf
+_region_.tex

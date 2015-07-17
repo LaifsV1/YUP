@@ -265,20 +265,18 @@ let rec check_pf (psi : ctx) (gamma : hyps) (proof : pf) (prop : prop) :(unit op
                                                                                 p c)
                                 | _                       -> None)
   | ByIndNat  (p,(n,h,q)) , Forall (m,Nat,pred) ->                                       (*ByInd-Nat*)
-     let new_gamma = remove_all_assoc gamma h in
      let pred_0     = subs_prop m Zero          pred in
      let pred_n     = subs_prop m (Var n)       pred in
      let pred_suc_n = subs_prop m (Suc (Var n)) pred in
-     and_also (check_pf psi            new_gamma               p pred_0)
-	      (check_pf ((n,Nat)::psi) ((h,pred_n)::new_gamma) q pred_suc_n)
+     and_also (check_pf psi            gamma               p pred_0)
+	      (check_pf ((n,Nat)::psi) ((h,pred_n)::gamma) q pred_suc_n)
   | ByIndNat _          , _                    -> None
   | ByIndList (p,((x,xs),h,q)) , Forall (ys,List tau,pred) ->                            (*ByInd-List*)
-     let new_gamma = remove_all_assoc gamma h in
      let pred_nil  = subs_prop ys Nil           pred in
      let pred_xs   = subs_prop ys (Var xs)      pred in
      let pred_x_xs = subs_prop ys (Cons (Var x,Var xs)) pred in
-     and_also (check_pf psi                           new_gamma                p pred_nil)
-	      (check_pf ((x,tau)::(xs,List tau)::psi) ((h,pred_xs)::new_gamma) q pred_x_xs)
+     and_also (check_pf psi                           gamma                p pred_nil)
+	      (check_pf ((x,tau)::(xs,List tau)::psi) ((h,pred_xs)::gamma) q pred_x_xs)
   | ByIndList _         , _                         -> None
   | ByIndBool (p,q)     , Forall (b,Bool,pred)      ->                                   (*ByInd-Bool*)
      and_also (check_pf psi gamma p (subs_prop b (Boolean true) pred))

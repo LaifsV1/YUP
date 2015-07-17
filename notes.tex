@@ -4,6 +4,7 @@
 
 \documentclass[twoside,a4paper]{article}
 
+\usepackage{natbib}
 \usepackage{mathtools}
 \usepackage{syntax}
 \usepackage{bussproofs}
@@ -24,11 +25,15 @@
 \normalfont
 \usepackage[T1]{fontenc}
 
+\usepackage{amsthm}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+
 %NEW quantifier (fresh)
 \usepackage{graphics} %needed for the NEW quantifier
 \newcommand\new[0]{\reflectbox{\ensuremath{\mathsf{N}}}} 
 %The quantifier itself, a reversed sans-serif N 
-%(by analogy with the reversed E of `exists' 
+%(by analogy with the reversed E of `exists'
 %and the reversed A of `forall') 
 \newcommand\New[1]{\new #1.} 
 %A macro, as in \New{a}\phi
@@ -828,5 +833,99 @@ $\psi ; \Gamma \vdash$
 }
 \DisplayProof
 \]
+
+\section{Equality in proofs}
+
+\subsection{Abstract congruence closure \cite[p.~4--7]{BachmairTV03}}
+
+\subsubsection{Definition}
+
+
+Rewrite-Rules:
+\begin{align*}
+D\text{-}rule : &&f(c_0, ... c_k) \rightarrow c &&&\textit{where $f$ is a term constructor and $c_i$ are constants in $K$}
+\\
+C\text{-}rule : &&c \rightarrow d &&&\textit{where $c$ and $d$ are constants in $K$}
+\end{align*}
+Sets:
+\begin{align*}
+D &: \{D\text{-}rule\}\\
+C &: \{C\text{-}rule\}
+\end{align*}
+\begin{align*}
+E &: \{(t = t) : \tau\}\\
+K &: \{ x | x \notin E\}\\
+R &: D \cup C\\
+\end{align*}
+Closure Construction:
+\begin{align*}
+state &: (K,E,R)\\
+{\tt state\_transition } &: state \rightarrow state {\tt ~option}\\
+{\tt construct\_closure ~ }\sigma &= {\tt construct\_closure (state\_transition ~ }\sigma)\\
+[\![ {\tt construct\_closure }]\!] &: (\emptyset , E , \emptyset) \mapsto (K , \emptyset , R)\\
+&{\text{\it where R is the (abstract) congruence closure for E}}
+\end{align*}
+
+\subsubsection{Sate transition rules}
+
+\[
+\AxiomC{$(K,E[t],R)$}
+\AxiomC{$t = f(c_0 , ... , c_k)$}
+\LeftLabel{Extension: \quad}
+\RightLabel{\quad (Ext)}
+\BinaryInfC{$(K \cup \{c\},E[c],R \cup \{t \rightarrow c\ : D\})$}
+\DisplayProof
+\]
+
+\[
+\AxiomC{$(K,E[t],R \cup \{t \rightarrow c : D\})$}
+\LeftLabel{Simplification: \quad}
+\RightLabel{\quad (Sim)}
+\UnaryInfC{$(K,E[c],R \cup \{t \rightarrow c : D\})$}
+\DisplayProof
+\]
+
+\[
+\AxiomC{$(K \cup \{c\},E \cup \{t = c \},R\})$}
+\LeftLabel{Orientation: \quad}
+\RightLabel{\quad (Ori)}
+\UnaryInfC{$(K \cup \{c\},E,R \cup \{t \rightarrow c : D\})$}
+\DisplayProof
+\]
+
+\[
+\AxiomC{$(K,E \cup \{t = t \},R\})$}
+\LeftLabel{Deletion: \quad}
+\RightLabel{\quad (Del)}
+\UnaryInfC{$(K,E,R\})$}
+\DisplayProof
+\]
+
+\[
+\AxiomC{$(K,E,R \cup \{t \rightarrow c : D , t \rightarrow d : D \})$}
+\LeftLabel{Deduction: \quad}
+\RightLabel{\quad (Ded)}
+\UnaryInfC{$(K,E \cup \{c = d \},R \cup \{t \rightarrow d : D\})$}
+\DisplayProof
+\]
+
+\[
+\AxiomC{$(K,E,R \cup \{s[c] \rightarrow c' : D , c \rightarrow d : C \})$}
+\LeftLabel{Collapse: \quad}
+\RightLabel{\quad (Col)}
+\UnaryInfC{$(K,E,R \cup \{s[d] \rightarrow c' : D , c \rightarrow d : C \})$}
+\DisplayProof
+\]
+
+\[
+\AxiomC{$(K,E,R \cup \{t \rightarrow c : D , c \rightarrow d : C \})$}
+\LeftLabel{Composition: \quad}
+\RightLabel{\quad (Com)}
+\UnaryInfC{$(K,E,R \cup \{t \rightarrow d : D , c \rightarrow d : C \})$}
+\DisplayProof
+\]
+
+\bibliography{notes}
+\bibliographystyle{plain}
 
 \end{document}
