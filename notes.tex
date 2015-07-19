@@ -31,11 +31,11 @@
 
 %NEW quantifier (fresh)
 \usepackage{graphics} %needed for the NEW quantifier
-\newcommand\new[0]{\reflectbox{\ensuremath{\mathsf{N}}}} 
-%The quantifier itself, a reversed sans-serif N 
+\newcommand\new[0]{\reflectbox{\ensuremath{\mathsf{N}}}}
+%The quantifier itself, a reversed sans-serif N
 %(by analogy with the reversed E of `exists'
-%and the reversed A of `forall') 
-\newcommand\New[1]{\new #1.} 
+%and the reversed A of `forall')
+\newcommand\New[1]{\new #1.}
 %A macro, as in \New{a}\phi
 
 \begin{document}
@@ -44,15 +44,15 @@
 \section{Syntax Grammar}
 \begin{center}
 \begin{tabular}{rll}
-(types)& $\tau$ ::= bool 
+(types)& $\tau$ ::= bool
 | $\tau$ $\rightarrow$ $\tau $ | nat | list $\tau$
 \\
 (hypotheses)& A , B ::= $\top$ | $\bot$
-| A $\wedge$ B | A $\vee$ B | A $\supset$ B 
+| A $\wedge$ B | A $\vee$ B | A $\supset$ B
 | $\forall$ $x$ : $\tau$ . A | $\exists$ $x$ : $\tau$ . A
 | t = t : $\tau$
 \\
-(terms)& e , t ::= $x$ | t t | true | false 
+(terms)& e , t ::= $x$ | t t | true | false
 | [ ] | t :: t  %lists
 | zero | suc( t ) %natural numbers
 \\
@@ -198,7 +198,7 @@ Quantifier Propositions:
 \subsection{Syntax grammar}
 \begin{center}
 \begin{tabular}{rll}
-(infer)& e ::= x 
+(infer)& e ::= x
 | e v | true | false | zero | suc( e )
 \\
 (check)& v ::= v :: v  | nil | e
@@ -372,15 +372,15 @@ check_prop &: $\psi$ $\rightarrow$ A $\rightarrow$ unit option
 \subsection{Syntax grammar}
 \begin{center}
 \begin{tabular}{rrrl}
-(proofs)& p , q &::=& by H 
-\\ &&|& (p , q) 
+(proofs)& p , q &::=& by H
+\\ &&|& (p , q)
 \\ &&|& {\tt let} (H',H'') {\tt =} H {\tt in} p
-\\ &&|& (p , q ) {\tt either} 
+\\ &&|& (p , q ) {\tt either}
 \\ &&|& {\tt match [}H{\tt  ] : (}A $\vee$ B{\tt ) with (}
-\\ &&&\qquad \qquad | A {\tt [}H'{\tt ]:} p {\tt ->} C 
+\\ &&&\qquad \qquad | A {\tt [}H'{\tt ]:} p {\tt ->} C
 \\ &&&\qquad \qquad | B {\tt [}H''{\tt ]:} q {\tt ->} C {\tt)}
 \\
-(hypotheses context)& $\Gamma$ &::=& \quad $\cdot$ \quad 
+(hypotheses context)& $\Gamma$ &::=& \quad $\cdot$ \quad
 \\ &&| & $\Gamma$ , H : A
 \\ &&| & Assume A [ H ] , p
 \end{tabular}
@@ -403,7 +403,7 @@ Truth and Falsity:
 \qquad
 \AxiomC{}
 \RightLabel{\quad ($\bot$L)}
-\UnaryInfC{$\psi ; \Gamma ,$  H : $\bot$ 
+\UnaryInfC{$\psi ; \Gamma ,$  H : $\bot$
 $\vdash $
 Absurd H : C
 }
@@ -412,7 +412,7 @@ Absurd H : C
 
 Conjunction:
 \[
-\AxiomC{$\psi ; \Gamma ,$ H : A $\wedge$ B , H' : A , H'' : B 
+\AxiomC{$\psi ; \Gamma ,$ H : A $\wedge$ B , H' : A , H'' : B
 $\vdash$ p : C}
 \RightLabel{\quad ($\wedge$L)}
 \UnaryInfC{$\psi ; \Gamma ,$ H : A $\wedge$ B $\vdash$
@@ -433,7 +433,7 @@ Disjunction:
 \AxiomC{$\psi ; \Gamma$ , H : A $ \vee$ B , H' : A $\vdash$ p : C}
 \AxiomC{$\psi ; \Gamma$ , H : A $ \vee$ B , H'' : B $\vdash$ q : C}
 \RightLabel{\quad ($\vee$L)}
-\BinaryInfC{$\psi ; \Gamma ,$  H : A 
+\BinaryInfC{$\psi ; \Gamma ,$  H : A
 $ \vee$ B $\vdash $
  {\tt  match [}H{\tt] with(}
  A {\tt [}H'{\tt ]:} p
@@ -469,7 +469,7 @@ Implication:
 \[
 \AxiomC{$\psi ; \Gamma$ , H : A $\vdash$ p : B}
 \RightLabel{\quad ($\supset$R)}
-\UnaryInfC{$\psi ; \Gamma \vdash$ ( Assume A [ H ] , p ) : A 
+\UnaryInfC{$\psi ; \Gamma \vdash$ ( Assume A [ H ] , p ) : A
 $\supset$ B}
 \DisplayProof
 \]
@@ -493,7 +493,7 @@ Using hypotheses:
 \subsection{Function signature}
 \begin{center}
 {\tt
-check_proof : $\psi \rightarrow \Gamma \rightarrow $ P 
+check_proof : $\psi \rightarrow \Gamma \rightarrow $ P
 $\rightarrow$ A $\rightarrow$ unit option
 }
 \end{center}
@@ -529,7 +529,7 @@ Universals:
 
 \[
 \AxiomC{$\psi ; \Gamma \vdash$ t : $\tau$}
-\AxiomC{$\psi ; \Gamma$ , 
+\AxiomC{$\psi ; \Gamma$ ,
 H : $\forall x : \tau $ . A ,
 H' : [x $\mapsto$ t] A  $\vdash$ p : C}
 \RightLabel{\quad ($\forall$ L)}
@@ -739,7 +739,7 @@ $\psi$ , $n$ : nat ; $\Gamma$ , H : P($n$) $\vdash$ q : P(suc($n$))
 \RightLabel{\quad (induction-nat)}
 \BinaryInfC{
 $\psi ; \Gamma$ $\vdash$
-(Induction on nat: case zero : p ; case suc($n$) : [H] , q) 
+(Induction on nat: case zero : p ; case suc($n$) : [H] , q)
 : ($\forall$ $m$ : nat . P($m$))
 }
 \DisplayProof
@@ -751,13 +751,13 @@ Lists:
 $\psi ; \Gamma \vdash$ p : P( [] )
 }
 \AxiomC{
-$\psi$ , $x$ : $\tau$ , $xs$ : list $\tau$ ; 
+$\psi$ , $x$ : $\tau$ , $xs$ : list $\tau$ ;
 $\Gamma$ , H : P($xs$) $\vdash$ q : P($x$ :: $xs$)
 }
 \RightLabel{\quad (induction-list)}
 \BinaryInfC{
 $\psi ; \Gamma$ $\vdash$
-(Induction on list: case [] : p ; case ($x$ :: $xs$) : [H] , q) 
+(Induction on list: case [] : p ; case ($x$ :: $xs$) : [H] , q)
 : ($\forall$ $ys$ : list $\tau$ . P($ys$))
 }
 \DisplayProof
@@ -773,8 +773,8 @@ $\psi ; \Gamma \vdash$ q : P( false )
 }
 \RightLabel{\quad (induction-bool)}
 \BinaryInfC{
-$\psi ; \Gamma \vdash$ 
-(Induction on bool: case true : p ; case false : q ) 
+$\psi ; \Gamma \vdash$
+(Induction on bool: case true : p ; case false : q )
 : ($\forall$ $b$ : bool . P( $b$ ))
 }
 \DisplayProof
@@ -793,7 +793,7 @@ $\psi$ , $n$ : nat ; $\Gamma$ , H : [m $\mapsto$ zero] C $\vdash$ q : [m $\mapst
 \RightLabel{\quad (induction-nat)}
 \BinaryInfC{
 $\psi ; \Gamma$ $\vdash$
-(Ind-Nat: zero : p ; suc($n$) : [H] , q) 
+(Ind-Nat: zero : p ; suc($n$) : [H] , q)
 : ($\forall$ $m$ : nat . C)
 }
 \DisplayProof
@@ -805,13 +805,13 @@ Lists:
 $\psi ; \Gamma \vdash$ p : [$ys$ $\mapsto$ [] ] C
 }
 \AxiomC{
-$\psi$ , $x$ : $\tau$ , $xs$ : list $\tau$ ; 
+$\psi$ , $x$ : $\tau$ , $xs$ : list $\tau$ ;
 $\Gamma$ , H : [$ys$ $\mapsto$ $xs$ ] C $\vdash$ q : [$ys$ $\mapsto$ $x$ :: $xs$ ] C
 }
 \RightLabel{\quad (induction-list)}
 \BinaryInfC{
 $\psi ; \Gamma$ $\vdash$
-(Ind-List: [] : p ; ($x$ :: $xs$) : [H] , q) 
+(Ind-List: [] : p ; ($x$ :: $xs$) : [H] , q)
 : ($\forall$ $ys$ : list $\tau$ . C)
 }
 \DisplayProof
@@ -827,8 +827,8 @@ $\psi ; \Gamma \vdash$ q : [$b$ $\mapsto$ false ] C
 }
 \RightLabel{\quad (induction-bool)}
 \BinaryInfC{
-$\psi ; \Gamma \vdash$ 
-(Ind-Bool: true : p ; false : q ) 
+$\psi ; \Gamma \vdash$
+(Ind-Bool: true : p ; false : q )
 : ($\forall$ $b$ : bool . C)
 }
 \DisplayProof
@@ -871,9 +871,10 @@ state &: (K,E,R)\\
 \[
 \AxiomC{$(K,E[t],R)$}
 \AxiomC{$t = f(c_0 , ... , c_k)$}
+\AxiomC{$c_i \notin K$}
 \LeftLabel{Extension: \quad}
 \RightLabel{\quad (Ext)}
-\BinaryInfC{$(K \cup \{c\},E[c],R \cup \{t \rightarrow c\ : D\})$}
+\TrinaryInfC{$(K \cup \{c\},E[c],R \cup \{t \rightarrow c\ : D\})$}
 \DisplayProof
 \]
 
