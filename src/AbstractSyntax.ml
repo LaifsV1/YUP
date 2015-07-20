@@ -49,3 +49,21 @@ type pf = TruthR                                (* Truth-R,  T : A*)
         | ByIndNat  of pf * (var * var * pf)    (*ByInduction:case zero p;case suc(n),H,q*)
         | ByIndList of pf * ((var*var)*var*pf)  (*ByInduction:case nil p;case cons(y,ys),H,q*)
         | ByIndBool of pf * pf                  (*ByInduction:case true p;case false q*)
+
+let rec toString (tau : tp) :(string) =
+  match tau with
+  | Bool -> "type_Bool"
+  | Nat  -> "type_Nat"
+  | List  x -> "type_List (" ^ (toString x) ^ ")"
+  | Arrow (a,b)-> "type_Arrow (" ^ (toString a) ^"," ^ (toString b) ^ ")"
+
+let rec toString (t : term) :(string) =
+  match t with
+  | Var x     -> "term_Var("^x^")"
+  | App (f,x) -> "term_App("^(toString f)^","^(toString x)^")"
+  | Boolean true -> "term_Bool(true)"
+  | Boolean false -> "term_Bool(false)"
+  | Zero          -> "term_Nat(Zero)"
+  | Suc n         -> "term_Nat(Suc("^(toString n)^"))"
+  | Nil           -> "term_List(Nil)"
+  | Cons (x,xs)   -> "term_List("^(toString x)^","^(toString xs)^")"
