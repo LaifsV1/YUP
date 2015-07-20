@@ -8,6 +8,7 @@ type var = string
 type tp = Bool | Nat | List of tp | Arrow of tp * tp
 
 (* Terms *)
+(* f ( c_0 , ... , c_k ) where c_i : term *)
 type term = Var of var                 (*var*)
           | App of term * term         (*app*)
           | Boolean of bool            (*bool*)

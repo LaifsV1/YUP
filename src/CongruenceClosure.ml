@@ -3,7 +3,9 @@
 (* algorithm from "Abstract Congruence Closure" by Leo Bachmair, Ashish Tiwari, Laurent Vigneron *)
 (* Details in notes file *)
 open AbstractSyntax
+open Helper
 
+(******** TYPE DEFINITIONS ********)
 (*rewrite rules*)
 type crule = var * var             (* c -> d *)
 type drule = term * var            (* f(c_0, ... , c_k) -> c *)
@@ -18,12 +20,13 @@ type r_set = c_set * d_set         (* C union D *)
 (*state*)
 type state = k_set * e_set * r_set (* K,E,R *)
 
-(*helper functions*)
-let or_else f g =
-  match f with
-  | None   -> g
-  | Some s -> Some s
 
+(******** MODULE-SPECIFIC HELPER FUNCTIONS ********)
+(* fresh function and global variable - this is a reserved string, users cannot have underscore variables. *)
+let var_c = ref 0
+let fresh_c () = var_c := !var_c + 1; "_c_" ^ string_of_int (!var_c) ^ "_" (*format: _c_int_*)
+
+(* finds first element satisfying p *)
 let rec find (ls : 'a list) (p : 'a -> bool) :(('a * 'a list) option) =
   match ls with
   | []      -> None
@@ -32,6 +35,8 @@ let rec find (ls : 'a list) (p : 'a -> bool) :(('a * 'a list) option) =
                      | None -> None
                      | Some (y,ys) -> Some (y,x::ys))
 
+(* finds first element in the second list that satifies the condition generted from the first list *)
+(* conditions are generated for each element in the first list, stopping when the condition is satified *)
 let rec slide_find (xs : 'a list)             (* first list *)
                    (p : 'a -> 'c -> bool)     (* condition generator from first list *)
                    (ys : 'b list)             (* second list *)
@@ -45,6 +50,8 @@ let rec slide_find (xs : 'a list)             (* first list *)
                          | None -> None
                          | Some (x',xs',y',ys') -> Some (x',x::xs',y',ys')))
 
+(* finds the first element in the list that satifies the conditions generated from it *)
+(* conditions are generated for each element in the list, stopping when the condition is satified *)
 let rec compare_within (xs : 'a list)       (* list to compare within *)
                     (p : 'a -> 'b -> bool)  (* generate condition from first list *)
                     (q: 'a -> 'b)           (* extract from list for comparison *)
@@ -57,12 +64,52 @@ let rec compare_within (xs : 'a list)       (* list to compare within *)
                          | None -> None
                          | Some (x',y,ys) -> Some (x',y,x::ys)))
 
+(* E[t] where t=f(c_0,...,c_k) and c_i in K *)
+(* returns: (term extracted , new var c) *)
+let rec expand_extract (t : term) (k : k_set) :(drule option) =
+  let c = fresh_c () in
+  (match t with
+    | Var x                 -> if List.mem x k then None else Some (Var x , c) (*prevents replacing vars in K infinitely*)
+    | App (Var f, Var x)    -> if List.mem f k && List.mem x k then Some (App (Var f, Var x) , c)
+                               else or_else (expand_extract (Var x) k)
+                                            (expand_extract (Var f) k)
+    | App (f , x )          -> or_else (expand_extract f k)
+                                       (expand_extract x k)
+    | Boolean b             -> Some (Boolean b , c)
+    | Zero                  -> Some (Zero , c)
+    | Suc (Var n)           -> if List.mem n k then Some (Suc (Var n) , c)
+                               else expand_extract (Var n) k
+    | Suc n                 -> expand_extract n k
+    | Nil                   -> Some (Nil , c)
+    | Cons (Var x , Var xs) -> if List.mem x k && List.mem xs k then Some (Cons (Var x, Var xs) , c)
+                               else or_else (expand_extract (Var x)  k)
+                                            (expand_extract (Var xs) k)
+    | Cons (x , xs)         -> or_else (expand_extract x  k)
+                                       (expand_extract xs k))
 
+(* replaces any t with new_t given t=t' *)
+let rec expand_replace (t : term) (t' : term) (new_t : term) :(term) =
+  if t = t' then new_t
+  else (match t with
+        | Var x     -> Var x
+        | Boolean b -> Boolean b
+        | Zero      -> Zero
+        | Nil       -> Nil
+        | App (f, x)    -> App (expand_replace f t' new_t , expand_replace x t' new_t)
+        | Suc n         -> Suc (expand_replace n t' new_t)
+        | Cons (x , xs) -> Cons (expand_replace x t' new_t , expand_replace xs t' new_t))
 
-(*state-transition rules*)
-let rec ext ((k,e,r) : state) :(state option) = None
+(******** STATE TRANSITION RULES ********)
+let rec ext ((k,e,(cs,ds)) : state) :(state option) =                                          (*Extension Transition*)
+  match List.fold_right (fun (t,t') b -> or_else (or_else (expand_extract t  k)
+                                                          (expand_extract t' k)) b) e None
+  with
+  | None             -> None
+  | Some (ext_t , c) -> let e' = List.map (fun (t,t') -> (expand_replace t  ext_t (Var c) ,
+                                                          expand_replace t' ext_t (Var c))) e
+                        in Some (c::k , e' , (cs,(ext_t,c)::ds))
 
-let rec sim ((k,e,r) : state) :(state option) = None
+let rec sim ((k,e,r) : state) :(state option) = None                                     (*Simplification Transition*)
 
 let rec ori ((k,e,(cs,ds)) : state) :(state option) =                                    (*Orientation Transition*)
   match slide_find k (fun c -> fun t -> t=(Var c))
@@ -70,7 +117,7 @@ let rec ori ((k,e,(cs,ds)) : state) :(state option) =                           
   with
   | None             -> None
   | Some (c,k',(t,Var c'),e') -> Some (c::k',e',(cs,(t,c')::ds))
-  | _                         -> failwith "this shouldn't have happened" (****CHECK THIS*****)
+  | Some (_,_,(_,t),_)        -> failwith "ori" (*to_string function*)
 
 let rec del ((k,e,r) : state) :(state option) =                                          (*Deletion Transition*)
   match find e (fun (t,t') -> t = t') with
@@ -78,7 +125,7 @@ let rec del ((k,e,r) : state) :(state option) =                                 
   | Some ((t,t'),e') -> Some (k,e',r)
 
 let rec ded ((k,e,(cs,ds)) : state) :(state option) =                                    (*Deduction Transition*)
-  match  compare_within ds (fun (t,c) -> fun t' -> t=t') (*returns first matching elements*)
+  match  compare_within ds (fun (t,c) -> fun t' -> t=t')
                         (fun (t,d) -> t)
   with
   | None                    -> None
@@ -91,11 +138,10 @@ let rec com ((k,e,(cs,ds)) : state) :(state option) =                           
                    cs (fun (c,d) -> c)
   with
   | None                        -> None
-  | Some ((t,c),ds',(c',d),cs') -> Some (k,e,((c',d)::cs',(t, d)::ds')) (***THIS WAS CONFUSING, CHECK IT***)
+  | Some ((t,c),ds',(c',d),cs') -> Some (k,e,((c',d)::cs',(t, d)::ds'))
 
 
-
-(*constructing the closure*)
+(******** BUILDING THE CLOSURE ********)
 let rec build_closure' (sigma : state) :(state option) =
   let step = or_else (ext sigma)
                      (or_else (sim sigma)
