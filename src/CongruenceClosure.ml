@@ -1,11 +1,12 @@
 (* Abstract Congruence Closure *)
 (* author: Yu-Yang Lin *)
 (* algorithm from "Abstract Congruence Closure" by Leo Bachmair, Ashish Tiwari, Laurent Vigneron *)
-(* Details in notes file *)
+(* Details in section 8.1 of notes *)
 open AbstractSyntax
 open Helper
 
 (******** TYPE DEFINITIONS ********)
+(*notes: [section 8.1.1]*)
 (*rewrite rules*)
 type crule = var * var             (* c -> d *)
 type drule = term * var            (* f(c_0, ... , c_k) -> c *)
@@ -22,7 +23,8 @@ type state = k_set * e_set * r_set (* K,E,R *)
 
 
 (**************** MODULE-SPECIFIC HELPER FUNCTIONS ****************)
-(* fresh function and global variable - this is a reserved string, users cannot have underscore variables. *)
+(*fresh function and global variable - this is a reserved string, users cannot have underscore variables.*)
+(*notes: [section 8.1.2]*)
 let var_c = ref 0
 let fresh_c () = var_c := !var_c + 1; "_c_" ^ string_of_int (!var_c) ^ "_" (*format: _c_int_*)
 
@@ -95,21 +97,25 @@ let rec expand_extract (t : term) (k : k_set) :(drule option) =
 (* s[t -> c] *)
 (* replaces all occurances of t' in t with c, returns None if nothing was found to match. *)
 let rec expand_replace (t : term) (t' : term) (c : term) :(term option) =
-  if t = t' then Some c
+  if t = t' then (Some c)
   else (match t with
         | Var x     -> None
         | Boolean b -> None
         | Zero      -> None
         | Nil       -> None
         | App (f, x)    -> (match expand_replace f t' c , expand_replace x t' c with
-                            | Some a, Some b -> Some (App (a,b))
-                            | _              -> None)
+                            | Some a , Some b -> Some (App (a,b))
+                            | Some a , None   -> Some (App (a,x))
+                            | None   , Some b -> Some (App (f,b))
+                            | None   , None   -> None)
         | Suc n         -> (match expand_replace n t' c with
                             | Some n ->  Some (Suc n)
                             | _      -> None)
         | Cons (x , xs) -> (match expand_replace x t' c , expand_replace xs t' c with
                             | Some a , Some b -> Some (Cons (a,b))
-                            | _               -> None))
+                            | Some a , None   -> Some (Cons (a,xs))
+                            | None   , Some b -> Some (Cons (x,b))
+                            | None   , None   -> None))
 
 (* replaces all occurances of t' in t with c, returns original t if nothing is replaced *)
 let discard_expand_replace t t' c = discard_none (expand_replace t t' c) t
@@ -178,15 +184,25 @@ let rec com ((k,e,(cs,ds)) : state) :(state option) =                           
 
 (******** BUILDING THE CLOSURE ********)
 let rec build_closure' (sigma : state) :(state option) =
-  let step = or_else (ext sigma)
-                     (or_else (sim sigma)
-                              (or_else (ori sigma)
-                                       (or_else (del sigma)
-                                                (or_else (ded sigma)
-                                                         (or_else (col sigma)
-                                                                  (com sigma))))))
+  let step =   or_else (ext sigma)
+                       (or_else (sim sigma)
+                                (or_else (ori sigma)
+                                         (or_else (del sigma)
+                                                  (or_else (ded sigma)
+                                                           (or_else (col sigma)
+                                                                    (com sigma))))))
   in (match step with
       | None   -> Some sigma
       | Some s -> build_closure' s)
 
 let build_closure (e : e_set) :(state option) = build_closure' ([],e,([],[]))
+
+(*for testing*)
+let step_through (sigma : state) :(state option) =
+  or_else (ext sigma)
+          (or_else (sim sigma)
+                   (or_else (ori sigma)
+                            (or_else (del sigma)
+                                     (or_else (ded sigma)
+                                              (or_else (col sigma)
+                                                       (com sigma))))))

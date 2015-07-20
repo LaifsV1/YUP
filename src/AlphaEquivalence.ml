@@ -1,6 +1,6 @@
 (* Alpha Equivalence and Related Functions *)
 (* author: Yu-Yang Lin *)
-(* Read notes section 6 for details *)
+(* Details in section 6 of notes *)
 open AbstractSyntax
 open Helper
 
