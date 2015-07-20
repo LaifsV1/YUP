@@ -1,4 +1,8 @@
-#load "Checker.cmo";;
 #load "AbstractSyntax.cmo";;
-open Checker
+#load "Helper.cmo";;
+#load "AlphaEquivalence.cmo";;
+#load "Checker.cmo";;
+#load "CongruenceClosure.cmo";;
 open AbstractSyntax
+open Checker
+open CongruenceClosure
