@@ -888,9 +888,10 @@ state &: (K,E,R)\\
 
 \[
 \AxiomC{$(K \cup \{c\},E \cup \{t = c \},R\})$}
+\AxiomC{$t \notin K$}
 \LeftLabel{Orientation: \quad}
 \RightLabel{\quad (Ori)}
-\UnaryInfC{$(K \cup \{c\},E,R \cup \{t \rightarrow c : D\})$}
+\BinaryInfC{$(K \cup \{c\},E,R \cup \{t \rightarrow c : D\})$}
 \DisplayProof
 \]
 
