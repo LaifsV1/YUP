@@ -888,10 +888,27 @@ state &: (K,E,R)\\
 
 \[
 \AxiomC{$(K \cup \{c\},E \cup \{t = c \},R\})$}
-\AxiomC{$t \notin K$}
-\LeftLabel{Orientation: \quad}
-\RightLabel{\quad (Ori)}
-\BinaryInfC{$(K \cup \{c\},E,R \cup \{t \rightarrow c : D\})$}
+\LeftLabel{Orientation1: \quad}
+\RightLabel{\quad (Ori1)}
+\UnaryInfC{$(K \cup \{c\},E,R \cup \{t \rightarrow c : D\})$}
+\DisplayProof
+\]
+
+\[
+\AxiomC{$(K \cup \{c,d\},E \cup \{c = d \},R\})$}
+\AxiomC{$c < d$}
+\LeftLabel{Orientation2: \quad}
+\RightLabel{\quad (Ori2)}
+\BinaryInfC{$(K \cup \{c,d\},E,R \cup \{c \rightarrow d : C\})$}
+\DisplayProof
+\]
+
+\[
+\AxiomC{$(K \cup \{c,d\},E \cup \{c = d \},R\})$}
+\AxiomC{$d < c$}
+\LeftLabel{Orientation3: \quad}
+\RightLabel{\quad (Ori2)}
+\BinaryInfC{$(K \cup \{c,d\},E,R \cup \{d \rightarrow c : C\})$}
 \DisplayProof
 \]
 

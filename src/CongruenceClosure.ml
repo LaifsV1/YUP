@@ -141,7 +141,7 @@ let rec sim ((k,e,(cs,ds)) : state) :(state option) =                           
                                                              discard_expand_replace b t (Var c))) e
                                          in Some (k, e' , (cs,ds))
 
-let rec ori ((k,e,(cs,ds)) : state) :(state option) =                                    (*Orientation Transition*)
+let rec ori_1 ((k,e,(cs,ds)) : state) :(state option) =                                    (*Orientation1 Transition*)
   match slide_find k (fun c -> fun (a,b) ->
                                (match a,b with
                                 | Var t,Var c' -> c=c' && not (List.mem t k)
@@ -150,7 +150,29 @@ let rec ori ((k,e,(cs,ds)) : state) :(state option) =                           
   with
   | None             -> None
   | Some (c,k',(t,Var c'),e') -> Some (c::k',e',(cs,(t,c')::ds))
-  | Some (_,_,(_,t),_)        -> failwith ("ori: " ^ (toString t))
+  | Some (_,_,(_,t),_)        -> failwith ("ori1: " ^ (toString t))
+
+let rec ori_2 ((k,e,(cs,ds)) : state) :(state option) =                                    (*Orientation2 Transition*)
+  match slide_find k (fun d -> fun (a,b) ->
+                               (match a,b with
+                                | Var c,Var d' -> d=d' && c < d
+                                | _    ,Var d' -> d=d'
+                                | _            -> false)) e
+  with
+  | None             -> None
+  | Some (d,k',(Var c,Var d'),e') -> Some (d::k',e',((c,d')::cs,ds))
+  | Some (_,_,(_,t),_)        -> failwith ("ori2: " ^ (toString t))
+
+let rec ori_3 ((k,e,(cs,ds)) : state) :(state option) =                                    (*Orientation3 Transition*)
+  match slide_find k (fun d -> fun (a,b) ->
+                               (match a,b with
+                                | Var c,Var d' -> d=d' && d < c
+                                | _    ,Var d' -> d=d'
+                                | _            -> false)) e
+  with
+  | None             -> None
+  | Some (d,k',(Var c,Var d'),e') -> Some (d::k',e',((d',c)::cs,ds))
+  | Some (_,_,(_,t),_)        -> failwith ("ori2: " ^ (toString t))
 
 let rec del ((k,e,r) : state) :(state option) =                                          (*Deletion Transition*)
   match find e (fun (t,t') -> t = t') with
@@ -183,11 +205,13 @@ let rec com ((k,e,(cs,ds)) : state) :(state option) =                           
 let rec build_closure' (sigma : state) :(state option) =
   let step = or_else (ext sigma)
                      (or_else (sim sigma)
-                              (or_else (ori sigma)
-                                       (or_else (del sigma)
-                                                (or_else (ded sigma)
-                                                         (or_else (col sigma)
-                                                                  (com sigma))))))
+                              (or_else (ori_1 sigma)
+                                       (or_else (ori_2 sigma)
+                                                (or_else (ori_3 sigma)
+                                                         (or_else (del sigma)
+                                                                  (or_else (ded sigma)
+                                                                           (or_else (col sigma)
+                                                                                    (com sigma))))))))
   in (match step with
       | None   -> Some sigma
       | Some s -> build_closure' s)
@@ -198,9 +222,11 @@ let build_closure (e : e_set) :(state option) = build_closure' ([],e,([],[]))
 let step_through (sigma : state) :(state option) =
   let step = or_else (ext sigma)
                      (or_else (sim sigma)
-                              (or_else (ori sigma)
-                                       (or_else (del sigma)
-                                                (or_else (ded sigma)
-                                                         (or_else (col sigma)
-                                                                  (com sigma))))))
+                              (or_else (ori_1 sigma)
+                                       (or_else (ori_2 sigma)
+                                                (or_else (ori_3 sigma)
+                                                         (or_else (del sigma)
+                                                                  (or_else (ded sigma)
+                                                                           (or_else (col sigma)
+                                                                                    (com sigma))))))))
   in step

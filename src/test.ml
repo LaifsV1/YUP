@@ -6,3 +6,4 @@
 open AbstractSyntax
 open Checker
 open CongruenceClosure
+       (* K, E, (cs, ds) *)
