@@ -21,7 +21,6 @@ type r_set = c_set * d_set         (* C union D *)
 (*state*)
 type state = k_set * e_set * r_set (* K,E,R *)
 
-
 (**************** MODULE-SPECIFIC HELPER FUNCTIONS ****************)
 (*fresh function and global variable - this is a reserved string, users cannot have underscore variables.*)
 (*notes: [section 8.1.2]*)
@@ -36,11 +35,16 @@ let discard_none (some : 'a option) (a : 'a) :('a) =
 (* finds first element satisfying p *)
 let rec find (ls : 'a list) (p : 'a -> bool) :(('a * 'a list) option) =
   match ls with
-  | []      -> None
-  | (x::xs) -> if p x then Some (x,xs)
-               else (match find xs p with
-                     | None -> None
-                     | Some (y,ys) -> Some (y,x::ys))
+  | []    -> None
+  | x::xs -> if p x then Some (x,xs)
+             else (match find xs p with
+                   | None -> None
+                   | Some (y,ys) -> Some (y,x::ys))
+
+let union_append (x : 'a) (xs : 'a list) :('a list) =
+  match xs with
+  | [] -> [x]
+  | ys -> if List.mem x ys then ys else x::ys
 
 (* finds first element in the second list that satifies the condition generted from the first list *)
 (* conditions are generated for each element in the first list, stopping when the condition is satified *)
@@ -127,7 +131,7 @@ let rec ext ((k,e,(cs,ds)) : state) :(state option) =                           
   | None             -> None
   | Some (ext_t , c) -> let e' = List.map (fun (t,t') -> (discard_expand_replace t  ext_t (Var c),
                                                           discard_expand_replace t' ext_t (Var c))) e
-                        in Some (c::k , e' , (cs,(ext_t,c)::ds))
+                        in Some (union_append c k , e' , (cs,union_append (ext_t,c) ds))
 
 let rec sim ((k,e,(cs,ds)) : state) :(state option) =                                    (*Simplification Transition*)
   match slide_find ds (fun (t,c) -> fun (t',t'') ->
@@ -148,31 +152,29 @@ let rec ori_1 ((k,e,(cs,ds)) : state) :(state option) =                         
                                 | _    ,Var c' -> c=c'
                                 | _            -> false)) e
   with
-  | None             -> None
-  | Some (c,k',(t,Var c'),e') -> Some (c::k',e',(cs,(t,c')::ds))
-  | Some (_,_,(_,t),_)        -> failwith ("ori1: " ^ (toString t))
+  | None                      -> None
+  | Some (c,k',(t,Var c'),e') -> Some (union_append c k',e',(cs,union_append (t,c') ds))
+  | Some (_,_,(t,t'),_)       -> failwith ("ori1: " ^ (toString t) ^ " = " ^ (toString t'))
 
 let rec ori_2 ((k,e,(cs,ds)) : state) :(state option) =                                    (*Orientation2 Transition*)
-  match slide_find k (fun d -> fun (a,b) ->
-                               (match a,b with
-                                | Var c,Var d' -> d=d' && c < d
-                                | _    ,Var d' -> d=d'
+  match slide_find k (fun d -> fun (t,t') ->
+                               (match t,t' with
+                                | Var c,Var d' -> d=d' && (c < d) && (List.mem c k)
                                 | _            -> false)) e
   with
-  | None             -> None
-  | Some (d,k',(Var c,Var d'),e') -> Some (d::k',e',((c,d')::cs,ds))
-  | Some (_,_,(_,t),_)        -> failwith ("ori2: " ^ (toString t))
+  | None                          -> None
+  | Some (d,k',(Var c,Var d'),e') -> Some (union_append d k',e',(union_append (c,d') cs,ds))
+  | Some (_,_,(t,t'),_)           -> failwith ("ori2: " ^ (toString t) ^ " = " ^ (toString t'))
 
 let rec ori_3 ((k,e,(cs,ds)) : state) :(state option) =                                    (*Orientation3 Transition*)
-  match slide_find k (fun d -> fun (a,b) ->
-                               (match a,b with
-                                | Var c,Var d' -> d=d' && d < c
-                                | _    ,Var d' -> d=d'
+  match slide_find k (fun d -> fun (t,t') ->
+                               (match t,t' with
+                                | Var c,Var d' -> d=d' && (d < c) && (List.mem c k)
                                 | _            -> false)) e
   with
-  | None             -> None
-  | Some (d,k',(Var c,Var d'),e') -> Some (d::k',e',((d',c)::cs,ds))
-  | Some (_,_,(_,t),_)        -> failwith ("ori2: " ^ (toString t))
+  | None                          -> None
+  | Some (d,k',(Var c,Var d'),e') -> Some (union_append d k',e',(union_append (d',c) cs,ds))
+  | Some (_,_,(t,t'),_)           -> failwith ("ori3: " ^ (toString t) ^ " = " ^ (toString t'))
 
 let rec del ((k,e,r) : state) :(state option) =                                          (*Deletion Transition*)
   match find e (fun (t,t') -> t = t') with
@@ -183,7 +185,7 @@ let rec ded ((k,e,(cs,ds)) : state) :(state option) =                           
   match compare_within ds (fun (t,c) -> fun (t',d) -> t=t')
   with
   | None                    -> None
-  | Some ((t',c),(t,d),ds') -> Some (k,(Var c, Var d)::e,(cs,(t,d)::ds'))
+  | Some ((t',c),(t,d),ds') -> Some (k,union_append (Var c, Var d) e,(cs,union_append (t,d) ds'))
 
 let rec col ((k,e,(cs,ds)) : state) :(state option) =                                    (*Collapse Transition*)
   match slide_find cs (fun (c,d) -> fun (s,c') ->
@@ -192,13 +194,13 @@ let rec col ((k,e,(cs,ds)) : state) :(state option) =                           
                                      | _    -> true)) ds
   with
   | None -> None
-  | Some ((c,d),cs',(s,c'),ds') -> Some (k,e,(cs,(discard_expand_replace s (Var c) (Var d), c')::ds'))
+  | Some ((c,d),cs',(s,c'),ds') -> Some (k,e,(cs,union_append (discard_expand_replace s (Var c) (Var d), c') ds'))
 
 let rec com ((k,e,(cs,ds)) : state) :(state option) =                                    (*Composition Transition*)
   match slide_find ds (fun (t,c) -> fun (c',d) -> c=c') cs
   with
   | None                        -> None
-  | Some ((t,c),ds',(c',d),cs') -> Some (k,e,((c',d)::cs',(t, d)::ds'))
+  | Some ((t,c),ds',(c',d),cs') -> Some (k,e,(union_append (c',d) cs',union_append (t, d) ds'))
 
 
 (******** BUILDING THE CLOSURE ********)
