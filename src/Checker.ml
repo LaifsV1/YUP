@@ -130,3 +130,10 @@ let rec check_pf (psi : ctx) (gamma : hyps) (proof : pf) (prop : prop) :(unit op
      and_also (check_pf psi gamma p (subs_prop b (Boolean true) pred))
               (check_pf psi gamma q (subs_prop b (Boolean false) pred))
   | ByIndBool _         , _                         -> None
+  | ByEq [] , _            -> None                                                       (*ByEquality*)
+  | ByEq hs , Eq (t,t',tau) -> let e = List.fold_right (fun a b ->
+                                                        match lookup_hyps gamma a , b with
+                                                        | Some (Eq (x,y,tau')) , Some b -> Some ((x,y)::b)
+                                                        | _                        -> None)
+                               in None (***TODO : 1) build ACC on t=t'; 2) rewrite t=t', 3) compare for equality***)
+  | ByEq hs , _            -> None

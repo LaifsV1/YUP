@@ -49,21 +49,24 @@ type pf = TruthR                                (* Truth-R,  T : A*)
         | ByIndNat  of pf * (var * var * pf)    (*ByInduction:case zero p;case suc(n),H,q*)
         | ByIndList of pf * ((var*var)*var*pf)  (*ByInduction:case nil p;case cons(y,ys),H,q*)
         | ByIndBool of pf * pf                  (*ByInduction:case true p;case false q*)
+        | ByEq of var list                      (*By Equality [H_i]*)
 
-let rec toString (tau : tp) :(string) =
+
+(* TO STRING FUNCTIONS *)
+let rec toString_tp (tau : tp) :(string) =
   match tau with
-  | Bool -> "type_Bool"
-  | Nat  -> "type_Nat"
-  | List  x -> "type_List (" ^ (toString x) ^ ")"
-  | Arrow (a,b)-> "type_Arrow (" ^ (toString a) ^"," ^ (toString b) ^ ")"
+  | Bool -> "bool"
+  | Nat  -> "nat"
+  | List  x -> "[" ^ (toString_tp x) ^ "]"
+  | Arrow (a,b)-> "(" ^ (toString_tp a) ^"->" ^ (toString_tp b) ^ ")"
 
 let rec toString (t : term) :(string) =
   match t with
-  | Var x     -> "term_Var("^x^")"
-  | App (f,x) -> "term_App("^(toString f)^","^(toString x)^")"
-  | Boolean true -> "term_Bool(true)"
-  | Boolean false -> "term_Bool(false)"
-  | Zero          -> "term_Nat(Zero)"
-  | Suc n         -> "term_Nat(Suc("^(toString n)^"))"
-  | Nil           -> "term_List(Nil)"
-  | Cons (x,xs)   -> "term_List("^(toString x)^","^(toString xs)^")"
+  | Var x     -> "Var("^x^")"
+  | App (f,x) -> "App("^(toString f)^","^(toString x)^")"
+  | Boolean true -> "Bool(true)"
+  | Boolean false -> "Bool(false)"
+  | Zero          -> "Nat(Zero)"
+  | Suc n         -> "Nat(Suc("^(toString n)^"))"
+  | Nil           -> "List(Nil)"
+  | Cons (x,xs)   -> "List("^(toString x)^","^(toString xs)^")"

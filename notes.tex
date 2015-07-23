@@ -26,6 +26,7 @@
 \usepackage[T1]{fontenc}
 
 \usepackage{amsthm}
+\usepackage{amssymb}
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}
 
@@ -854,17 +855,18 @@ C &: \{C\text{-}rule\}
 \end{align*}
 \begin{align*}
 E &: \{(t = t) : \tau\}\\
-K &: \{ x | x \notin E\}\\
+K &: \{ x \mid x \notin E\}\\
 R &: D \cup C\\
 \end{align*}
 Closure Construction:
-\begin{align*}
-state &: (K,E,R)\\
-{\tt state\_transition } &: state \rightarrow state {\tt ~option}\\
-{\tt construct\_closure ~ }\sigma &= {\tt construct\_closure (state\_transition ~ }\sigma)\\
-[\![ {\tt construct\_closure }]\!] &: (\emptyset , E , \emptyset) \mapsto (K , \emptyset , R)\\
-&{\text{\it where R is the (abstract) congruence closure for E}}
-\end{align*}
+\[state : (K,E,R)\]
+\[
+\AxiomC{$(\emptyset , E , \emptyset)$}
+\LeftLabel{{\tt build\_acc}: \quad}
+\RightLabel{\quad \it where $R$ is the abstract congruence closure (ACC) of $E$}
+\UnaryInfC{$(K , \emptyset , R)$}
+\DisplayProof
+\]
 
 \subsubsection{Sate transition rules}
 
@@ -941,6 +943,16 @@ state &: (K,E,R)\\
 \LeftLabel{Composition: \quad}
 \RightLabel{\quad (Com)}
 \UnaryInfC{$(K,E,R \cup \{t \rightarrow d : D , c \rightarrow d : C \})$}
+\DisplayProof
+\]
+
+\subsection{Equality through congruence}
+
+\[
+\AxiomC{$\psi~ ;~ \Gamma ~\vdash~$ H$_i$ : $(t_i = t_i ') : \tau_i$}
+\AxiomC{$\forall i \in \{1 ... n\}~ . ~ \overset{\xrightharpoonup{~~~~~~~~}}{t_i = t_i '} ~\vDash~ t = t'$}
+\RightLabel{\quad (eq)}
+\BinaryInfC{$\psi~ ;~ \Gamma ~\vdash~$ By Equality ( H$_0$ , ... , H$_n$ ) : ($t = t' : \tau$)}
 \DisplayProof
 \]
 
