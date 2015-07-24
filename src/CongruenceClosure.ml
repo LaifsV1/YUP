@@ -205,15 +205,7 @@ let rec com ((k,e,(cs,ds)) : state) :(state option) =                           
 
 (******** BUILDING THE CLOSURE ********)
 let rec build_closure' (sigma : state) :(state option) =
-  let step = or_else (ext sigma)
-                     (or_else (sim sigma)
-                              (or_else (ori_1 sigma)
-                                       (or_else (ori_2 sigma)
-                                                (or_else (ori_3 sigma)
-                                                         (or_else (del sigma)
-                                                                  (or_else (ded sigma)
-                                                                           (or_else (col sigma)
-                                                                                    (com sigma))))))))
+  let step = List.fold_right (fun a b -> or_else (a sigma) b) [ext;sim;ori_1;ori_2;ori_3;del;ded;col;com] None
   in (match step with
       | None   -> Some sigma
       | Some s -> build_closure' s)
@@ -222,13 +214,25 @@ let build_closure (e : e_set) :(state option) = build_closure' ([],e,([],[]))
 
 (*for testing*)
 let step_through (sigma : state) :(state option) =
-  let step = or_else (ext sigma)
-                     (or_else (sim sigma)
-                              (or_else (ori_1 sigma)
-                                       (or_else (ori_2 sigma)
-                                                (or_else (ori_3 sigma)
-                                                         (or_else (del sigma)
-                                                                  (or_else (ded sigma)
-                                                                           (or_else (col sigma)
-                                                                                    (com sigma))))))))
+  let step = List.fold_right (fun a b -> or_else (a sigma) b) [ext;sim;ori_1;ori_2;ori_3;del;ded;col;com] None
   in step
+
+(******** CONGRUENCE ENTAILS ********)
+
+(* rs2 are the rules that have been tried already *)
+(* rs1 are the rules I haven't tried yet *)
+let rec rewrite_reduce (rs1 : d_set) (rs2 : d_set) ((e,e') : (term * term)) :(term * term) =
+  match rs1 with
+  | []       -> (e,e')
+  | (t,c) :: rs1' -> (match expand_replace e t (Var c) , expand_replace e' t (Var c) with
+                      | Some a , Some b -> rewrite_reduce (rs1@rs2) [] (a,b)
+                      | Some a , None   -> rewrite_reduce (rs1@rs2) [] (a,e')
+                      | None   , Some b -> rewrite_reduce (rs1@rs2) [] (e,b)
+                      | None   , None   -> rewrite_reduce rs1' ((t,c)::rs2) (e,e'))
+
+(* e : (t_i, t'_i) |= (t = t') *)
+let cong_entails (e : e_set) ((t,t') : (term * term)) :(unit option) =
+  match build_closure e with
+  | Some (_,_,(_,ds)) -> let (new_t, new_t') = rewrite_reduce ds [] (t,t') in
+                         if (new_t = new_t') then Some () else None
+  | None              -> failwith ("cong_entails: build_closure failed.")

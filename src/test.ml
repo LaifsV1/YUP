@@ -5,5 +5,4 @@
 #load "CongruenceClosure.cmo";;
 open AbstractSyntax
 open Checker
-open CongruenceClosure
-       (* K, E, (cs, ds) *)
+open CongruenceClosure (* K, E, (cs, ds) *)

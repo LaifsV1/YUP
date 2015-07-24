@@ -8,7 +8,7 @@ open CongruenceClosure
 
 (******** MODULE-SPECIFIC HELPER FUNCTIONS ********)
 (* entails function for By rule, can become more powerful this way *)
-let entails a b = (a = b) (*TODO*)
+let prop_entails a b = (a = b) (*TODO*)
 
 
 (******************** CHECK AND INFER FUNCTIONS ********************)
@@ -91,7 +91,7 @@ let rec check_pf (psi : ctx) (gamma : hyps) (proof : pf) (prop : prop) :(unit op
                                                                                  (check_pf psi ((h',b)::gamma) q c)
                                               | _                    -> None)
   | By h , b -> (match lookup_hyps gamma h with                                          (*By*)
-                 | Some a -> if entails a b then Some () else None
+                 | Some a -> if prop_entails a b then Some () else None
                  | None   -> None)
   | Therefore (p,a) , b -> (match alpha_equiv_prop a b with                              (*Therefore*)
                             | Some () -> check_pf psi gamma p b
@@ -131,9 +131,12 @@ let rec check_pf (psi : ctx) (gamma : hyps) (proof : pf) (prop : prop) :(unit op
               (check_pf psi gamma q (subs_prop b (Boolean false) pred))
   | ByIndBool _         , _                         -> None
   | ByEq [] , _            -> None                                                       (*ByEquality*)
-  | ByEq hs , Eq (t,t',tau) -> let e = List.fold_right (fun a b ->
-                                                        match lookup_hyps gamma a , b with
-                                                        | Some (Eq (x,y,tau')) , Some b -> Some ((x,y)::b)
-                                                        | _                        -> None)
-                               in None (***TODO : 1) build ACC on t=t'; 2) rewrite t=t', 3) compare for equality***)
+  | ByEq hs , Eq (t,t',tau) -> (match List.fold_right (fun a b ->
+                                                        (match lookup_hyps gamma a , b with
+                                                         | Some (Eq (x,y,tau')) , Some b -> Some ((x,y)::b)
+                                                         | Some (Eq (x,y,tau')) , None   -> Some [(x,y)]
+                                                         | _                             -> None)) hs None
+                                with
+                                | Some e -> cong_entails e (t,t')
+                                | None   -> None)
   | ByEq hs , _            -> None
