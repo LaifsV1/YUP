@@ -204,6 +204,11 @@ let rec com ((k,e,(cs,ds)) : state) :(state option) =                           
 
 
 (******** BUILDING THE CLOSURE ********)
+let rec cset_to_dset (cs : c_set) :(d_set) =
+  match cs with
+  | []    -> []
+  | (c,d)::cs' -> (Var c, d)::(cset_to_dset cs')
+
 let rec build_closure' (sigma : state) :(state option) =
   let step = List.fold_right (fun a b -> or_else (a sigma) b) [ext;sim;ori_1;ori_2;ori_3;del;ded;col;com] None
   in (match step with
@@ -212,13 +217,12 @@ let rec build_closure' (sigma : state) :(state option) =
 
 let build_closure (e : e_set) :(state option) = build_closure' ([],e,([],[]))
 
-(*for testing*)
-let step_through (sigma : state) :(state option) =
-  let step = List.fold_right (fun a b -> or_else (a sigma) b) [ext;sim;ori_1;ori_2;ori_3;del;ded;col;com] None
-  in step
+let get_cong_rules (sigma : state option) :(d_set option) =
+  match sigma with
+  | None                -> None
+  | Some (k,e',(cs,ds)) -> Some ((cset_to_dset cs)@ds)
 
 (******** CONGRUENCE ENTAILS ********)
-
 (* rs2 are the rules that have been tried already *)
 (* rs1 are the rules I haven't tried yet *)
 let rec rewrite_reduce (rs1 : d_set) (rs2 : d_set) ((e,e') : (term * term)) :(term * term) =
@@ -232,7 +236,7 @@ let rec rewrite_reduce (rs1 : d_set) (rs2 : d_set) ((e,e') : (term * term)) :(te
 
 (* e : (t_i, t'_i) |= (t = t') *)
 let cong_entails (e : e_set) ((t,t') : (term * term)) :(unit option) =
-  match build_closure e with
-  | Some (_,_,(_,ds)) -> let (new_t, new_t') = rewrite_reduce ds [] (t,t') in
+  match get_cong_rules (build_closure e) with
+  | Some rs -> let (new_t, new_t') = rewrite_reduce rs [] (t,t') in
                          if (new_t = new_t') then Some () else None
   | None              -> failwith ("cong_entails: build_closure failed.")
