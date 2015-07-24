@@ -9,6 +9,13 @@
 #use "CongruenceClosure.ml";; (* K, E, (cs, ds) *)
 
 (*** GLOBAL HELPER FUNCTIONS ***)
+let time f x =
+  let t = Sys.time() in
+  let fx = f x in
+  fx;
+  Printf.printf "Execution time: %fs\n" (Sys.time() -. t)
+
+
 let arr_random arr =
   let n = Random.int (Array.length arr) in
   Array.get arr n;;
