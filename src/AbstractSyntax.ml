@@ -62,7 +62,7 @@ let rec toString_tp (tau : tp) :(string) =
 
 let rec toString (t : term) :(string) =
   match t with
-  | Var x     -> "Var("^x^")"
+  | Var x     -> "Var(\""^x^"\")"
   | App (f,x) -> "App("^(toString f)^","^(toString x)^")"
   | Boolean true -> "Boolean(true)"
   | Boolean false -> "Boolean(false)"
