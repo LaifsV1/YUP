@@ -924,9 +924,17 @@ Closure Construction:
 
 \[
 \AxiomC{$(K,E,R \cup \{t \rightarrow c : D , t \rightarrow d : D \})$}
-\LeftLabel{Deduction: \quad}
-\RightLabel{\quad (Ded)}
+\LeftLabel{Deduction1: \quad}
+\RightLabel{\quad (Ded1)}
 \UnaryInfC{$(K,E \cup \{c = d \},R \cup \{t \rightarrow d : D\})$}
+\DisplayProof
+\]
+
+\[
+\AxiomC{$(K,E,R \cup \{c \rightarrow c' : C , c \rightarrow d : C \})$}
+\LeftLabel{Deduction2: \quad}
+\RightLabel{\quad (Ded2)}
+\UnaryInfC{$(K,E \cup \{c' = d \},R \cup \{c \rightarrow d : C\})$}
 \DisplayProof
 \]
 

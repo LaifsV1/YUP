@@ -15,6 +15,11 @@ let time f x =
   fx;
   Printf.printf "Execution time: %fs\n" (Sys.time() -. t)
 
+let rec print_e_set (e : e_set) :(unit) =
+  match e with
+  | []      -> print_endline "[]"
+  | ((t,t')::e') -> print_endline ("("^(toString t) ^" , "^ (toString t') ^") :: ") ; print_e_set e'
+
 let arr_random arr =
   let n = Random.int (Array.length arr) in
   Array.get arr n;;
@@ -32,24 +37,16 @@ let random_term () :(term) =
                Cons (random_base_term (),random_base_term ())|]
   in arr_random arr
 
+
+(*******************************************)
+(*** ABSTRACT CONGRUENCE CLOSURE TESTING ***)
+(*******************************************)
+
+(*** ARBITRARY E GENERATOR ***)
 let rec random_e_set (length : int) :(e_set) =
   match length > 0 with
   | true  -> (random_term () , random_term ()) :: (random_e_set (length - 1))
   | false -> []
-
-let rec print_e_set (e : e_set) :(unit) =
-  match e with
-  | []      -> print_endline "[]"
-  | ((t,t')::e') -> print_endline ("("^(toString t) ^" , "^ (toString t') ^") :: ") ; print_e_set e'
-
-(*** ABSTRACT CONGRUENCE CLOSURE TESTING ***)
-let test_closure_step (sigma : state) :(state option) =
-  let step = List.fold_right (fun a b -> or_else (a sigma) b) [ext;sim;ori_1;ori_2;ori_3;del;ded;col;com] None
-  in step
-
-let test_random_closure_rules (length : int) :(d_set option) =
-  let e = random_e_set length in
-  print_e_set e; get_cong_rules (build_closure e)
 
 (*** PROPOSITIONS ***)
 let prop_build_closure e =
@@ -59,20 +56,28 @@ let prop_build_closure e =
                            && (List.fold_right (fun (c,d) a -> c<d && a) cs true)
                            && if e=[] then true else
                                 let (t,t') = (List.nth e (Random.int (List.length e))) in
-                                (if (cong_entails e (t,t')  = Some ()) then true
-                                 else (print_endline ("Element: "^(toString t) ^","^(toString t')^" of ");
-                                       print_string "(";
-                                       print_e_set e;
-                                       print_endline ")";
-                                       false))
-
+                                (match cong_entails e (t,t') with
+                                 | Some () -> true
+                                 | None -> print_endline ("Element: "^(toString t) ^","^(toString t')^" of ");
+                                           print_string "(";
+                                           print_e_set e;
+                                           print_endline ")";
+                                           false)
 
 (*** TESTER ***)
-let rec test_prop_e' f i total =
+let rec test_prop_complex_e' f i total =
   match i with
   | 0 -> print_endline ("test passed: "^(string_of_int (total-i))^" of "^(string_of_int (total)))
   | n -> (match f (random_e_set (total-i)) with
           | false -> print_endline ("failed: "^(string_of_int (total-(i-1)))^" of "^(string_of_int (total)))
-          | true -> print_endline ("passed: "^(string_of_int (total-(i-1)))^" of "^(string_of_int (total))); test_prop_e' f (i-1) total)
+          | true  -> print_endline ("passed: "^(string_of_int (total-(i-1)))^" of "^(string_of_int (total))); test_prop_complex_e' f (i-1) total)
 
-let test_prop_e f = test_prop_e' f 100 100
+let rec test_prop_simple_e' f i total =
+  match i with
+  | 0 -> print_endline ("test passed: "^(string_of_int (total-i))^" of "^(string_of_int (total)))
+  | n -> (match f (random_e_set 10) with
+          | false -> print_endline ("failed: "^(string_of_int (total-(i-1)))^" of "^(string_of_int (total)))
+          | true  -> print_endline ("passed: "^(string_of_int (total-(i-1)))^" of "^(string_of_int (total))); test_prop_simple_e' f (i-1) total)
+
+let test_prop_complex_e f = test_prop_complex_e' f 100 100
+let test_prop_simple_e f = test_prop_simple_e' f 100 100

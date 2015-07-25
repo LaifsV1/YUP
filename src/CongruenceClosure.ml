@@ -1,9 +1,35 @@
 (* Abstract Congruence Closure *)
 (* author: Yu-Yang Lin *)
 (* algorithm from "Abstract Congruence Closure" by Leo Bachmair, Ashish Tiwari, Laurent Vigneron *)
-(* Details in section 8.1 of notes *)
+
+(* Result of "get_cong_rules (build_congruence e)" is the abstract congruence closure rewrite rule for e.
+   These rules will be in simplest form, and be deterministic. Additionally, the rules are confluent.
+   Order of rule reduction does not matter, but in this implementation, order is fixed.
+   i.e. [ext; sim; ori_1; ori_2; ori_3; del; ded1; ded2; col; com] from left to right. *)
+
+(* More details in section 8.1 of notes *)
 open AbstractSyntax
 open Helper
+
+  (*NOTE: when debugging, function calls will be listed in the following way:
+    ***[STEP: n]***
+    ext a,b
+    ***[STEP: n+1]***
+    sim c,d
+    ext c,e
+    (...)
+
+    This means that:
+    1) ext a,b succeeded
+    2) sim c,d and ext c,e suceeded but ext c,e was chosen.
+
+    This is because all rules are chained using or_else.i.e. or_else rule1 rule2.
+    Which in turn means rule2 and rule1 are evaluated in that order.*)
+
+let debug = false
+let debug_step = ref 0
+let get_step () = debug_step := !debug_step + 1; "***[STEP: " ^ string_of_int (!debug_step) ^ "]***"
+
 
 (******** TYPE DEFINITIONS ********)
 (*notes: [section 8.1.1]*)
@@ -131,7 +157,9 @@ let rec ext ((k,e,(cs,ds)) : state) :(state option) =                           
   | None             -> None
   | Some (ext_t , c) -> let e' = List.map (fun (t,t') -> (discard_expand_replace t  ext_t (Var c),
                                                           discard_expand_replace t' ext_t (Var c))) e
-                        in Some (union_append c k , e' , (cs,union_append (ext_t,c) ds))
+                        in
+                        if not debug then () else print_endline ("ext "^(toString ext_t)^","^c);
+                        Some (union_append c k , e' , (cs,union_append (ext_t,c) ds))
 
 let rec sim ((k,e,(cs,ds)) : state) :(state option) =                                    (*Simplification Transition*)
   match slide_find ds (fun (t,c) -> fun (t',t'') ->
@@ -143,7 +171,9 @@ let rec sim ((k,e,(cs,ds)) : state) :(state option) =                           
   | Some ((t,c) , ds' , (t',t'') , _) -> let e' = List.map (fun (a,b) ->
                                                             (discard_expand_replace a t (Var c),
                                                              discard_expand_replace b t (Var c))) e
-                                         in Some (k, e' , (cs,ds))
+                                         in
+                                         if not debug then () else print_endline "sim";
+                                         Some (k, e' , (cs,ds))
 
 let rec ori_1 ((k,e,(cs,ds)) : state) :(state option) =                                    (*Orientation1 Transition*)
   match slide_find k (fun c -> fun (a,b) ->
@@ -153,7 +183,9 @@ let rec ori_1 ((k,e,(cs,ds)) : state) :(state option) =                         
                                 | _            -> false)) e
   with
   | None                      -> None
-  | Some (c,k',(t,Var c'),e') -> Some (union_append c k',e',(cs,union_append (t,c') ds))
+  | Some (c,k',(t,Var c'),e') ->
+     if not debug then () else print_endline ("ori_1 "^(toString t)^","^c);
+     Some (union_append c k',e',(cs,union_append (t,c') ds))
   | Some (_,_,(t,t'),_)       -> failwith ("ori1: " ^ (toString t) ^ " = " ^ (toString t'))
 
 let rec ori_2 ((k,e,(cs,ds)) : state) :(state option) =                                    (*Orientation2 Transition*)
@@ -163,7 +195,9 @@ let rec ori_2 ((k,e,(cs,ds)) : state) :(state option) =                         
                                 | _            -> false)) e
   with
   | None                          -> None
-  | Some (d,k',(Var c,Var d'),e') -> Some (union_append d k',e',(union_append (c,d') cs,ds))
+  | Some (d,k',(Var c,Var d'),e') ->
+     if not debug then () else print_endline ("ori_2 "^c^","^d');
+     Some (union_append d k',e',(union_append (c,d') cs,ds))
   | Some (_,_,(t,t'),_)           -> failwith ("ori2: " ^ (toString t) ^ " = " ^ (toString t'))
 
 let rec ori_3 ((k,e,(cs,ds)) : state) :(state option) =                                    (*Orientation3 Transition*)
@@ -173,19 +207,33 @@ let rec ori_3 ((k,e,(cs,ds)) : state) :(state option) =                         
                                 | _            -> false)) e
   with
   | None                          -> None
-  | Some (d,k',(Var c,Var d'),e') -> Some (union_append d k',e',(union_append (d',c) cs,ds))
+  | Some (d,k',(Var c,Var d'),e') ->
+     if not debug then () else print_endline ("ori_3 "^d'^","^c);
+     Some (union_append d k',e',(union_append (d',c) cs,ds))
   | Some (_,_,(t,t'),_)           -> failwith ("ori3: " ^ (toString t) ^ " = " ^ (toString t'))
 
 let rec del ((k,e,r) : state) :(state option) =                                          (*Deletion Transition*)
   match find e (fun (t,t') -> t = t') with
   | None             -> None
-  | Some ((t,t'),e') -> Some (k,e',r)
+  | Some ((t,t'),e') ->
+     if not debug then () else print_endline "del";
+     Some (k,e',r)
 
-let rec ded ((k,e,(cs,ds)) : state) :(state option) =                                    (*Deduction Transition*)
+let rec ded1 ((k,e,(cs,ds)) : state) :(state option) =                                   (*Deduction1 Transition*)
   match compare_within ds (fun (t,c) -> fun (t',d) -> t=t')
   with
   | None                    -> None
-  | Some ((t',c),(t,d),ds') -> Some (k,union_append (Var c, Var d) e,(cs,union_append (t,d) ds'))
+  | Some ((t',c),(t,d),ds') ->
+     if not debug then () else print_endline ("ded1 ("^c^","^d^") and ("^(toString t)^","^d^")");
+     Some (k,union_append (Var c, Var d) e,(cs,union_append (t,d) ds'))
+
+let rec ded2 ((k,e,(cs,ds)) : state) :(state option) =                                   (*Deduction2 Transition*)
+  match compare_within cs (fun (c,d) -> fun (c',d') -> c=c')
+  with
+  | None                    -> None
+  | Some ((c,d),(c',d'),cs') ->
+     if not debug then () else print_endline ("ded2 ("^c^","^d^") and ("^c'^","^d'^")");
+     Some (k,union_append (Var d, Var d') e,(union_append (c',d') cs',ds))
 
 let rec col ((k,e,(cs,ds)) : state) :(state option) =                                    (*Collapse Transition*)
   match slide_find cs (fun (c,d) -> fun (s,c') ->
@@ -194,13 +242,17 @@ let rec col ((k,e,(cs,ds)) : state) :(state option) =                           
                                      | _    -> true)) ds
   with
   | None -> None
-  | Some ((c,d),cs',(s,c'),ds') -> Some (k,e,(cs,union_append (discard_expand_replace s (Var c) (Var d), c') ds'))
+  | Some ((c,d),cs',(s,c'),ds') ->
+     if not debug then () else print_endline "col";
+     Some (k,e,(cs,union_append (discard_expand_replace s (Var c) (Var d), c') ds'))
 
 let rec com ((k,e,(cs,ds)) : state) :(state option) =                                    (*Composition Transition*)
   match slide_find ds (fun (t,c) -> fun (c',d) -> c=c') cs
   with
   | None                        -> None
-  | Some ((t,c),ds',(c',d),cs') -> Some (k,e,(union_append (c',d) cs',union_append (t, d) ds'))
+  | Some ((t,c),ds',(c',d),cs') ->
+     if not debug then () else print_endline "com";
+     Some (k,e,(union_append (c',d) cs',union_append (t, d) ds'))
 
 
 (******** BUILDING THE CLOSURE ********)
@@ -210,7 +262,8 @@ let rec cset_to_dset (cs : c_set) :(d_set) =
   | (c,d)::cs' -> (Var c, d)::(cset_to_dset cs')
 
 let rec build_closure' (sigma : state) :(state option) =
-  let step = List.fold_right (fun a b -> or_else (a sigma) b) [ext;sim;ori_1;ori_2;ori_3;del;ded;col;com] None
+  if not debug then () else (print_endline (get_step ()));
+  let step = List.fold_right (fun a b -> or_else (a sigma) b) [ext;sim;ori_1;ori_2;ori_3;del;ded1;ded2;col;com] None
   in (match step with
       | None   -> Some sigma
       | Some s -> build_closure' s)
