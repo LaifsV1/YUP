@@ -375,11 +375,11 @@ check_prop &: $\psi$ $\rightarrow$ A $\rightarrow$ unit option
 \begin{tabular}{rrrl}
 (proofs)& p , q &::=& by H
 \\ &&|& (p , q)
-\\ &&|& {\tt let} (H',H'') {\tt =} H {\tt in} p
-\\ &&|& (p , q ) {\tt either}
-\\ &&|& {\tt match [}H{\tt  ] : (}A $\vee$ B{\tt ) with (}
-\\ &&&\qquad \qquad | A {\tt [}H'{\tt ]:} p {\tt ->} C
-\\ &&&\qquad \qquad | B {\tt [}H''{\tt ]:} q {\tt ->} C {\tt)}
+\\ &&|& let (H',H'') = H in p
+\\ &&|& (p , q ) either
+\\ &&|& match [H] : (A $\vee$ B) with (
+\\ &&&\qquad \qquad | A [H']: p -> C
+\\ &&&\qquad \qquad | B [H'']: q -> C )
 \\
 (hypotheses context)& $\Gamma$ &::=& \quad $\cdot$ \quad
 \\ &&| & $\Gamma$ , H : A
@@ -417,7 +417,7 @@ Conjunction:
 $\vdash$ p : C}
 \RightLabel{\quad ($\wedge$L)}
 \UnaryInfC{$\psi ; \Gamma ,$ H : A $\wedge$ B $\vdash$
-{\tt let (}H'{\tt,}H''{\tt) = }H {\tt  in }p : C}
+let (H',H'') = H in p : C}
 \DisplayProof
 \]
 
@@ -436,9 +436,9 @@ Disjunction:
 \RightLabel{\quad ($\vee$L)}
 \BinaryInfC{$\psi ; \Gamma ,$  H : A
 $ \vee$ B $\vdash $
- {\tt  match [}H{\tt] with(}
- A {\tt [}H'{\tt ]:} p
- | B {\tt [}H''{\tt ]:} q {\tt)} : C
+ match [H] with(
+ A [H']: p
+ | B [H'']: q ) : C
 }
 \DisplayProof
 \]
@@ -446,14 +446,14 @@ $ \vee$ B $\vdash $
 \[
 \AxiomC{$\psi ; \Gamma \vdash$ p : A}
 \RightLabel{\quad ($\vee R_1$)}
-\UnaryInfC{$\psi ; \Gamma \vdash$ {\tt Left} p : A $\vee$ B}
+\UnaryInfC{$\psi ; \Gamma \vdash$ Left p : A $\vee$ B}
 \DisplayProof
 \]
 
 \[
 \AxiomC{$\psi ; \Gamma \vdash$ q : B}
 \RightLabel{\quad ($\vee R_2$)}
-\UnaryInfC{$\psi ; \Gamma \vdash$ {\tt Right} q :  A $\vee$ B}
+\UnaryInfC{$\psi ; \Gamma \vdash$ Right q :  A $\vee$ B}
 \DisplayProof
 \]
 
@@ -516,7 +516,7 @@ Existentials:
 \AxiomC{$\psi, y:\tau ; \Gamma, $ H $:\exists x : \tau . A, $ H': $[x \mapsto y] A \vdash$ p : C}
 \RightLabel{\quad ($\exists$ L)}
 \UnaryInfC{$\psi ; \Gamma , $ H $:\exists x:\tau. $ A $ \vdash$
-{\tt let} ($y$,H') = H {\tt in} p : C}
+let ($y$,H') = H in p : C}
 \DisplayProof
 \]
 
@@ -535,7 +535,7 @@ H : $\forall x : \tau $ . A ,
 H' : [x $\mapsto$ t] A  $\vdash$ p : C}
 \RightLabel{\quad ($\forall$ L)}
 \BinaryInfC{$\psi ; \Gamma , $ H $:\forall x:\tau. $ A $ \vdash$
-{\tt let} H' = H with t {\tt in} p : C}
+let H' = H with t in p : C}
 \DisplayProof
 \]
 
@@ -786,10 +786,10 @@ $\psi ; \Gamma \vdash$
 Natural Numbers:
 \[
 \AxiomC{
-$\psi ; \Gamma \vdash$ p : [m $\mapsto$ zero] C
+$\psi ; \Gamma \vdash$ p : [$m$ $\mapsto$ zero] C
 }
 \AxiomC{
-$\psi$ , $n$ : nat ; $\Gamma$ , H : [m $\mapsto$ zero] C $\vdash$ q : [m $\mapsto$ suc($n$)] C
+$\psi$ , $n$ : nat ; $\Gamma$ , H : [$m$ $\mapsto$ zero] C $\vdash$ q : [m $\mapsto$ suc($n$)] C
 }
 \RightLabel{\quad (induction-nat)}
 \BinaryInfC{

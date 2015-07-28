@@ -17,6 +17,7 @@ open Helper
     ***[STEP: n+1]***
     sim c,d
     ext c,e
+    ***[STEP: n+2]***
     (...)
 
     This means that:

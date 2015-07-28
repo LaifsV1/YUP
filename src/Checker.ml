@@ -62,7 +62,7 @@ let rec check_prop (psi : ctx) (prop : prop) :(unit option) =
   | Forall (x,tau,a) -> check_prop ((x,tau)::psi) a                                      (*forall-prop*)
   | Exists (x,tau,a) -> check_prop ((x,tau)::psi) a                                      (*exists-prop*)
 
-(* proof type checking [notes: section 4] *)
+(* proof type checking [notes: section 4, 5.1, 7, 8] *)
 let rec check_pf (psi : ctx) (gamma : hyps) (proof : pf) (prop : prop) :(unit option) =
   match proof , prop with
   | TruthR , Truth -> Some ()                                                            (*TruthR*)

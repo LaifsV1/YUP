@@ -24,6 +24,10 @@ type prop = Truth | Falsity            (*top and bot*)
           | Forall of var * tp * prop  (*forall*)
           | Exists of var * tp * prop  (*exists*)
 
+(* Spines *)
+type spine_arg = SpineTerm of term | SpineHyp of var
+type spine = spine_arg list
+
 (* Term Context *)
 type ctx = ( var * tp ) list
 
