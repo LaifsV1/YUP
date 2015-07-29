@@ -964,6 +964,78 @@ Closure Construction:
 \DisplayProof
 \]
 
+\section{Spines, hypotheses labelling and universal-quantifier elimination}
+
+\subsection{Rules for proofs}
+
+\begin{center}
+\begin{tabular}{rrl}
+
+(simple-proofs) & \quad spf ::=& [H] with s $\mid$ [H] $\mid$ Left spf $\mid$  Right spf $\mid$ (spf , spf)
+\\
+(proofs) & \quad p ::=& ... $\mid$ [H] with s $\mid$ We know [H] : A because spf , p
+\\
+(spines) & \quad s ::=& . $\mid$ [H] , s $\mid$ t , s
+
+\end{tabular}
+\end{center}
+
+\[
+\AxiomC{$\psi ; \Gamma $ $\vdash$ spf : A}
+\AxiomC{$\psi ; \Gamma ,$ [H] : A $\vdash$ p : C}
+\LeftLabel{Labelling: \quad}
+\RightLabel{\quad (hyp-label)}
+\BinaryInfC{$\psi ; \Gamma $ $\vdash$ We know [H] : A because spf , p : C}
+\DisplayProof
+\]
+
+\[
+\AxiomC{$\overset{-}\psi ; \overset{-}\Gamma ,$ [H] : A $\vdash$ $\overset{-}{\text s}$ : $\overset{-}{\text A}$ $\gg$ $\overset{+}{\text B}$}
+\AxiomC{B $\overset{\alpha}=$ C}
+\LeftLabel{Spine application ($\forall$ elim): \quad}
+\RightLabel{\quad ($\forall$L2)}
+\BinaryInfC{$\psi ; \Gamma $ $\vdash$ [H] with s : C}
+\DisplayProof
+\]
+
+\subsection{Rules for spline application}
+
+Rules:
+\[
+\AxiomC{}
+\AxiomC{}
+\RightLabel{\quad (id-spine-app)}
+\BinaryInfC{$\psi ; \Gamma $ $\vdash$ . : A $\gg$ A}
+\DisplayProof
+\]
+
+\[
+\AxiomC{$\psi ; \Gamma ,$ [H] : A $\vdash$ s : B $\gg$ C}
+\RightLabel{\quad ($\supset$-spine-app)}
+\UnaryInfC{$\psi ; \Gamma $ $\vdash$ [H] , s : A $\supset$ B $\gg$ C}
+\DisplayProof
+\]
+
+\[
+\AxiomC{$\psi \vdash$ $t : \tau$}
+\AxiomC{$\psi ; \Gamma $ $\vdash$ s : [t $\mapsto$ x] A $\gg$ C}
+\RightLabel{\quad ($\forall$-spine-app)}
+\BinaryInfC{$\psi ; \Gamma $ $\vdash$ t , s : $\forall x :\tau$ . A $\gg$ C}
+\DisplayProof
+\]
+
+Function signatures:
+
+\begin{center}
+\begin{tabular}{rll}
+
+{\tt apply_spine} &::& $\psi$ $\rightarrow$ A $\rightarrow$ A {\tt option}
+\\
+{\tt apply_spine} &::& {\tt ctx} $\rightarrow$ {\tt spine} $\rightarrow$ {\tt prop} $\rightarrow$ {\tt prop option}
+
+\end{tabular}
+\end{center}
+
 \bibliography{notes}
 \bibliographystyle{plain}
 

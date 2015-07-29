@@ -1,4 +1,4 @@
-(* Abstract Syntax Trees - Syntax Grammar*)
+(* Abstract Syntax Trees - Syntax Grammar *)
 (* author: Yu-Yang Lin *)
 
 (* Variables *)
@@ -25,7 +25,7 @@ type prop = Truth | Falsity            (*top and bot*)
           | Exists of var * tp * prop  (*exists*)
 
 (* Spines *)
-type spine_arg = SpineTerm of term | SpineHyp of var
+type spine_arg = SpineT of term | SpineH of var
 type spine = spine_arg list
 
 (* Term Context *)
@@ -34,14 +34,20 @@ type ctx = ( var * tp ) list
 (* Propositions Context *)
 type hyps = ( var * prop ) list
 
+(* Simple-Proofs *)
+type spf = With of var * spf                    (*[H] with sp*)
+         | OrLeft of spf                        (*Left sp*)
+         | OrRight of spf                       (*Right sp*)
+         | AndPair of spf * spf                 (*(sp,sp)*)
+
 (* Proofs *)
-type pf = TruthR                                (* Truth-R,  T : A*)
-        | FalsityL of var                       (* Falsity-L, Absurd : A *)
+type pf = TruthR                                (*Truth-R,  T : A*)
+        | FalsityL of var                       (*Falsity-L, Absurd : A*)
         | AndL of (var * var) * var * pf        (*let (H',H'') = H in p*)
         | AndR of pf * pf                       (*p,q*)
         | OrL of var * (var * pf) * (var * pf)  (*match [H] with [H']:p | [H'']:q*)
-        | OrR1 of pf                            (*A v B*)
-        | OrR2 of pf                            (*A v B*)
+        | OrR1 of pf                            (*Left  A : A v B*)
+        | OrR2 of pf                            (*Right B : A v B*)
         | ImpliesL of pf * (var * var) * pf     (*p, B [H'] via (A implies B) [H], q*)
         | ImpliesR of var * pf                  (*Assume [H], p*)
         | By of var                             (*by H*)
@@ -54,6 +60,8 @@ type pf = TruthR                                (* Truth-R,  T : A*)
         | ByIndList of pf * ((var*var)*var*pf)  (*ByInduction:case nil p;case cons(y,ys),H,q*)
         | ByIndBool of pf * pf                  (*ByInduction:case true p;case false q*)
         | ByEq of var list                      (*By Equality [H_i]*)
+        | With of var * spf                     (*[H] with sp*)
+        | WeKnow of var * prop * spf * pf       (*We know [H] : A because sp , p*)
 
 
 (* TO STRING FUNCTIONS *)
