@@ -1,3 +1,3 @@
 .DEFAULT_GOAL := Build
 Build:
-	ocamlc AbstractSyntax.ml Helper.ml AlphaEquivalence.ml CongruenceClosure.ml SpineApplication.ml Checker.ml
+	ocamlc AbstractSyntax.ml Helper.ml AlphaEquivalence.ml CongruenceClosure.ml Checker.ml

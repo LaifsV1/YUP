@@ -964,7 +964,7 @@ Closure Construction:
 \DisplayProof
 \]
 
-\section{Spines, hypotheses labelling and universal-quantifier elimination}
+\section{Spine application and hypotheses labelling}
 
 \subsection{Rules for proofs}
 
@@ -980,9 +980,17 @@ Closure Construction:
 \end{tabular}
 \end{center}
 
+\begin{center}
+\begin{tabular}{rll}
+
+{\tt check_simple_pf} &::& {\tt spf} $\rightarrow$ {\tt unit option}
+
+\end{tabular}
+\end{center}
+
 \[
 \AxiomC{$\psi ; \Gamma $ $\vdash$ spf : A}
-\AxiomC{$\psi ; \Gamma ,$ [H] : A $\vdash$ p : C}
+\AxiomC{$\psi ; \Gamma ,$ H : A $\vdash$ p : C}
 \LeftLabel{Labelling: \quad}
 \RightLabel{\quad (hyp-label)}
 \BinaryInfC{$\psi ; \Gamma $ $\vdash$ We know [H] : A because spf , p : C}
@@ -990,11 +998,11 @@ Closure Construction:
 \]
 
 \[
-\AxiomC{$\overset{-}\psi ; \overset{-}\Gamma ,$ [H] : A $\vdash$ $\overset{-}{\text s}$ : $\overset{-}{\text A}$ $\gg$ $\overset{+}{\text B}$}
+\AxiomC{$\overset{-}\psi ; \overset{-}\Gamma ,$ H : A $\vdash$ $\overset{-}{\text s}$ : $\overset{-}{\text A}$ $\gg$ $\overset{+}{\text B}$}
 \AxiomC{B $\overset{\alpha}=$ C}
-\LeftLabel{Spine application ($\forall$ elim): \quad}
-\RightLabel{\quad ($\forall$L2)}
-\BinaryInfC{$\psi ; \Gamma $ $\vdash$ [H] with s : C}
+\LeftLabel{Spine application: \quad}
+\RightLabel{\quad (spine-app)}
+\BinaryInfC{$\psi ; \Gamma $, H : A $\vdash$ [H] with s : C}
 \DisplayProof
 \]
 
@@ -1017,7 +1025,7 @@ Rules:
 \]
 
 \[
-\AxiomC{$\psi \vdash$ $t : \tau$}
+\AxiomC{$\psi \vdash$ t : $\tau$}
 \AxiomC{$\psi ; \Gamma $ $\vdash$ s : [t $\mapsto$ x] A $\gg$ C}
 \RightLabel{\quad ($\forall$-spine-app)}
 \BinaryInfC{$\psi ; \Gamma $ $\vdash$ t , s : $\forall x :\tau$ . A $\gg$ C}
@@ -1029,9 +1037,9 @@ Function signatures:
 \begin{center}
 \begin{tabular}{rll}
 
-{\tt apply_spine} &::& $\psi$ $\rightarrow$ A $\rightarrow$ A {\tt option}
+{\tt apply_spine} &::& $\psi$ $\rightarrow$ $\Gamma$ $\rightarrow$ s $\rightarrow$ A $\rightarrow$ B {\tt option}
 \\
-{\tt apply_spine} &::& {\tt ctx} $\rightarrow$ {\tt spine} $\rightarrow$ {\tt prop} $\rightarrow$ {\tt prop option}
+{\tt apply_spine} &::& {\tt ctx} $\rightarrow$ {\tt hyps} $\rightarrow$ {\tt spine} $\rightarrow$ {\tt prop} $\rightarrow$ {\tt prop option}
 
 \end{tabular}
 \end{center}

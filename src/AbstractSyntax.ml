@@ -35,7 +35,7 @@ type ctx = ( var * tp ) list
 type hyps = ( var * prop ) list
 
 (* Simple-Proofs *)
-type spf = With of var * spf                    (*[H] with sp*)
+type spf = HypLabel of var * spf                (*[H] with sp*)
          | OrLeft of spf                        (*Left sp*)
          | OrRight of spf                       (*Right sp*)
          | AndPair of spf * spf                 (*(sp,sp)*)
@@ -60,8 +60,8 @@ type pf = TruthR                                (*Truth-R,  T : A*)
         | ByIndList of pf * ((var*var)*var*pf)  (*ByInduction:case nil p;case cons(y,ys),H,q*)
         | ByIndBool of pf * pf                  (*ByInduction:case true p;case false q*)
         | ByEq of var list                      (*By Equality [H_i]*)
-        | With of var * spf                     (*[H] with sp*)
-        | WeKnow of var * prop * spf * pf       (*We know [H] : A because sp , p*)
+        | HypLabel of var * prop * spf * pf     (*We know [H] : A because sp , p*)
+        | SpineApp of var * spine               (*[H] with s*)
 
 
 (* TO STRING FUNCTIONS *)

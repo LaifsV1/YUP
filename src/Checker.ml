@@ -11,7 +11,7 @@ open CongruenceClosure
 let prop_entails a b = (a = b) (*TODO*)
 
 
-(******************** CHECK AND INFER FUNCTIONS ********************)
+(******************** CHECK AND INFER TERM FUNCTIONS ********************)
 (* term type inference [notes: section 2 and 3], (psi |- t => tau) *)
 let rec infer_term (psi : ctx) (t : term) :(tp option) =
   match t with
@@ -62,7 +62,26 @@ let rec check_prop (psi : ctx) (prop : prop) :(unit option) =
   | Forall (x,tau,a) -> check_prop ((x,tau)::psi) a                                      (*forall-prop*)
   | Exists (x,tau,a) -> check_prop ((x,tau)::psi) a                                      (*exists-prop*)
 
-(* proof type checking [notes: section 4, 5.1, 7, 8] *)
+
+(******************** APPLY SPINE FUNCTION ********************)
+(* [notes: section 9.2] *)
+let rec apply_spine (psi : ctx) (gamma : hyps) (s : spine) (a : prop) :(prop option) =
+  match s , a with
+  | []             , a                -> Some a                                          (*id-spine-app*)
+  | SpineH h :: s' , Implies (a,b)    -> apply_spine psi ((h,a)::gamma) s' b             (*implies-spine-app*)
+  | SpineT t :: s' , Forall (x,tau,a')-> (match check_term psi t tau with                (*forall-spine-app*)
+                                          | None    -> None
+                                          | Some () -> apply_spine psi gamma s' (subs_prop x t a'))
+  | _              , _                -> None
+
+
+(******************** CHECK SIMPLE-PROOFS FUNCTION ********************)
+(* [notes: section 9.1] *)
+let rec check_spf (p : spf) :(unit option) = None (*** TODO, might need psi, gamma, or call check_pf. ***)
+                                                  (*** NEED TO KNOW WHAT'S THE BASE CASE!! ***)
+
+(******************** CHECK PROOF FUNCTION ********************)
+(* proof type checking [notes: section 4, 5.1, 7, 8, 9] *)
 let rec check_pf (psi : ctx) (gamma : hyps) (proof : pf) (prop : prop) :(unit option) =
   match proof , prop with
   | TruthR , Truth -> Some ()                                                            (*TruthR*)
@@ -140,3 +159,9 @@ let rec check_pf (psi : ctx) (gamma : hyps) (proof : pf) (prop : prop) :(unit op
                                 | Some e -> cong_entails e (t,t')
                                 | None   -> None)
   | ByEq hs , _            -> None
+  | HypLabel (h,a,spf,p) , c -> check_pf psi ((h,a)::gamma) p c                          (*HypLabel*)
+  | SpineApp (h,s)       , c -> (match lookup_hyps gamma h with                          (*SpineApp*)
+                                 | None   -> None                                        (***TODO: wellformed-ness of SPF***)
+                                 | Some a -> (match apply_spine psi gamma s a with
+                                              | None   -> None
+                                              | Some b -> alpha_equiv_prop a b))
