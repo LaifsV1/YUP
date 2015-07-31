@@ -68,17 +68,29 @@ let rec check_prop (psi : ctx) (prop : prop) :(unit option) =
 let rec apply_spine (psi : ctx) (gamma : hyps) (s : spine) (a : prop) :(prop option) =
   match s , a with
   | []             , a                -> Some a                                          (*id-spine-app*)
-  | SpineH h :: s' , Implies (a,b)    -> apply_spine psi ((h,a)::gamma) s' b             (*implies-spine-app*)
-  | SpineT t :: s' , Forall (x,tau,a')-> (match check_term psi t tau with                (*forall-spine-app*)
+  | SpineH h :: s' , Implies (a,b)    -> (match lookup_hyps gamma h with                 (*implies-spine-app*)
                                           | None    -> None
-                                          | Some () -> apply_spine psi gamma s' (subs_prop x t a'))
+                                          | Some a' -> (match alpha_equiv_prop a a' with
+                                                        | None -> None
+                                                        | Some () -> (apply_spine psi gamma s' b)))
+  | SpineT t :: s' , Forall (x,tau,a) -> (match check_term psi t tau with                (*forall-spine-app*)
+                                          | None    -> None
+                                          | Some () -> apply_spine psi gamma s' (subs_prop x t a))
   | _              , _                -> None
 
 
 (******************** CHECK SIMPLE-PROOFS FUNCTION ********************)
 (* [notes: section 9.1] *)
-let rec check_spf (p : spf) :(unit option) = None (*** TODO, might need psi, gamma, or call check_pf. ***)
-                                                  (*** NEED TO KNOW WHAT'S THE BASE CASE!! ***)
+let rec check_spf (p : pf) :(unit option) =
+  match p with
+  | TruthR         -> Some ()
+  | AndR (p,q)     -> and_also (check_spf p) (check_spf q)
+  | OrR1 p         -> check_spf p
+  | OrR2 q         -> check_spf q
+  | By h           -> Some ()
+  | SpineApp (h,s) -> Some ()
+  | _              -> None
+
 
 (******************** CHECK PROOF FUNCTION ********************)
 (* proof type checking [notes: section 4, 5.1, 7, 8, 9] *)
@@ -159,9 +171,12 @@ let rec check_pf (psi : ctx) (gamma : hyps) (proof : pf) (prop : prop) :(unit op
                                 | Some e -> cong_entails e (t,t')
                                 | None   -> None)
   | ByEq hs , _            -> None
-  | HypLabel (h,a,spf,p) , c -> check_pf psi ((h,a)::gamma) p c                          (*HypLabel*)
+  | HypLabel (h,a,spf,p) , c -> and_also (check_pf psi gamma spf a)                       (*HypLabel*)
+                                         (and_also (check_spf spf)
+                                                   (check_pf psi ((h,a)::gamma) p c))
+
   | SpineApp (h,s)       , c -> (match lookup_hyps gamma h with                          (*SpineApp*)
-                                 | None   -> None                                        (***TODO: wellformed-ness of SPF***)
+                                 | None   -> None
                                  | Some a -> (match apply_spine psi gamma s a with
                                               | None   -> None
-                                              | Some b -> alpha_equiv_prop a b))
+                                              | Some b -> alpha_equiv_prop c b))

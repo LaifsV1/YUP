@@ -398,7 +398,7 @@ Truth and Falsity:
 \[
 \AxiomC{}
 \RightLabel{\quad ($\top$R)}
-\UnaryInfC{$\psi ; \Gamma \vdash$ $\top$ : C}
+\UnaryInfC{$\psi ; \Gamma \vdash$ tt : $\top$}
 \DisplayProof
 \qquad
 \qquad
@@ -971,7 +971,7 @@ Closure Construction:
 \begin{center}
 \begin{tabular}{rrl}
 
-(simple-proofs) & \quad spf ::=& [H] with s $\mid$ [H] $\mid$ Left spf $\mid$  Right spf $\mid$ (spf , spf)
+(simple-proofs) & \quad spf ::=& [H] with s $\mid$ By [H] $\mid$ Left spf $\mid$  Right spf $\mid$ (spf , spf) $\mid$ tt
 \\
 (proofs) & \quad p ::=& ... $\mid$ [H] with s $\mid$ We know [H] : A because spf , p
 \\
@@ -1018,9 +1018,11 @@ Rules:
 \]
 
 \[
-\AxiomC{$\psi ; \Gamma ,$ [H] : A $\vdash$ s : B $\gg$ C}
+\AxiomC{[H] : A' $\in$ $\Gamma$}
+\AxiomC{$\psi ; \Gamma $ $\vdash$ s : B $\gg$ C}
+\AxiomC{A $\overset{\alpha}=$ A'}
 \RightLabel{\quad ($\supset$-spine-app)}
-\UnaryInfC{$\psi ; \Gamma $ $\vdash$ [H] , s : A $\supset$ B $\gg$ C}
+\TrinaryInfC{$\psi ; \Gamma $ $\vdash$ [H] , s : A $\supset$ B $\gg$ C}
 \DisplayProof
 \]
 
