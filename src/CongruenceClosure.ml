@@ -35,18 +35,18 @@ let get_step () = debug_step := !debug_step + 1; "***[STEP: " ^ string_of_int (!
 (******** TYPE DEFINITIONS ********)
 (*notes: [section 8.1.1]*)
 (*rewrite rules*)
-type crule = var * var             (* c -> d *)
-type drule = term * var            (* f(c_0, ... , c_k) -> c *)
+type crule = var * var              (* c -> d *)
+type drule = npTerm * var           (* f(c_0, ... , c_k) -> c *)
 
 (*sets*)
-type c_set = crule list            (* {crule} *)
-type d_set = drule list            (* {drule} *)
-type e_set = (term * term) list    (* {(t=t):tau} *)
-type k_set = var list              (* {x | x not in E} *)
-type r_set = c_set * d_set         (* C union D *)
+type c_set = crule list             (* {crule} *)
+type d_set = drule list             (* {drule} *)
+type e_set = (npTerm * npTerm) list (* {(t=t):tau} *)
+type k_set = var list               (* {x | x not in E} *)
+type r_set = c_set * d_set          (* C union D *)
 
 (*state*)
-type state = k_set * e_set * r_set (* K,E,R *)
+type state = k_set * e_set * r_set  (* K,E,R *)
 
 (**************** MODULE-SPECIFIC HELPER FUNCTIONS ****************)
 (*fresh function and global variable - this is a reserved string, users cannot have underscore variables.*)
@@ -102,7 +102,7 @@ let rec compare_within (xs : 'a list)       (* list to compare within *)
 
 (* E[t] where t=f(c_0,...,c_k) and c_i in K *)
 (* returns: (term extracted , new var c) *)
-let rec expand_extract (t : term) (k : k_set) :(drule option) =
+let rec expand_extract (t : npTerm) (k : k_set) :(drule option) =
   let c = fresh_c () in
   (match t with
    | Var x                 -> if List.mem x k then None else Some (Var x , c) (*prevents replacing vars in K infinitely*)
@@ -125,7 +125,7 @@ let rec expand_extract (t : term) (k : k_set) :(drule option) =
 
 (* s[t -> c] *)
 (* replaces all occurances of t' in t with c, returns None if nothing was found to match. *)
-let rec expand_replace (t : term) (t' : term) (c : term) :(term option) =
+let rec expand_replace (t : npTerm) (t' : npTerm) (c : npTerm) :(npTerm option) =
   if t = t' then (Some c)
   else (match t with
         | Var x     -> None
@@ -279,7 +279,7 @@ let get_cong_rules (sigma : state option) :(d_set option) =
 (******** CONGRUENCE ENTAILS ********)
 (* rs2 are the rules that have been tried already *)
 (* rs1 are the rules I haven't tried yet *)
-let rec rewrite_reduce (rs1 : d_set) (rs2 : d_set) ((e,e') : (term * term)) :(term * term) =
+let rec rewrite_reduce (rs1 : d_set) (rs2 : d_set) ((e,e') : (npTerm * npTerm)) :(npTerm * npTerm) =
   match rs1 with
   | []       -> (e,e')
   | (t,c) :: rs1' -> (match expand_replace e t (Var c) , expand_replace e' t (Var c) with
@@ -289,7 +289,7 @@ let rec rewrite_reduce (rs1 : d_set) (rs2 : d_set) ((e,e') : (term * term)) :(te
                       | None   , None   -> rewrite_reduce rs1' ((t,c)::rs2) (e,e'))
 
 (* e : (t_i, t'_i) |= (t = t') *)
-let cong_entails (e : e_set) ((t,t') : (term * term)) :(unit option) =
+let cong_entails (e : e_set) ((t,t') : (npTerm * npTerm)) :(unit option) =
   match get_cong_rules (build_closure e) with
   | Some rs -> let (new_t, new_t') = rewrite_reduce rs [] (t,t') in
                          if (new_t = new_t') then Some () else None

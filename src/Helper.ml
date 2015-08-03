@@ -1,6 +1,7 @@
 (* Helper Functions *)
 (* author: Yu-Yang Lin *)
 open AbstractSyntax
+open Lexing
 
 (******************** HELPER FUNCTIONS ********************)
 (* lookup function for the context *)
@@ -23,3 +24,47 @@ let or_else f g =
   match f with
   | None   -> g
   | Some s -> Some s
+
+(* gets an arbitrary position *)
+let somepos = dummy_pos , dummy_pos
+
+(* DEPOS FUNCTIONS *)
+let rec depos_term ((_,t) : term) :(npTerm) =
+  match t with
+  | Var x       -> Var x
+  | App (a,b)   -> App (depos_term a,depos_term b)
+  | Boolean b   -> Boolean b
+  | Zero        -> Zero
+  | Suc t       -> Suc (depos_term t)
+  | Nil         -> Nil
+  | Cons (x,xs) -> Cons (depos_term x, depos_term xs)
+
+let rec depos_prop ((_,a) : prop) :(npProp) =
+  match a with
+  | Truth   -> Truth
+  | Falsity -> Falsity
+  | And (a,b) -> And (depos_prop a, depos_prop b)
+  | Or (a,b) -> Or (depos_prop a, depos_prop b)
+  | Implies (a,b) -> Implies (depos_prop a, depos_prop b)
+  | Eq (t,t',tau) -> Eq (depos_term t, depos_term t', tau)
+  | Forall (x,tau,a) -> Forall (x,tau,depos_prop a)
+  | Exists (x,tau,a) -> Exists (x,tau,depos_prop a)
+
+(* TO STRING FUNCTIONS *)
+let rec toString_tp (tau : tp) :(string) =
+  match tau with
+  | Bool -> "bool"
+  | Nat  -> "nat"
+  | List  x -> "[" ^ (toString_tp x) ^ "]"
+  | Arrow (a,b)-> "(" ^ (toString_tp a) ^"->" ^ (toString_tp b) ^ ")"
+
+let rec toString (t : npTerm) :(string) =
+  match t with
+  | Var x     -> "Var(\""^x^"\")"
+  | App (f,x) -> "App("^(toString f)^","^(toString x)^")"
+  | Boolean true -> "Boolean(true)"
+  | Boolean false -> "Boolean(false)"
+  | Zero          -> "Zero"
+  | Suc n         -> "Suc("^(toString n)^")"
+  | Nil           -> "Nil"
+  | Cons (x,xs)   -> "Cons("^(toString x)^","^(toString xs)^")"

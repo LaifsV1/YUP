@@ -404,7 +404,7 @@ Truth and Falsity:
 \qquad
 \AxiomC{}
 \RightLabel{\quad ($\bot$L)}
-\UnaryInfC{$\psi ; \Gamma ,$  H : $\bot$
+\UnaryInfC{$\psi ; \Gamma ,$  [H] : $\bot$
 $\vdash $
 Absurd H : C
 }
@@ -417,7 +417,7 @@ Conjunction:
 $\vdash$ p : C}
 \RightLabel{\quad ($\wedge$L)}
 \UnaryInfC{$\psi ; \Gamma ,$ H : A $\wedge$ B $\vdash$
-let (H',H'') = H in p : C}
+let ([H'],[H'']) = [H] in p : C}
 \DisplayProof
 \]
 
@@ -463,14 +463,14 @@ Implication:
 \AxiomC{$\psi ; \Gamma ,$ H : A $\supset$ B , H' : B $\vdash$ q : C}
 \RightLabel{\quad ($\supset$L)}
 \BinaryInfC{$\psi ; \Gamma ,$ H : A $\supset$ B $\vdash$
-(p, B [ H' ] via H, q) : C}
+(p, B [ H' ] via [H], q) : C}
 \DisplayProof
 \]
 
 \[
 \AxiomC{$\psi ; \Gamma$ , H : A $\vdash$ p : B}
 \RightLabel{\quad ($\supset$R)}
-\UnaryInfC{$\psi ; \Gamma \vdash$ ( Assume A [ H ] , p ) : A
+\UnaryInfC{$\psi ; \Gamma \vdash$ ( Assume A [H] , p ) : A
 $\supset$ B}
 \DisplayProof
 \]
@@ -480,7 +480,7 @@ Using hypotheses:
 \[
 \AxiomC{}
 \RightLabel{\quad (by)}
-\UnaryInfC{$\psi ; \Gamma , $ [ H ] : A $\vdash$ by H : A}
+\UnaryInfC{$\psi ; \Gamma , $ H : A $\vdash$ by [H] : A}
 \DisplayProof
 \]
 
@@ -1043,6 +1043,23 @@ Function signatures:
 \\
 {\tt apply_spine} &::& {\tt ctx} $\rightarrow$ {\tt hyps} $\rightarrow$ {\tt spine} $\rightarrow$ {\tt prop} $\rightarrow$ {\tt prop option}
 
+\end{tabular}
+\end{center}
+
+\section{Parsing}
+
+\subsection{Adding lexical position data}
+
+\begin{center}
+\begin{tabular}{llrl}
+(term') &t' &:=& $x$ $\mid$ t t $\mid$ true $\mid$ false $\mid$ Zero $\mid$ Suc t $\mid$ Cons (t,t)\\
+(term) &t &:=& (pos, pos) , t'\\
+\\
+(prop') &A' &:=& $\top$ $\mid$ $\bot$ $\mid$ A $\wedge$ A $\mid$ A $\vee$ A $\mid$ A $\supset$ A $\mid$ t $=$ t : $\tau$ $\mid$ $\forall x$ . p $\mid$ $\exists x$ . p\\
+(prop) &A &:=& (pos, pos) , A'\\
+\\
+(proof') &p' &:=& tt $\mid$ Absurd $\mid$ ... \\
+(proof) &p &:=& (pos, pos) , p'\\
 \end{tabular}
 \end{center}
 

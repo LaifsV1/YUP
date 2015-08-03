@@ -11,32 +11,32 @@ let fresh () = fresh_var := !fresh_var + 1; "_var_" ^ string_of_int (!fresh_var)
 
 (* swap functions - swaps the names of every variable that matches *)
 (* [notes: section 6.3] *)
-let rec swap_term (x : var) (z : var) (t : term) :(term) =
+let rec swap_term (x : var) (z : var) ((pos,t) : term) :(term) =
   match t with
-  | Var y      -> if y = x then Var z
-                  else if y = z then Var x else Var y
-  | App (e,v)  -> App (swap_term x z e, swap_term x z v)
-  | Boolean b  -> Boolean b
-  | Zero       -> Zero
-  | Suc n      -> Suc (swap_term x z n)
-  | Nil        -> Nil
-  | Cons (e,v) -> Cons (swap_term x z e, swap_term x z v)
+  | Var y      -> if y = x then (pos, Var z)
+                  else if y = z then (pos, Var x) else (pos, Var y)
+  | App (e,v)  -> pos , App (swap_term x z e, swap_term x z v)
+  | Boolean b  -> pos , Boolean b
+  | Zero       -> pos , Zero
+  | Suc n      -> pos , Suc (swap_term x z n)
+  | Nil        -> pos , Nil
+  | Cons (e,v) -> pos , Cons (swap_term x z e, swap_term x z v)
 
-let rec swap_prop (x : var) (z : var) (a : prop) :(prop) =
+let rec swap_prop (x : var) (z : var) ((pos,a) : prop) :(prop) =
   match a with
-  | Truth   -> Truth
-  | Falsity -> Falsity
-  | And (a,b)     -> And (swap_prop x z a, swap_prop x z b)
-  | Or (a,b)      -> Or  (swap_prop x z a, swap_prop x z b)
-  | Implies (a,b) -> Implies (swap_prop x z a, swap_prop x z b)
-  | Eq (t,t',tau) -> Eq (swap_term x z t, swap_term x z t', tau)
-  | Forall (y,tau,a) -> if y = x then Forall (z,tau,swap_prop x z a)
-                        else Forall (y,tau,swap_prop x z a)
-  | Exists (y,tau,a) -> if y = x then Exists (z,tau,swap_prop x z a)
-                        else Exists (y,tau,swap_prop x z a)
+  | Truth   -> pos , Truth
+  | Falsity -> pos , Falsity
+  | And (a,b)     -> pos , And (swap_prop x z a, swap_prop x z b)
+  | Or (a,b)      -> pos , Or  (swap_prop x z a, swap_prop x z b)
+  | Implies (a,b) -> pos , Implies (swap_prop x z a, swap_prop x z b)
+  | Eq (t,t',tau) -> pos , Eq (swap_term x z t, swap_term x z t', tau)
+  | Forall (y,tau,a) -> if y = x then (pos , Forall (z,tau,swap_prop x z a))
+                        else (pos , Forall (y,tau,swap_prop x z a))
+  | Exists (y,tau,a) -> if y = x then (pos , Exists (z,tau,swap_prop x z a))
+                        else (pos , Exists (y,tau,swap_prop x z a))
 
 (* free variables list functions - computes list of all free variables in prop/term *)
-let rec freevars_term (t_term : term) :(var list) =
+let rec freevars_term ((pos,t_term) : term) :(var list) =
   match t_term with
   | Var x      -> [ x ]
   | App (e,v)  -> (freevars_term e) @ (freevars_term v)
@@ -46,7 +46,7 @@ let rec freevars_term (t_term : term) :(var list) =
   | Nil        -> []
   | Cons (e,v) -> (freevars_term e) @ (freevars_term v)
 
-let rec freevars (a_prop : prop) :(var list) =
+let rec freevars ((pos,a_prop) : prop) :(var list) =
   match a_prop with
   | Truth | Falsity -> []
   | And (a,b)
@@ -57,40 +57,43 @@ let rec freevars (a_prop : prop) :(var list) =
   | Exists (y,tau,a) -> List.filter (fun x -> x=y) (freevars a)
 
 (* substitution functions - substitutes variables in prop/term for given term *)
+(* [x->t] t' *)
 (* [notes: section 5.2] *)
-let rec subs_term' (x : var) (t : term) (t' : term) :(term) =
+let rec subs_term' (x : var) ((_,t) : term) ((pos,t') : term) :(term) =     (*** DOES t's pos matter?***)
   match t' with
-  | Var y      -> if y = x then t else Var y
-  | App (e,v)  -> App (subs_term' x t e, subs_term' x t v)
-  | Boolean b  -> Boolean b
-  | Zero       -> Zero
-  | Suc n      -> Suc (subs_term' x t n)
-  | Nil        -> Nil
-  | Cons (e,v) -> Cons (subs_term' x t e, subs_term' x t v)
+  | Var y      -> if y = x then (pos,t) else (pos,Var y)
+  | App (e,v)  -> pos , App (subs_term' x (pos,t) e, subs_term' x (pos,t) v)
+  | Boolean b  -> pos , Boolean b
+  | Zero       -> pos , Zero
+  | Suc n      -> pos , Suc (subs_term' x (pos,t) n)
+  | Nil        -> pos , Nil
+  | Cons (e,v) -> pos , Cons (subs_term' x (pos,t) e, subs_term' x (pos,t) v)
 
-let rec subs_prop' (x : var) (t_term : term) (a : prop) (fv : var list) :(prop) =
+(* [x->t] a *)
+let rec subs_prop' (x : var) (t_term : term) ((pos,a) : prop) (fv : var list) :(prop) =
   match a with
-  | Truth   -> Truth
-  | Falsity -> Falsity
-  | And (a,b)     -> And (subs_prop' x t_term a fv, subs_prop' x t_term b fv)
-  | Or (a,b)      -> Or  (subs_prop' x t_term a fv, subs_prop' x t_term b fv)
-  | Implies (a,b) -> Implies (subs_prop' x t_term a fv, subs_prop' x t_term b fv)
-  | Eq (t,t',tau) -> Eq (subs_term' x t_term t, subs_term' x t_term t', tau)
+  | Truth   -> pos , Truth
+  | Falsity -> pos , Falsity
+  | And (a,b)     -> pos , And (subs_prop' x t_term a fv, subs_prop' x t_term b fv)
+  | Or (a,b)      -> pos , Or  (subs_prop' x t_term a fv, subs_prop' x t_term b fv)
+  | Implies (a,b) -> pos , Implies (subs_prop' x t_term a fv, subs_prop' x t_term b fv)
+  | Eq (t,t',tau) -> pos , Eq (subs_term' x t_term t, subs_term' x t_term t', tau)
   | Forall (y,tau,a) -> if List.mem y fv then
                           let z = fresh ()
-                          in Forall (z,tau, subs_prop' x t_term (swap_prop y z a) fv)
-                        else Forall (y,tau, subs_prop' x t_term a fv)
+                          in (pos , Forall (z,tau, subs_prop' x t_term (swap_prop y z a) fv))
+                        else (pos , Forall (y,tau, subs_prop' x t_term a fv))
   | Exists (y,tau,a) -> if List.mem y fv then
                           let z = fresh ()
-                          in Exists (z,tau, subs_prop' x t_term (swap_prop y z a) fv)
-                        else Exists (y,tau, subs_prop' x t_term a fv)
+                          in (pos , Exists (z,tau, subs_prop' x t_term (swap_prop y z a) fv))
+                        else (pos , Exists (y,tau, subs_prop' x t_term a fv))
 
+(* [x->t] a *)
 let subs_prop (x : var) (t_term : term) (a : prop) :(prop) = subs_prop' x t_term a (freevars_term t_term)
 
 (* term alpha-equivalence - note: this function doesn't check well-formedness *)
 (* DOES THE SAME AS OCAML STRUCTURAL EQUALITY *)
 (* [notes: section 6.1] *)
-let rec alpha_equiv_term (t : term) (e : term) :(unit option) =
+let rec alpha_equiv_term ((_,t) : term) ((_,e) : term) :(unit option) =
   match t , e with
   | Var x , Var y -> if x = y then Some () else None                                     (*Var-equiv*)
   | Var _ , _     -> None
@@ -111,7 +114,7 @@ let rec alpha_equiv_term (t : term) (e : term) :(unit option) =
 
 (* prop alpha-equivalence - note: this function doesn't check well-formedness *)
 (* [notes: section 6.2] *)
-let rec alpha_equiv_prop (a_prop : prop) (b_prop : prop) :(unit option) =
+let rec alpha_equiv_prop ((_,a_prop) : prop) ((_,b_prop) : prop) :(unit option) =
   match a_prop , b_prop with
   | Truth   , Truth   -> Some ()                                                         (*Truth-equiv*)
   | Truth   , _       -> None
