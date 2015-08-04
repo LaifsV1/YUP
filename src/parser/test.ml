@@ -5,6 +5,7 @@
 #load "Lexer.cmo";;
 #directory "..";;
 
-let type_of_string s = Parser.type_toplevel Lexer.read (Lexing.from_string s)
-let term_of_string s = Parser.term_toplevel Lexer.read (Lexing.from_string s)
-let prop_of_string s = Parser.prop_toplevel Lexer.read (Lexing.from_string s)
+let parse_type s = Parser.type_toplevel Lexer.read (Lexing.from_string s)
+let parse_term s = Parser.term_toplevel Lexer.read (Lexing.from_string s)
+let parse_prop s = Parser.prop_toplevel Lexer.read (Lexing.from_string s)
+let parse_proof s = Parser.proof_toplevel Lexer.read (Lexing.from_string s)

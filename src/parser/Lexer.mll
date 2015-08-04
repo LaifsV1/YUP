@@ -2,6 +2,8 @@
   open Parser
   open Lexing
 
+  exception SyntaxError of string
+
   let next_line lexbuf =
   let pos = lexbuf.lex_curr_p in
   lexbuf.lex_curr_p <-
@@ -31,6 +33,7 @@ rule read =
   | '|'            { PIPE }
   | "bool"         { Bool_TYPE }
   | "nat"          { Nat_TYPE }
+  | "list"         { List_TYPE_OP }
   | "->"           { Arrow_TYPE_OP }
   | "true"         { True_TERM }
   | "false"        { False_TERM }
@@ -45,6 +48,8 @@ rule read =
   | "="            { Eq_OP }
   | "forall"       { Forall_PROP }
   | "exists"       { Exists_PROP }
+  | "tt"           { TT_PROOF }
+  | "absurd"       { Absurd_PROOF }
   | "let"          { Let_PROOF }
   | "in"           { In_PROOF }
   | "match"        { Match_PROOF }
@@ -56,6 +61,7 @@ rule read =
   | "by"           { By_PROOF }
   | "choose"       { Choose_PROOF }
   | "induction on" { Induction_PROOF }
+  | "case"         { Case_PROOF }
   | "equality on"  { Equality_PROOF }
   | hvar as x      { HVAR x }
   | var as x       { VAR x }

@@ -1,5 +1,10 @@
 %{
   open AbstractSyntax
+  open Lexing
+  
+  let parse_failure (msg : string) (pos1 : position) (pos2 : position) = 
+	(Failure ( msg ^ " from (line:"^(string_of_int (pos1.pos_lnum))^" char:"^(string_of_int (pos1.pos_cnum))^") to ("^
+		                    "line:"^(string_of_int (pos2.pos_lnum))^" char:"^(string_of_int (pos2.pos_cnum))^")") )
 %}
 
 /*=================*/
@@ -9,6 +14,7 @@
 (*** TYPE-TOKENS ***)
 %token Bool_TYPE
 %token Nat_TYPE
+%token List_TYPE_OP
 %token Arrow_TYPE_OP
 
 (*** TERMS-TOKENS ***)
@@ -87,10 +93,21 @@
 /*---- GRAMMAR ----*/
 /*=================*/
 
-type_toplevel:  complex_type EOF { $1 }
-term_toplevel:  term EOF         { $1 }
-prop_toplevel:  prop EOF         { $1 }
-proof_toplevel: proof EOF        { $1 }
+type_toplevel:  
+| complex_type EOF { $1 }
+| error            { raise (parse_failure "parsing type" $startpos $endpos) }
+
+term_toplevel:  
+| term EOF         { $1 }
+| error            { raise (parse_failure "parsing term" $startpos $endpos) }
+
+prop_toplevel:  
+| prop EOF         { $1 }
+| error            { raise (parse_failure "parsing proposition" $startpos $endpos) }
+
+proof_toplevel: 
+| proof EOF        { $1 }
+| error            { raise (parse_failure "parsing proof" $startpos $endpos) }
 
 (*** TYPES ***)
 simple_type:
@@ -100,8 +117,8 @@ simple_type:
 
 complex_type:
 | simple_type                             { $1 }
-| OPEN_BRACKET complex_type CLOSE_BRACKET { List $2 }
 | complex_type Arrow_TYPE_OP complex_type { Arrow ($1,$3) }
+| complex_type List_TYPE_OP               { List $1 }
 
 (*** TERMS ***)
 simple_term:
@@ -130,6 +147,8 @@ prop:
 | prop Or_PROP_OP prop                        { ($startpos , $endpos) , Or ($1,$3) }
 | prop Implies_PROP_OP prop                   { ($startpos , $endpos) , Implies ($1,$3) }
 | term Eq_OP term COLON complex_type          { ($startpos , $endpos) , Eq ($1,$3,$5) }
+| OPEN_PAREN term Eq_OP term CLOSE_PAREN 
+  COLON complex_type                          { ($startpos , $endpos) , Eq ($2,$4,$7) }
 | Forall_PROP VAR COLON complex_type DOT prop { ($startpos , $endpos) , Forall ($2,$4,$6) }
 | Exists_PROP VAR COLON complex_type DOT prop { ($startpos , $endpos) , Exists ($2,$4,$6) }
 
@@ -166,8 +185,8 @@ proof:
 | HVAR With_PROOF spine                                                      { ($startpos , $endpos) , SpineApp ($1,$3) }
 
 eq_tuple:
-| HVAR                   { $1 :: [] }
-| HVAR COMMA eq_tuple    { $1 :: $3 }
+| HVAR                 { $1 :: [] }
+| HVAR COMMA eq_tuple  { $1 :: $3 }
 
 spine:
 | HVAR              { SpineH $1 :: [] }

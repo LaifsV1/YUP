@@ -17,6 +17,7 @@ type token =
   | Nil_TERM
   | Nat_TYPE
   | Match_PROOF
+  | List_TYPE_OP
   | Let_PROOF
   | Left_PROOF
   | Induction_PROOF
