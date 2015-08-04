@@ -1,12 +1,12 @@
 #load "AbstractSyntax.cmo";;
 #load "Helper.cmo";;
-#load "AlphaEquivalence.cmo";;
-#load "Checker.cmo";;
 #load "CongruenceClosure.cmo";;
 #use "AbstractSyntax.ml";;
-#use "Checker.ml";;
-#use "Helper.ml";;
 #use "CongruenceClosure.ml";; (* K, E, (cs, ds) *)
+#use "Helper.ml";;
+#use "Checker.ml";;
+
+
 
 (*** GLOBAL HELPER FUNCTIONS ***)
 let time f x =
@@ -26,12 +26,12 @@ let arr_random arr =
 
 let random_var () :(string) = "_randv_" ^ string_of_int (Random.int (10)) ^ "_"
 
-let random_base_term () :(term) =
+let random_base_term () :(npTerm) =
   let randv = random_var () in
   let arr = [| Var randv; Boolean true; Boolean false; Zero; Nil|]
   in arr_random arr
 
-let random_term () :(term) =
+let random_term () :(npTerm) =
   let arr = [| random_base_term (); App (random_base_term (),random_base_term ());
                Suc (random_base_term ());
                Cons (random_base_term (),random_base_term ())|]

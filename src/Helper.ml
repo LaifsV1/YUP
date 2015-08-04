@@ -49,22 +49,3 @@ let rec depos_prop ((_,a) : prop) :(npProp) =
   | Eq (t,t',tau) -> Eq (depos_term t, depos_term t', tau)
   | Forall (x,tau,a) -> Forall (x,tau,depos_prop a)
   | Exists (x,tau,a) -> Exists (x,tau,depos_prop a)
-
-(* TO STRING FUNCTIONS *)
-let rec toString_tp (tau : tp) :(string) =
-  match tau with
-  | Bool -> "bool"
-  | Nat  -> "nat"
-  | List  x -> "[" ^ (toString_tp x) ^ "]"
-  | Arrow (a,b)-> "(" ^ (toString_tp a) ^"->" ^ (toString_tp b) ^ ")"
-
-let rec toString (t : npTerm) :(string) =
-  match t with
-  | Var x     -> "Var(\""^x^"\")"
-  | App (f,x) -> "App("^(toString f)^","^(toString x)^")"
-  | Boolean true -> "Boolean(true)"
-  | Boolean false -> "Boolean(false)"
-  | Zero          -> "Zero"
-  | Suc n         -> "Suc("^(toString n)^")"
-  | Nil           -> "Nil"
-  | Cons (x,xs)   -> "Cons("^(toString x)^","^(toString xs)^")"
