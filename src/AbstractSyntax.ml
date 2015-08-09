@@ -49,32 +49,45 @@ type spine = spine_arg list
 (* Term Context *)
 type ctx = ( var * tp ) list
 
+(* Hypotheses Labels *)
+type hvar = var * (prop option)
+
 (* Propositions Context *)
 type hyps = ( var * prop ) list
 
 (* Proofs *)
-type pf' = TruthR                                (*Truth-R,  T : A*) (***SPF***)
-         | FalsityL of var                       (*Falsity-L, Absurd : A*)
-         | AndL of (var * var) * var * pf        (*let (H',H'') = H in p*)
-         | AndR of pf * pf                       (*p,q*) (***SPF***)
-         | OrL of var * (var * pf) * (var * pf)  (*match [H] with [H']:p | [H'']:q*)
-         | OrR1 of pf                            (*Left  p : A v B*) (***SPF***)
-         | OrR2 of pf                            (*Right q : A v B*) (***SPF***)
-         | ImpliesL of pf * (var * var) * pf     (*p, [H'] : B via [H] : (A => B), q*)
-         | ImpliesR of var * pf                  (*Assume [H] : A, p*)
-         | By of var                             (*by [H]*) (***SPF***)
-         | Therefore of pf * prop                (*p Therefore A*)
-         | ExistsR of term * pf                  (*choose t, p*)
-         | ExistsL of (var * var) * var * pf     (*let (x',H') = H in p*)
-         | ForallR of (var * tp) * pf            (*Assume x:tau . p*)
-         | ForallL of var * var * term * pf      (*let H' = H with t in p*)
-         | ByIndNat  of pf * (var * var * pf)    (*ByInduction:case zero p;case suc(n),H,q*)
-         | ByIndList of pf * ((var*var)*var*pf)  (*ByInduction:case nil p;case cons(y,ys),H,q*)
-         | ByIndBool of pf * pf                  (*ByInduction:case true p;case false q*)
-         | ByEq of var list                      (*By Equality [H_i]*)
-         | HypLabel of var * prop * pf * pf      (*We know [H] : A because spf , p*)
-         | SpineApp of var * spine               (*[H] with s*) (***SPF***)
+type pf' = TruthR                                  (*Truth-R,  T : A*) (***SPF***)
+         | FalsityL of hvar                        (*Falsity-L, Absurd [H] : A*)
+         | AndL of (hvar * hvar) * hvar * pf       (*let (H',H'') = H in p*)
+         | AndR of pf * pf                         (*p,q*) (***SPF***)
+         | OrL of hvar * (hvar * pf) * (hvar * pf) (*match [H] with [H']:p | [H'']:q*)
+         | OrR1 of pf                              (*Left  p : A v B*) (***SPF***)
+         | OrR2 of pf                              (*Right q : A v B*) (***SPF***)
+         | ImpliesL of pf * (hvar * hvar) * pf     (*p, [H'] : B via [H] : (A => B), q*)
+         | ImpliesR of hvar * pf                   (*Assume [H] : A, p*)
+         | By of hvar                              (*by [H]*) (***SPF***)
+         | Therefore of pf * prop                  (*p Therefore A*)
+         | ExistsR of term * pf                    (*choose t, p*)
+         | ExistsL of (var * hvar) * hvar * pf     (*let (x',H') = H in p*)
+         | ForallR of (var * tp) * pf              (*Assume x:tau . p*)
+         | ForallL of hvar * hvar * term * pf      (*let H' = H with t in p*)
+         | ByIndNat  of pf * (var * hvar * pf)     (*ByInduction:case zero p;case suc(n),H,q*)
+         | ByIndList of pf * ((var*var)*hvar*pf)   (*ByInduction:case nil p;case cons(y,ys),H,q*)
+         | ByIndBool of pf * pf                    (*ByInduction:case true p;case false q*)
+         | ByEq of hvar list                       (*By Equality [H_i]*)
+         | HypLabel of var * prop * pf * pf        (*We know [H] : A because spf , p*)
+         | SpineApp of hvar * spine                (*[H] with s*) (***SPF***)
 and pf = (Lexing.position * Lexing.position) * pf'
+
+(* Monadic Errors *)
+type 'a result = Ok of 'a | Wrong of (Lexing.position * Lexing.position) (* Wrong takes a single argument for simplicity *)
+
+(* Monadic Operations *)
+let return x = Ok x
+let (>>=) x f =
+  match x with
+  | Ok v    -> f v
+  | Wrong e -> Wrong e
 
 (* TO STRING FUNCTIONS *)
 let rec toString_tp (tau : tp) :(string) =

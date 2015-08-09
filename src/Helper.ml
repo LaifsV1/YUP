@@ -4,12 +4,6 @@ open AbstractSyntax
 open Lexing
 
 (******************** HELPER FUNCTIONS ********************)
-(* lookup function for the context *)
-let rec lookup_ctx (psi : ctx) (x : var) :(tp option) = (try Some (List.assoc x psi) with Not_found -> None)
-
-(* lookup function for the hypotheses *)
-let rec lookup_hyps (gamma : hyps) (h : var) :(prop option) = (try Some (List.assoc h gamma) with Not_found -> None)
-
 (* function that returns a list of pairs that do not match the given key *)
 let remove_all_assoc (gamma : hyps) (h : var) :(hyps) = List.fold_right (fun (k,v) b -> if h=k then b else (k,v)::b) gamma []
 
@@ -25,6 +19,7 @@ let or_else f g =
   | None   -> g
   | Some s -> Some s
 
+(******************** ERROR HANDLING FUNCTIONS ********************)
 (* gets an arbitrary position *)
 let somepos = dummy_pos , dummy_pos
 

@@ -3,6 +3,7 @@
 (* Details in section 6 of notes *)
 open AbstractSyntax
 open Helper
+open Lexing
 
 (******************** FRESH, SWAP, SUBSTITUTE, ALPHA-EQUIVALENCE FUNCTIONS ********************)
 (* fresh function and global variable - this is a reserved string, users cannot have underscore variables. *)
@@ -143,3 +144,36 @@ let rec alpha_equiv_prop ((_,a_prop) : prop) ((_,b_prop) : prop) :(unit option) 
                                                   alpha_equiv_prop (swap_prop x z a)
                                                                    (swap_prop y z a')
   | Exists _         , _                  -> None
+
+
+let is_alpha_equiv_prop (a : prop) (b : prop) :(bool) =
+  match alpha_equiv_prop a b with
+  | Some () -> true
+  | None    -> false
+
+
+(******************** LOOKUP FUNCTIONS ********************)
+(* lookup function for the context *)
+let lookup_ctx (psi : ctx) (x : var) :(tp option) = (try Some (List.assoc x psi) with Not_found -> None)
+
+(* lookup function for the hypotheses *)
+let lookup_hyps (gamma : hyps) (h : var) :(prop option) = (try Some (List.assoc h gamma) with Not_found -> None)
+
+(* lookup check function for the hypotheses *)
+let lookup_check_hyps (gamma : hyps) ((h,a) : hvar) :(prop option) =
+  (try let a' = (List.assoc h gamma) in
+       (match a with
+        | Some a -> if is_alpha_equiv_prop a a' then Some a else None
+        | None   -> Some a')
+   with Not_found -> None)
+
+let check_hyp (a : prop option) (a' : prop) :(bool) =
+  match a with
+  | None   -> true
+  | Some a -> is_alpha_equiv_prop a a'
+
+let lookup_ctx_err (psi : ctx) (x : var) (p : position * position) :(tp result) =
+  (try Ok (List.assoc x psi) with Not_found -> Wrong p)
+
+let lookup_hyps_err (gamma : hyps) (h : var) (p : position * position) :(prop result) =
+  (try Ok (List.assoc h gamma) with Not_found -> Wrong p)

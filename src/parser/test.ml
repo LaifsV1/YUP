@@ -4,6 +4,13 @@
 #load "Parser.cmo";;
 #load "Lexer.cmo";;
 #directory "..";;
+#load "Helper.cmo";;
+#load "AlphaEquivalence.cmo";;
+#load "CongruenceClosure.cmo";;
+#load "Checker.cmo";;
+
+open AbstractSyntax
+open Checker
 
 let parse_type s = Parser.type_toplevel Lexer.read (Lexing.from_string s)
 let parse_term s = Parser.term_toplevel Lexer.read (Lexing.from_string s)

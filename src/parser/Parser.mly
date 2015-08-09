@@ -154,39 +154,44 @@ prop:
 
 (*** PROOFS ***)                /* for props in rules, once we add them, do we call check_prop where there are props? */
 proof:
-| TT_PROOF                                                                   { ($startpos , $endpos) , TruthR }
-| Absurd_PROOF HVAR                                                          { ($startpos , $endpos) , FalsityL $2 }
-| Let_PROOF HVAR COMMA HVAR Eq_OP HVAR In_PROOF proof                        { ($startpos , $endpos) , AndL (($2,$4),$6,$8) }
-| Let_PROOF OPEN_PAREN HVAR COMMA HVAR CLOSE_PAREN Eq_OP HVAR In_PROOF proof { ($startpos , $endpos) , AndL (($3,$5),$8,$10) }
-| OPEN_PAREN proof COMMA proof CLOSE_PAREN                                   { ($startpos , $endpos) , AndR ($2,$4) }
-| Match_PROOF HVAR With_PROOF PIPE HVAR DOT proof PIPE HVAR DOT proof        { ($startpos , $endpos) , OrL ($2,($5,$7),($9,$11)) }/* check this, no prop in L rule */
-| Match_PROOF HVAR With_PROOF HVAR DOT proof PIPE HVAR DOT proof             { ($startpos , $endpos) , OrL ($2,($4,$6),($8,$10)) }/* check this, no prop in L rule */
-| Left_PROOF proof                                                           { ($startpos , $endpos) , OrR1 $2 }
-| Right_PROOF proof                                                          { ($startpos , $endpos) , OrR1 $2 }
-| proof DOT HVAR Because_PROOF HVAR DOT proof                                { ($startpos , $endpos) , ImpliesL ($1,($3,$5),$7) } /* check this, no prop in L rule */
-| Assume_PROOF HVAR DOT proof                                                { ($startpos , $endpos) , ImpliesR ($2,$4) }         /* check this, no prop in R rule */
-| By_PROOF HVAR                                                              { ($startpos , $endpos) , By $2 }
-| proof DOT Therefore_PROOF prop                                             { ($startpos , $endpos) , Therefore ($1,$4) }
-| Choose_PROOF term DOT proof DOT                                            { ($startpos , $endpos) , ExistsR ($2,$4) }   /* not sure if I agree with DOT syntax */
-| Let_PROOF VAR COMMA HVAR Eq_OP HVAR In_PROOF proof                         { ($startpos , $endpos) , ExistsL (($2,$4),$6,$8) } /* hmmmmmm */ 
-| Assume_PROOF VAR COLON complex_type DOT proof                              { ($startpos , $endpos) , ForallR (($2,$4),$6) }
-| Let_PROOF HVAR Eq_OP HVAR With_PROOF term In_PROOF proof                   { ($startpos , $endpos) , ForallL ($2,$4,$6,$8) }
+| TT_PROOF                                                                { ($startpos , $endpos) , TruthR }
+| Absurd_PROOF h_var                                                      { ($startpos , $endpos) , FalsityL $2 }
+| Let_PROOF h_var COMMA h_var Eq_OP h_var In_PROOF proof                  { ($startpos , $endpos) , AndL (($2,$4),$6,$8) }
+| Let_PROOF OPEN_PAREN h_var COMMA h_var CLOSE_PAREN Eq_OP h_var 
+  In_PROOF proof                                                          { ($startpos , $endpos) , AndL (($3,$5),$8,$10) }
+| OPEN_PAREN proof COMMA proof CLOSE_PAREN                                { ($startpos , $endpos) , AndR ($2,$4) }
+| Match_PROOF h_var With_PROOF PIPE h_var DOT proof PIPE h_var DOT proof  { ($startpos , $endpos) , OrL ($2,($5,$7),($9,$11)) }
+| Match_PROOF h_var With_PROOF h_var DOT proof PIPE h_var DOT proof       { ($startpos , $endpos) , OrL ($2,($4,$6),($8,$10)) }
+| Left_PROOF proof                                                        { ($startpos , $endpos) , OrR1 $2 }
+| Right_PROOF proof                                                       { ($startpos , $endpos) , OrR1 $2 }
+| proof DOT h_var Because_PROOF h_var DOT proof                           { ($startpos , $endpos) , ImpliesL ($1,($3,$5),$7) }
+| Assume_PROOF h_var DOT proof                                            { ($startpos , $endpos) , ImpliesR ($2,$4) }        
+| By_PROOF h_var                                                          { ($startpos , $endpos) , By $2 }
+| proof DOT Therefore_PROOF prop                                          { ($startpos , $endpos) , Therefore ($1,$4) }
+| Choose_PROOF term DOT proof DOT                                         { ($startpos , $endpos) , ExistsR ($2,$4) }
+| Let_PROOF VAR COMMA h_var Eq_OP h_var In_PROOF proof                    { ($startpos , $endpos) , ExistsL (($2,$4),$6,$8) }
+| Assume_PROOF VAR COLON complex_type DOT proof                           { ($startpos , $endpos) , ForallR (($2,$4),$6) }
+| Let_PROOF h_var Eq_OP h_var With_PROOF term In_PROOF proof              { ($startpos , $endpos) , ForallL ($2,$4,$6,$8) }
 | By_PROOF Induction_PROOF Nat_TYPE COLON 
   Case_PROOF Zero_TERM COLON proof SEMICOLON
-  Case_PROOF Suc_TERM_OP VAR COLON HVAR DOT proof                            { ($startpos , $endpos) , ByIndNat ($8,($12,$14,$16)) }
+  Case_PROOF Suc_TERM_OP VAR COLON h_var DOT proof                        { ($startpos , $endpos) , ByIndNat ($8,($12,$14,$16)) }
 | By_PROOF Induction_PROOF OPEN_BRACKET complex_type CLOSE_BRACKET COLON 
   Case_PROOF Nil_TERM COLON proof SEMICOLON
-  Case_PROOF OPEN_PAREN VAR Cons_TERM_OP VAR COLON HVAR DOT proof            { ($startpos , $endpos) , ByIndList ($10,(($14,$16),$18,$20)) }
+  Case_PROOF OPEN_PAREN VAR Cons_TERM_OP VAR COLON h_var DOT proof        { ($startpos , $endpos) , ByIndList ($10,(($14,$16),$18,$20)) }
 | By_PROOF Induction_PROOF Bool_TYPE COLON 
   Case_PROOF True_TERM COLON proof SEMICOLON
-  Case_PROOF False_TERM COLON proof                                          { ($startpos , $endpos) , ByIndBool ($8,$13) }
-| By_PROOF Equality_PROOF OPEN_PAREN eq_tuple CLOSE_PAREN COLON              { ($startpos , $endpos) , ByEq $4 }
-| HVAR COLON prop Because_PROOF proof DOT proof                              { ($startpos , $endpos) , HypLabel ($1,$3,$5,$7) }
-| HVAR With_PROOF spine                                                      { ($startpos , $endpos) , SpineApp ($1,$3) }
+  Case_PROOF False_TERM COLON proof                                       { ($startpos , $endpos) , ByIndBool ($8,$13) }
+| By_PROOF Equality_PROOF OPEN_PAREN eq_tuple CLOSE_PAREN COLON           { ($startpos , $endpos) , ByEq $4 }
+| HVAR COLON prop Because_PROOF proof DOT proof                           { ($startpos , $endpos) , HypLabel ($1,$3,$5,$7) }
+| h_var With_PROOF spine                                                  { ($startpos , $endpos) , SpineApp ($1,$3) }
+
+h_var:
+| HVAR                 { ($1,None) }
+| HVAR COLON prop      { ($1,Some $3) }
 
 eq_tuple:
-| HVAR                 { $1 :: [] }
-| HVAR COMMA eq_tuple  { $1 :: $3 }
+| h_var                 { $1 :: [] }
+| h_var COMMA eq_tuple  { $1 :: $3 }
 
 spine:
 | HVAR              { SpineH $1 :: [] }
