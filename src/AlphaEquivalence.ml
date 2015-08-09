@@ -163,17 +163,22 @@ let lookup_hyps (gamma : hyps) (h : var) :(prop option) = (try Some (List.assoc 
 let lookup_check_hyps (gamma : hyps) ((h,a) : hvar) :(prop option) =
   (try let a' = (List.assoc h gamma) in
        (match a with
-        | Some a -> if is_alpha_equiv_prop a a' then Some a else None
+        | Some a -> if is_alpha_equiv_prop a a' then Some a' else None       (*** ASK ABOUT THIS, USING ALPHA-EQUIV HERE!! ***)
         | None   -> Some a')
    with Not_found -> None)
 
-let check_hyp (a : prop option) (a' : prop) :(bool) =
+let lookup_hyps_result (gamma : hyps) ((h,a) : hvar) (p : position * position) :(prop result) =
+  (try let a' = (List.assoc h gamma) in
+       (match a with
+        | Some (q,a) -> if is_alpha_equiv_prop (q,a) a' then Ok a' else Wrong q       (*** ASK ABOUT THIS, USING ALPHA-EQUIV HERE!! ***)
+        | None   -> Ok a')
+   with Not_found -> Wrong p)
+
+
+let check_hyp_result (a : prop option) (a' : prop) :(unit result) =
   match a with
-  | None   -> true
-  | Some a -> is_alpha_equiv_prop a a'
+  | None   -> Ok ()
+  | Some (p,a) -> if is_alpha_equiv_prop (p,a) a' then Ok () else Wrong p
 
-let lookup_ctx_err (psi : ctx) (x : var) (p : position * position) :(tp result) =
+let lookup_ctx_result (psi : ctx) (x : var) (p : position * position) :(tp result) =
   (try Ok (List.assoc x psi) with Not_found -> Wrong p)
-
-let lookup_hyps_err (gamma : hyps) (h : var) (p : position * position) :(prop result) =
-  (try Ok (List.assoc h gamma) with Not_found -> Wrong p)
