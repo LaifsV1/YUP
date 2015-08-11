@@ -30,5 +30,5 @@ let _ =
   (match check_file (([],[]),new_proof) with
    | Ok ()         -> print_endline ("***SUCCESS****")
    | Wrong (p1,p2) ->
-      print_endline ("***FAILURE: (line "^(string_of_int (p1.pos_lnum))^", col "^(string_of_int (p1.pos_cnum - p1.pos_bol))
-                        ^") to ("^"line "^(string_of_int (p2.pos_lnum))^", col "^(string_of_int (p2.pos_cnum - p2.pos_bol))^")"))
+      print_endline ("***FAILURE: (line "^(string_of_int (p1.pos_lnum))^", col "^(string_of_int (p1.pos_cnum - p1.pos_bol + 1))
+                        ^") to ("^"line "^(string_of_int (p2.pos_lnum))^", col "^(string_of_int (p2.pos_cnum - p2.pos_bol + 1))^")"))
