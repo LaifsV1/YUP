@@ -44,3 +44,5 @@ let rec depos_prop ((_,a) : prop) :(npProp) =
   | Eq (t,t',tau) -> Eq (depos_term t, depos_term t', tau)
   | Forall (x,tau,a) -> Forall (x,tau,depos_prop a)
   | Exists (x,tau,a) -> Exists (x,tau,depos_prop a)
+
+let getpos ((p,a) : pos_range * 'a) :(pos_range) = p

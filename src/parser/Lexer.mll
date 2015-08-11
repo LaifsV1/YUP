@@ -23,9 +23,10 @@ rule read =
   | newline        { next_line lexbuf; read lexbuf }
   | '('            { OPEN_PAREN }
   | ')'            { CLOSE_PAREN }
-  | '['            { OPEN_BRACKET }
-  | ']'            { CLOSE_BRACKET }
+(*| '['            { OPEN_BRACKET } *)
+(*| ']'            { CLOSE_BRACKET } *)
   | "[]"           { Nil_TERM }
+  | "nil"          { Nil_TERM }
   | ':'            { COLON }
   | ','            { COMMA }
   | ';'            { SEMICOLON }
@@ -63,6 +64,14 @@ rule read =
   | "induction on" { Induction_PROOF }
   | "case"         { Case_PROOF }
   | "equality on"  { Equality_PROOF }
+  | "we know"      { WeKnow_PROOF }
+  | "Signatures"   { SIGNATURES }
+  | "Definitions"  { DEFINITIONS }
+  | "Theorem"      { THEOREM }
+  | "Statement"    { STATEMENT }
+  | "Proof"        { PROOF }
+  | "QED"          { QED }
+  | "Qed"          { QED }
   | hvar as x      { HVAR x }
   | var as x       { VAR x }
   | eof            { EOF }

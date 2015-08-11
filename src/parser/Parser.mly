@@ -3,8 +3,8 @@
   open Lexing
   
   let parse_failure (msg : string) (pos1 : position) (pos2 : position) = 
-    (Failure ( msg ^ " from (line:"^(string_of_int (pos1.pos_lnum))^" char:"^(string_of_int (pos1.pos_cnum - pos1.pos_bol))^") to ("^
-                            "line:"^(string_of_int (pos2.pos_lnum))^" char:"^(string_of_int (pos2.pos_cnum - pos2.pos_bol))^")") )
+    (Failure ( msg ^ " (line:"^(string_of_int (pos1.pos_lnum))^", col:"^(string_of_int (pos1.pos_cnum - pos1.pos_bol))^") to ("^
+                       "line:"^(string_of_int (pos2.pos_lnum))^", col:"^(string_of_int (pos2.pos_cnum - pos2.pos_bol))^")") )
 %}
 
 /*=================*/
@@ -43,11 +43,17 @@
 %token Induction_PROOF Case_PROOF
 %token Equality_PROOF
 %token Because_PROOF
+%token WeKnow_PROOF
+
+(*** TOPLEVEL-TOKENS ***)
+%token SIGNATURES
+%token DEFINITIONS
+%token THEOREM STATEMENT PROOF QED
 
 (*** OTHER-TOKENS ***)
 %token <AbstractSyntax.var> VAR
 %token <AbstractSyntax.var> HVAR
-%token OPEN_BRACKET CLOSE_BRACKET
+/*%token OPEN_BRACKET CLOSE_BRACKET*/
 %token OPEN_PAREN CLOSE_PAREN
 %token COLON COMMA SEMICOLON DOT PIPE
 %token Eq_OP
@@ -72,6 +78,10 @@
 /*---- START SYMBOLS AND TYPES ----*/
 /*=================================*/
 
+%start file_toplevel
+%type <AbstractSyntax.proof_file> file_toplevel
+%type <AbstractSyntax.toplevel> syntax_toplevel
+
 %start type_toplevel
 %type <AbstractSyntax.tp> complex_type
 %type <AbstractSyntax.tp> type_toplevel
@@ -94,21 +104,37 @@
 /*---- GRAMMAR ----*/
 /*=================*/
 
+(*** TOPLEVEL ***)
+file_toplevel:
+| EOF                           { [] }
+| syntax_toplevel file_toplevel { $1::$2 }
+| error                         { raise (parse_failure "unknown error" $startpos $endpos) }
+
+syntax_toplevel:
+| SIGNATURES COLON signatures   { Sig $3 }
+| DEFINITIONS COLON definitions { Def $3 }
+| THEOREM HVAR COLON STATEMENT COLON prop PROOF COLON proof QED DOT { Theorem ($2,$9,$6) }
+
+signatures:
+| VAR COLON complex_type SEMICOLON signatures { ($1,$3)::$5 }
+| VAR COLON complex_type SEMICOLON            { ($1,$3)::[] }
+
+definitions:
+| HVAR COLON prop SEMICOLON definitions { ($1,$3)::$5 }
+| HVAR COLON prop SEMICOLON             { ($1,$3)::[] }
+
+(*** OTHER TOPLEVELS ***)
 type_toplevel:  
 | complex_type EOF { $1 }
-| error            { raise (parse_failure "parsing type" $startpos $endpos) }
 
 term_toplevel:  
 | term EOF         { $1 }
-| error            { raise (parse_failure "parsing term" $startpos $endpos) }
 
 prop_toplevel:  
 | prop EOF         { $1 }
-| error            { raise (parse_failure "parsing proposition" $startpos $endpos) }
 
 proof_toplevel: 
 | proof EOF        { $1 }
-| error            { raise (parse_failure "parsing proof" $startpos $endpos) }
 
 (*** TYPES ***)
 simple_type:
@@ -120,6 +146,7 @@ complex_type:
 | simple_type                             { $1 }
 | complex_type Arrow_TYPE_OP complex_type { Arrow ($1,$3) }
 | complex_type List_TYPE_OP               { List $1 }
+| error                                   { raise (parse_failure "parsing type" $startpos $endpos) }
 
 (*** TERMS ***)
 simple_term:
@@ -131,8 +158,9 @@ simple_term:
 | OPEN_PAREN term CLOSE_PAREN { ($startpos , $endpos) , snd $2 }
 
 term:
+| error                  { raise (parse_failure "parsing type" $startpos $endpos) }
 | simple_term            { $1 }
-| simple_term term       { ($startpos , $endpos) , App ($1,$2) }
+| term simple_term       { ($startpos , $endpos) , App ($1,$2) }
 | term Cons_TERM_OP term { ($startpos , $endpos) , Cons ($1,$3) }
 | Suc_TERM_OP term       { ($startpos , $endpos) , Suc $2 }
 
@@ -143,6 +171,7 @@ simple_prop:
 | OPEN_PAREN prop CLOSE_PAREN { ($startpos , $endpos) , snd $2 }
 
 prop:
+| error                                       { raise (parse_failure "parsing proposition" $startpos $endpos) }
 | simple_prop                                 { $1 }
 | prop Implies_PROP_OP prop                   { ($startpos , $endpos) , Implies ($1,$3) }
 | prop Or_PROP_OP prop                        { ($startpos , $endpos) , Or ($1,$3) }
@@ -159,7 +188,7 @@ simple_proof:
 | Absurd_PROOF h_var                                                      { ($startpos , $endpos) , FalsityL $2 }
 | By_PROOF h_var                                                          { ($startpos , $endpos) , By $2 }
 | h_var With_PROOF OPEN_PAREN spine CLOSE_PAREN                           { ($startpos , $endpos) , SpineApp ($1,$4) }
-| By_PROOF Equality_PROOF OPEN_PAREN eq_tuple CLOSE_PAREN COLON           { ($startpos , $endpos) , ByEq $4 }
+| By_PROOF Equality_PROOF OPEN_PAREN eq_tuple CLOSE_PAREN                 { ($startpos , $endpos) , ByEq $4 }
 | OPEN_PAREN proof CLOSE_PAREN                                            { $2 }
 
 proof:
@@ -178,16 +207,17 @@ proof:
 | Assume_PROOF VAR COLON complex_type DOT proof                           { ($startpos , $endpos) , ForallR (($2,$4),$6) }
 | Let_PROOF h_var Eq_OP h_var With_PROOF term In_PROOF proof              { ($startpos , $endpos) , ForallL ($2,$4,$6,$8) }
 | By_PROOF Induction_PROOF Nat_TYPE COLON 
-  Case_PROOF Zero_TERM COLON proof SEMICOLON
-  Case_PROOF Suc_TERM_OP VAR COLON h_var DOT proof                        { ($startpos , $endpos) , ByIndNat ($8,($12,$14,$16)) }
-| By_PROOF Induction_PROOF OPEN_BRACKET complex_type CLOSE_BRACKET COLON 
-  Case_PROOF Nil_TERM COLON proof SEMICOLON
+  Case_PROOF Zero_TERM COLON proof 
+  Case_PROOF Suc_TERM_OP VAR COLON h_var DOT proof                        { ($startpos , $endpos) , ByIndNat ($8,($11,$13,$15)) }
+| By_PROOF Induction_PROOF List_TYPE_OP COLON 
+  Case_PROOF Nil_TERM COLON proof 
   Case_PROOF OPEN_PAREN VAR Cons_TERM_OP VAR CLOSE_PAREN
-  COLON h_var DOT proof                                                   { ($startpos , $endpos) , ByIndList ($10,(($14,$16),$19,$21)) }
+  COLON h_var DOT proof                                                   { ($startpos , $endpos) , ByIndList ($8,(($11,$13),$16,$18)) }
 | By_PROOF Induction_PROOF Bool_TYPE COLON 
-  Case_PROOF True_TERM COLON proof SEMICOLON
-  Case_PROOF False_TERM COLON proof                                       { ($startpos , $endpos) , ByIndBool ($8,$13) }
-| HVAR COLON prop Because_PROOF proof DOT proof                           { ($startpos , $endpos) , HypLabel ($1,$3,$5,$7) }
+  Case_PROOF True_TERM COLON proof 
+  Case_PROOF False_TERM COLON proof                                       { ($startpos , $endpos) , ByIndBool ($8,$12) }
+| WeKnow_PROOF HVAR COLON prop Because_PROOF proof DOT proof              { ($startpos , $endpos) , HypLabel ($2,$4,$6,$8) }
+| error                                                                   { raise (parse_failure "parsing proof" $startpos $endpos) }
 
 h_pair:
 | h_var COMMA h_var              { ($1,$3) }

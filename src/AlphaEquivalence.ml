@@ -151,34 +151,26 @@ let is_alpha_equiv_prop (a : prop) (b : prop) :(bool) =
   | Some () -> true
   | None    -> false
 
+let alpha_equiv_prop_result (a : prop) (b : prop) (p : pos_range) :(unit result) =
+  match alpha_equiv_prop a b with
+  | Some () -> return ()
+  | None    -> Wrong p
+
 
 (******************** LOOKUP FUNCTIONS ********************)
 (* lookup function for the context *)
-let lookup_ctx (psi : ctx) (x : var) :(tp option) = (try Some (List.assoc x psi) with Not_found -> None)
+let lookup_ctx_result (psi : ctx) (x : var) (p : pos_range) :(tp result) =
+  (try Ok (List.assoc x psi) with Not_found -> Wrong p)
 
-(* lookup function for the hypotheses *)
-let lookup_hyps (gamma : hyps) (h : var) :(prop option) = (try Some (List.assoc h gamma) with Not_found -> None)
-
-(* lookup check function for the hypotheses *)
-let lookup_check_hyps (gamma : hyps) ((h,a) : hvar) :(prop option) =
+(* lookup function for hypotheses *)
+let lookup_hyps_result (gamma : hyps) ((h,a) : hvar) (p : pos_range) :(prop result) =
   (try let a' = (List.assoc h gamma) in
        (match a with
-        | Some a -> if is_alpha_equiv_prop a a' then Some a' else None       (*** ASK ABOUT THIS, USING ALPHA-EQUIV HERE!! ***)
-        | None   -> Some a')
-   with Not_found -> None)
-
-let lookup_hyps_result (gamma : hyps) ((h,a) : hvar) (p : position * position) :(prop result) =
-  (try let a' = (List.assoc h gamma) in
-       (match a with
-        | Some (q,a) -> if is_alpha_equiv_prop (q,a) a' then Ok a' else Wrong q       (*** ASK ABOUT THIS, USING ALPHA-EQUIV HERE!! ***)
+        | Some a -> if is_alpha_equiv_prop a a' then Ok a' else Wrong (getpos a)
         | None   -> Ok a')
    with Not_found -> Wrong p)
-
 
 let check_hyp_result (a : prop option) (a' : prop) :(unit result) =
   match a with
   | None   -> Ok ()
   | Some (p,a) -> if is_alpha_equiv_prop (p,a) a' then Ok () else Wrong p
-
-let lookup_ctx_result (psi : ctx) (x : var) (p : position * position) :(tp result) =
-  (try Ok (List.assoc x psi) with Not_found -> Wrong p)

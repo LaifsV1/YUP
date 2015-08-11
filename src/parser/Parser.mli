@@ -2,18 +2,23 @@
 type token = 
   | Zero_TERM
   | With_PROOF
+  | WeKnow_PROOF
   | VAR of (AbstractSyntax.var)
   | Truth_PROP
   | True_TERM
   | Therefore_PROOF
   | TT_PROOF
+  | THEOREM
   | Suc_TERM_OP
+  | STATEMENT
+  | SIGNATURES
   | SEMICOLON
   | Right_PROOF
+  | QED
+  | PROOF
   | PIPE
   | Or_PROP_OP
   | OPEN_PAREN
-  | OPEN_BRACKET
   | Nil_TERM
   | Nat_TYPE
   | Match_PROOF
@@ -32,13 +37,13 @@ type token =
   | Eq_OP
   | EOF
   | DOT
+  | DEFINITIONS
   | Cons_TERM_OP
   | Choose_PROOF
   | Case_PROOF
   | COMMA
   | COLON
   | CLOSE_PAREN
-  | CLOSE_BRACKET
   | By_PROOF
   | Bool_TYPE
   | Because_PROOF
@@ -58,4 +63,6 @@ val term_toplevel: (Lexing.lexbuf -> token) -> Lexing.lexbuf -> (AbstractSyntax.
 val prop_toplevel: (Lexing.lexbuf -> token) -> Lexing.lexbuf -> (AbstractSyntax.prop)
 
 val proof_toplevel: (Lexing.lexbuf -> token) -> Lexing.lexbuf -> (AbstractSyntax.pf)
+
+val file_toplevel: (Lexing.lexbuf -> token) -> Lexing.lexbuf -> (AbstractSyntax.proof_file)
 

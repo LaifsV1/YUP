@@ -294,3 +294,8 @@ let cong_entails (e : e_set) ((t,t') : (npTerm * npTerm)) :(unit option) =
   | Some rs -> let (new_t, new_t') = rewrite_reduce rs [] (t,t') in
                          if (new_t = new_t') then Some () else None
   | None              -> failwith ("cong_entails: build_closure failed.")
+
+let cong_entails_result (e : e_set) (t : (npTerm * npTerm)) (p : pos_range) :(unit result) =
+  match cong_entails e t with
+  | Some () -> return ()
+  | None    -> Wrong p

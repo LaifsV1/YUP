@@ -1,6 +1,9 @@
 (* Abstract Syntax Trees - Syntax Grammar *)
 (* author: Yu-Yang Lin *)
 
+(* Position Data *)
+type pos_range = (Lexing.position * Lexing.position)
+
 (* Variables *)
 type var = string
 
@@ -14,7 +17,7 @@ type term' = Var of var                  (*var*)
            | Boolean of bool             (*bool*)
            | Zero | Suc of term          (*nats*)
            | Nil  | Cons of term * term  (*lists*)
-and term = (Lexing.position * Lexing.position) * term'
+and term = pos_range * term'
 
 (* no position term *)
 type npTerm = Var of var                      (*var*)
@@ -31,7 +34,7 @@ type prop' = Truth | Falsity            (*top and bot*)
            | Eq of term * term * tp     (*eq*)
            | Forall of var * tp * prop  (*forall*)
            | Exists of var * tp * prop  (*exists*)
-and prop = (Lexing.position * Lexing.position) * prop'
+and prop = pos_range * prop'
 
 (* no position prop *)
 type npProp = Truth | Falsity              (*top and bot*)
@@ -77,10 +80,10 @@ type pf' = TruthR                                  (*Truth-R,  T : A*) (***SPF**
          | ByEq of hvar list                       (*By Equality [H_i]*)
          | HypLabel of var * prop * pf * pf        (*We know [H] : A because spf , p*)
          | SpineApp of hvar * spine                (*[H] with s*) (***SPF***)
-and pf = (Lexing.position * Lexing.position) * pf'
+and pf = pos_range * pf'
 
 (* Monadic Errors *)
-type 'a result = Ok of 'a | Wrong of (Lexing.position * Lexing.position) (* Wrong takes a single argument for simplicity *)
+type 'a result = Ok of 'a | Wrong of pos_range
 
 (* Monadic Operations *)
 let return x = Ok x
@@ -88,6 +91,7 @@ let (>>=) x f =
   match x with
   | Ok v    -> f v
   | Wrong e -> Wrong e
+let (>>) x y = x >>= (fun _ -> y)
 
 (* TO STRING FUNCTIONS *)
 let rec toString_tp (tau : tp) :(string) =
@@ -107,3 +111,9 @@ let rec toString (t : npTerm) :(string) =
   | Suc n         -> "Suc("^(toString n)^")"
   | Nil           -> "Nil"
   | Cons (x,xs)   -> "Cons("^(toString x)^","^(toString xs)^")"
+
+
+(* TopLevel Syntax *)
+type toplevel = Sig of ctx | Def of hyps | Theorem of var * pf * prop
+type proof_file = toplevel list
+type proof_pair = (ctx * hyps) * proof_file
