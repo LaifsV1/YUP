@@ -1,30 +1,46 @@
+(*author: Yu-Yang Lin*)
+(*signatures are defined as a list separated by semi-colons*)
 Signatures:
-    append : nat list -> nat list -> nat list ; 
+    append : nat list -> nat list -> nat list ;
     rev    : nat list -> nat list ;
+    (*structure of signatures is "name : type"*)
 
-Definitions: 
+(*definitions are defined as a list separated by semi-colons*)
+Definitions:
     [append nil] : forall xs : nat list . append [] xs = xs : nat list ;
     [append ys]  : forall xs : nat list . forall ys : nat list . forall y : nat . append (y::ys) xs = y :: append ys xs : nat list ;
     [rev nil]    : rev [] = [] : nat list ;
     [rev xs]     : forall x : nat . forall xs : nat list . rev (x :: xs) = append (rev xs) (x :: []) : nat list ;
     [rev lemma]  : forall x : nat . forall xs : nat list . rev (append xs (x::[])) = x :: (rev xs) : nat list ;
+    (*all hypotheses must be labelled with square-brackets. i.e. [name]*)
 
-Theorem [involution rev] : 
+(*theorems are like hypotheses, so they must be named with square brackets too*)
+Theorem [involution rev] :
+    (*you need to provide the goal/statement for the theorem, and a proof for it.*)
     Statement: forall xs : nat list . rev (rev xs) = xs : nat list
     Proof:
-	
+        (*proving involution by induction on lists*)
         by induction on list :
-        
-        case [] : 
-		
+
+        (*cases for lists must include nil case first, and then the cons case*)
+        case [] :
+            (*rev (rev []) = rev [] = [], all through [rev nil].*)
+            (*a 'by equality' proof deals with congruence closure so you can skip the steps*)
             by equality on ([rev nil])
-            
+                        (*hypotheses under the Proof: heading can be optionally annotated with their proposition statement*)
+
         case (hd :: tl) : [inductive hypothesis] : rev (rev tl) = tl : nat list .
-            
-            we know [step 1] : (rev (hd::tl) = append (rev tl) (hd::[]) : nat list) 
+                        (*here I'm annotating the inductive hypothesis with its statement*)
+
+            (* we know [H'] : A because ... are labelling statements*)
+            we know [step 1] : (rev (hd::tl) = append (rev tl) (hd::[]) : nat list)
                 because [rev xs] with (hd,tl) .
-            we know [step 2] : (rev (append (rev tl) (hd::[])) = hd :: (rev (rev tl)) : nat list) 
+                (*[H] with (a,b,c,...) are forall and implication elimination statements*)
+                (*these allow you to feed in multiple variables at once*)
+            we know [step 2] : (rev (append (rev tl) (hd::[])) = hd :: (rev (rev tl)) : nat list)
                 because [rev lemma] with (hd,rev tl) .
             by equality on ([step 1], [step 2], [inductive hypothesis])
-			
-    QED.
+                        (*the tool can infer all propositions from the Theorem statement, thus, they are optional*)
+                        (*if you do annotate labels, the proposition must match the expected statement*)
+
+    QED. (*all theorem proofs must end with QED. or Qed*)

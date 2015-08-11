@@ -8,7 +8,7 @@ For details on how the Checker works, read the [notes](/notes.pdf).
 
 To compile the tool, use the provided `src\MakeFile`. The compiled tool will be named `proof_checker.exe` by default.
 
-You will require GNU make, Menhir, and the OCaml batch compiler `ocamlc`.
+You will require GNU make, Menhir, `ocamllex`, and the OCaml batch compiler `ocamlc`.
 
 ### Windows
 

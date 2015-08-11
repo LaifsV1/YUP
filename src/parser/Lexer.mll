@@ -14,11 +14,12 @@
 
 let var = ['a'-'z' 'A'-'Z'] ['_' 'a'-'z' 'A'-'Z' '0'-'9']*
 let hvar = '['['a'-'z' 'A'-'Z'] ['_' ' ' 'a'-'z' 'A'-'Z' '0'-'9']*']'
+let open_comment = "(*"
+let close_comment = "*)"
 let white = [' ' '\t']+
 let newline = '\r' | '\n' | "\r\n"
 
-rule read =
-  parse
+rule read = parse
   | white          { read lexbuf }
   | newline        { next_line lexbuf; read lexbuf }
   | '('            { OPEN_PAREN }
@@ -75,6 +76,9 @@ rule read =
   | hvar as x      { HVAR x }
   | var as x       { VAR x }
   | eof            { EOF }
-
+  | open_comment   { comment lexbuf }
+and comment = parse
+  | close_comment  { read lexbuf }
+  | _              { comment lexbuf }
 {
 }
