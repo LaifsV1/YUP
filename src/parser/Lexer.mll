@@ -5,11 +5,19 @@
   exception SyntaxError of string
 
   let next_line lexbuf =
-  let pos = lexbuf.lex_curr_p in
-  lexbuf.lex_curr_p <-
-    { pos with pos_bol = lexbuf.lex_curr_pos;
-               pos_lnum = pos.pos_lnum + 1
-    }
+    let pos = lexbuf.Lexing.lex_curr_p in
+    lexbuf.Lexing.lex_curr_p <-
+      { pos with
+        Lexing.pos_lnum = pos.Lexing.pos_lnum + 1;
+        Lexing.pos_bol = pos.Lexing.pos_cnum;
+      }
+
+  let lex_failure (msg : string) (pos1 : position) (pos2 : position) =
+    let col1 = (pos1.pos_cnum)-(pos1.pos_bol) in
+    let col2 = (pos2.pos_cnum)-(pos2.pos_bol) in
+    (Failure ( "error lexing "^ msg ^ " (line:"^(string_of_int (pos1.pos_lnum))^", col:"^(string_of_int (col1 + 1))^") to ("^
+                                        "line:"^(string_of_int (pos2.pos_lnum))^", col:"^(string_of_int (col2 + 1))^")") )
+
 }
 
 let var = ['a'-'z' 'A'-'Z'] ['_' 'a'-'z' 'A'-'Z' '0'-'9']*
@@ -77,6 +85,7 @@ rule read = parse
   | var as x       { VAR x }
   | eof            { EOF }
   | open_comment   { comment lexbuf }
+  | _              { raise (lex_failure ("unknown symbol '"^(lexeme lexbuf)^"'") (lexeme_start_p lexbuf) (lexeme_end_p lexbuf)) }
 and comment = parse
   | close_comment  { read lexbuf }
   | _              { comment lexbuf }

@@ -20,15 +20,23 @@ let rec check_file (((types,axioms),proof) : proof_pair) :(unit result) =
 
 let from_file file = Lexing.from_channel (open_in file);;
 let _ =
-  let file = Sys.argv.(1) in
-  print_endline ("***Opening file: " ^ file );
-  print_endline ("***Parsing file");
-  let lexbuf = from_file file in
-  let new_parser = Parser.file_toplevel Lexer.read in
-  let new_proof = new_parser lexbuf in
-  print_endline ("***Checking file");
-  (match check_file (([],[]),new_proof) with
-   | Ok ()         -> print_endline ("***SUCCESS****")
-   | Wrong (p1,p2) ->
-      print_endline ("***FAILURE: (line "^(string_of_int (p1.pos_lnum))^", col "^(string_of_int (p1.pos_cnum - p1.pos_bol + 1))
-                        ^") to ("^"line "^(string_of_int (p2.pos_lnum))^", col "^(string_of_int (p2.pos_cnum - p2.pos_bol + 1))^")"))
+  try
+    print_newline ();
+    let file = Sys.argv.(1) in
+    print_string ("  ***Opening file: " ^ file );
+    let lexbuf = from_file file in
+    print_endline (".....done***" );
+    print_string ("  ***Lexing and Parsing file.....");
+    let new_parser = Parser.file_toplevel Lexer.read in
+    let new_proof = new_parser lexbuf in
+    print_endline (".....done***" );
+    print_string ("  ***Checking file...............");
+    (match check_file (([],[]),new_proof) with
+     | Ok ()         -> print_endline (".....done***" ); print_endline ("  ***VALIDATION SUCCESSFUL****");print_newline ()
+     | Wrong (p1,p2) ->
+        print_endline ("  [VALIDATION FAILURE]: (line "^(string_of_int (p1.pos_lnum))^", col "^(string_of_int (p1.pos_cnum - p1.pos_bol + 1))
+                       ^") to ("^"line "^(string_of_int (p2.pos_lnum))^", col "^(string_of_int (p2.pos_cnum - p2.pos_bol + 1))^")");
+        print_newline ())
+
+  with
+  | Failure msg -> print_newline ();print_endline ("  [FATAL ERROR] "^msg);print_newline ()

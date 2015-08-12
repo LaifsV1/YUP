@@ -1,4 +1,6 @@
 (*author: Yu-Yang Lin*)
+(*this is a proof for the involution of reversing a list*)
+(*in this file, two theorems are proven, involution, and a lemma to prove involution*)
 Signatures:
     append : nat list -> nat list -> nat list ;
     rev    : nat list -> nat list ;
