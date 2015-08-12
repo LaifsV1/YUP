@@ -166,8 +166,8 @@ and _menhir_state =
   open Lexing
   
   let parse_failure (msg : string) (pos1 : position) (pos2 : position) = 
-    (Failure ( msg ^ " (line:"^(string_of_int (pos1.pos_lnum))^", col:"^(string_of_int (pos1.pos_cnum - pos1.pos_bol))^") to ("^
-                       "line:"^(string_of_int (pos2.pos_lnum))^", col:"^(string_of_int (pos2.pos_cnum - pos2.pos_bol))^")") )
+    (Failure ( msg ^ " (line:"^(string_of_int (pos1.pos_lnum))^", col:"^(string_of_int (pos1.pos_cnum - pos1.pos_bol + 1))^") to ("^
+                       "line:"^(string_of_int (pos2.pos_lnum))^", col:"^(string_of_int (pos2.pos_cnum - pos2.pos_bol + 1))^")") )
 let _eRR =
   Error
 

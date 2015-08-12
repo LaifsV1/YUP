@@ -1,0 +1,80 @@
+(*author: Yu-Yang Lin*)
+Signatures:
+    append : nat list -> nat list -> nat list ;
+    rev    : nat list -> nat list ;
+
+Definitions:
+    [append nil] : forall xs : nat list . append [] xs = xs : nat list ;
+    [append xs]  : forall xs : nat list . forall x : nat . forall ys : nat list . append (x::xs) ys = x :: append xs ys : nat list ;
+    [rev nil]    : rev [] = [] : nat list ;
+    [rev xs]     : forall xs : nat list . forall x : nat . rev (x :: xs) = append (rev xs) (x :: []) : nat list ;
+
+Theorem [rev lemma] :
+    Statement: forall xs : nat list . forall x : nat . rev (append xs (x::[])) = x :: (rev xs) : nat list
+    Proof:
+
+        by induction on list :
+
+        case [] :
+
+            assume x : nat .
+
+            we know [prop a] : append [] (x :: []) = (x :: [])                 : nat list because [append nil] with (x::[]).
+            we know [prop b] : rev (x::[]) = append (rev []) (x :: [])         : nat list because [rev xs] with ([],x).
+            we know [prop c] : append (rev []) (x :: []) = append [] (x :: []) : nat list because by equality on ([rev nil]).
+            we know [prop d] : (x :: []) = (x :: (rev []))                     : nat list because by equality on ([rev nil]).
+
+            we know [step 1] : rev (append [] (x::[])) = rev (x::[])               : nat list because by equality on ([prop a]).
+            we know [step 2] : rev (append [] (x::[])) = append (rev []) (x :: []) : nat list because by equality on ([step 1],[prop b]).
+            we know [step 3] : rev (append [] (x::[])) = append [] (x :: [])       : nat list because by equality on ([step 2],[prop c]).
+            we know [step 4] : rev (append [] (x::[])) = (x :: [])                 : nat list because by equality on ([step 3],[prop a]).
+            we know [step 5] : rev (append [] (x::[])) = (x :: (rev []))           : nat list because by equality on ([step 4],[prop d]).
+
+            by [step 5]
+
+        case (hd::tl) : [IH] : forall x : nat . rev (append tl (x::[])) = x :: (rev tl) : nat list .
+
+            assume x : nat .
+
+            we know [prop a] : append (hd::tl) (x::[]) = hd :: (append tl (x::[])) : nat list
+            because [append xs] with (tl,hd,(x::[])).
+            we know [prop b] : rev (hd :: (append tl (x::[]))) = append (rev (append tl (x::[]))) (hd :: [])  : nat list
+            because [rev xs] with (append tl (x::[]),hd).
+            we know [prop c] : append (x :: (rev tl)) (hd :: []) = x :: append (rev tl) (hd :: []) : nat list
+            because [append xs] with ((rev tl),x,(hd :: [])).
+            we know [prop d] : rev (hd::tl) = append (rev tl) (hd :: []) : nat list
+            because [rev xs] with (tl,hd).
+            we know [prop e] : rev (append tl (x::[])) = x :: (rev tl) : nat list
+            because [IH] with (x).
+
+            we know [step 1] : rev (append (hd::tl) (x::[])) = rev (hd :: (append tl (x::[]))) : nat list
+            because by equality on ([prop a]).
+            we know [step 2] : rev (append (hd::tl) (x::[])) = append (rev (append tl (x::[]))) (hd :: []) : nat list
+            because by equality on ([step 1],[prop b]).
+            we know [step 3] : rev (append (hd::tl) (x::[])) = append (x :: (rev tl)) (hd :: []) : nat list
+            because by equality on ([step 2],[prop e]).
+            we know [step 4] : rev (append (hd::tl) (x::[])) = x :: append (rev tl) (hd :: []) : nat list
+            because by equality on ([step 3],[prop c]).
+            we know [step 5] : rev (append (hd::tl) (x::[])) = x :: rev (hd::tl) : nat list
+            because by equality on ([step 4],[prop d]).
+
+            by [step 5]
+    QED.
+
+Theorem [involution rev] :
+    Statement: forall xs : nat list . rev (rev xs) = xs : nat list
+    Proof:
+
+        by induction on list :
+
+        case [] :
+
+            by equality on ([rev nil])
+
+        case (hd :: tl) : [inductive hypothesis] .
+
+            we know [step 1] : rev (hd :: tl) = append (rev tl) (hd::[])               : nat list because [rev xs] with (tl,hd).
+            we know [step 2] : rev (append (rev tl) (hd::[])) = hd :: (rev (rev tl)) : nat list because [rev lemma] with (rev tl,hd) .
+
+            by equality on ([step 1], [step 2], [inductive hypothesis])
+    QED.

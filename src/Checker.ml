@@ -73,6 +73,7 @@ let rec check_spf ((pos,p) : pf) :(unit result) =
   | AndR (p,q)     -> (check_spf p) >> (check_spf q)
   | OrR1 p         -> check_spf p
   | OrR2 q         -> check_spf q
+  | ByEq hs        -> return ()
   | By h           -> return ()
   | SpineApp (h,s) -> return ()
   | _              -> Wrong pos
@@ -158,8 +159,9 @@ let rec check_pf (psi : ctx) (gamma : hyps) ((pf_pos,proof) : pf) ((prop_pos,pro
      let pred_nil  = subs_prop ys (prop_pos,Nil)                                       pred in
      let pred_xs   = subs_prop ys (prop_pos,Var xs)                                    pred in (*inductive hypothesis*)
      let pred_x_xs = subs_prop ys (prop_pos,Cons ((prop_pos,Var x),(prop_pos,Var xs))) pred in
-     (check_pf psi gamma p pred_nil) >>
-       (check_pf ((x,tau)::(xs,List tau)::psi) ((h,pred_xs)::gamma) q pred_x_xs)
+     (check_hyp_result a' pred_xs) >>
+       ((check_pf psi gamma p pred_nil) >>
+          (check_pf ((x,tau)::(xs,List tau)::psi) ((h,pred_xs)::gamma) q pred_x_xs))
   | ByIndList _         , _                                     -> Wrong pf_pos
   | ByIndBool (p,q)     , Forall (b,Bool,pred) ->                                        (*ByInd-Bool*)
      (check_pf psi gamma p (subs_prop b (prop_pos,Boolean true) pred)) >>

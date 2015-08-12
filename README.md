@@ -25,6 +25,6 @@ e.g.
 
 This should output a success message if the proof is valid, or output an error with position data for where the checker failed.
 
-Sample syntax for proof files can be seen in the test proof file found in `testing\test_proof.txt`.
+Sample syntax for proof files can be seen in the test proof file found in `testing\test_proof.txt`. For more sample proofs, check [extra/sample_proofs] (/extra/sample_proofs).
 
 Under [extra](/extra), you can find a syntax highlight mode for notepad++.

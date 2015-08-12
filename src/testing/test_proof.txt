@@ -6,6 +6,7 @@ Signatures:
     (*structure of signatures is "name : type"*)
 
 (*definitions are defined as a list separated by semi-colons*)
+(*these are axioms, and are added into the hypothesis context of the proof file*)
 Definitions:
     [append nil] : forall xs : nat list . append [] xs = xs : nat list ;
     [append ys]  : forall xs : nat list . forall ys : nat list . forall y : nat . append (y::ys) xs = y :: append ys xs : nat list ;
@@ -15,6 +16,7 @@ Definitions:
     (*all hypotheses must be labelled with square-brackets. i.e. [name]*)
 
 (*theorems are like hypotheses, so they must be named with square brackets too*)
+(*instead of adding them directly into the file's hypothesis context, it only does so after validating the proof provided*)
 Theorem [involution rev] :
     (*you need to provide the goal/statement for the theorem, and a proof for it.*)
     Statement: forall xs : nat list . rev (rev xs) = xs : nat list
@@ -29,17 +31,19 @@ Theorem [involution rev] :
             by equality on ([rev nil])
                         (*hypotheses under the Proof: heading can be optionally annotated with their proposition statement*)
 
-        case (hd :: tl) : [inductive hypothesis] : rev (rev tl) = tl : nat list .
+        case (hd :: tl) : [inductive hypothesis] : rev (rev tl) = tl : nat list .              
+                        (*the inductive case must be provided with an inductive hypothesis, which you can name*)
                         (*here I'm annotating the inductive hypothesis with its statement*)
 
-            (* we know [H'] : A because ... are labelling statements*)
-            we know [step 1] : (rev (hd::tl) = append (rev tl) (hd::[]) : nat list)
+            (* we know [H'] : A because ... are labelling statements. For these, a proposition must be provided.*)
+            (* these statements add hypotheses into the proof hypothesis context *)
+            we know [step 1] : rev (hd::tl) = append (rev tl) (hd::[]) : nat list
                 because [rev xs] with (hd,tl) .
                 (*[H] with (a,b,c,...) are forall and implication elimination statements*)
                 (*these allow you to feed in multiple variables at once*)
-            we know [step 2] : (rev (append (rev tl) (hd::[])) = hd :: (rev (rev tl)) : nat list)
+            we know [step 2] : rev (append (rev tl) (hd::[])) = hd :: (rev (rev tl)) : nat list
                 because [rev lemma] with (hd,rev tl) .
-            by equality on ([step 1], [step 2], [inductive hypothesis])
+            by equality on ([step 1], [step 2],[inductive hypothesis])
                         (*the tool can infer all propositions from the Theorem statement, thus, they are optional*)
                         (*if you do annotate labels, the proposition must match the expected statement*)
 
