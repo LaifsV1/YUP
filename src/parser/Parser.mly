@@ -231,11 +231,11 @@ simple_proof:
 | spf_errors                                                              { $1 }
 
 spf_errors:
-| h_var              { raise (parse_failure (pf_of_form "to use hypotheses," (sprintf (proof_sf "By") "[H]" "" "" "" "")) $startpos $endpos) }
+| h_var              { raise (parse_failure (pf_of_form "to use hypotheses," (proof_sf_By "[H]")) $startpos $endpos) }
 | OPEN_PAREN proof   { raise (parse_failure "proof: unmatched '('" $startpos $endpos) }
 | Absurd_PROOF       { raise (parse_failure "proof: missing hypothesis after 'absurd'" $startpos $endpos) }
-| By_PROOF Equality_PROOF { raise (parse_failure (pf_of_form "equality" (sprintf (proof_sf "ByEq") "([A],[B],[C])" "" "" "" "")) $startpos $endpos) }
-| h_var error { raise (parse_failure (pf_of_form "with clause" (sprintf (proof_sf "SpineApp") "[H]" "(a,b,c)" "" "" "")) $startpos $endpos) }
+| By_PROOF Equality_PROOF { raise (parse_failure (pf_of_form "equality" (proof_sf_ByEq "([A],[B],[C])")) $startpos $endpos) }
+| h_var error { raise (parse_failure (pf_of_form "with clause" (proof_sf_SpineApp "[H]" "(a,b,c)")) $startpos $endpos) }
 
 proof:
 | simple_proof                                                            { $1 }
@@ -270,30 +270,30 @@ proof:
 
 proof_errors:
 | Let_PROOF h_pair   
-  error { raise (parse_failure (pf_of_form "and elim" (sprintf (proof_sf "AndL") "[A]" "[B]" "[A and B]" "p" "")) $startpos $endpos) }
+  error { raise (parse_failure (pf_of_form "and elim" (proof_sf_AndL "[A]" "[B]" "[A and B]" "p")) $startpos $endpos) }
 | Match_PROOF h_var  
-  error { raise (parse_failure (pf_of_form "or elim" (sprintf (proof_sf "OrL") "[A or B]" "[A]" "p" "[B]" "q")) $startpos $endpos) }
-| Left_PROOF     { raise (parse_failure (pf_of_form "left or intro" (sprintf (proof_sf "OrR1") "p" "" "" "" "")) $startpos $endpos) }
-| Right_PROOF    { raise (parse_failure (pf_of_form "right or intro" (sprintf (proof_sf "OrR2") "q" "" "" "" "")) $startpos $endpos) }
-| Because_PROOF  { raise (parse_failure (pf_of_form "implies elim" (sprintf (proof_sf "ImpliesL") "p" "[B]" "[A=>B]" "q" "")) $startpos $endpos) }
+  error { raise (parse_failure (pf_of_form "or elim" (proof_sf_OrL "[A or B]" "[A]" "p" "[B]" "q")) $startpos $endpos) }
+| Left_PROOF     { raise (parse_failure (pf_of_form "left or intro" (proof_sf_OrR1 "p")) $startpos $endpos) }
+| Right_PROOF    { raise (parse_failure (pf_of_form "right or intro" (proof_sf_OrR2 "q")) $startpos $endpos) }
+| Because_PROOF  { raise (parse_failure (pf_of_form "implies elim" (proof_sf_ImpliesL "p" "[B]" "[A=>B]" "q")) $startpos $endpos) }
 | Assume_PROOF h_var 
-  error { raise (parse_failure (pf_of_form "implies intro" (sprintf (proof_sf "ImpliesR") "[A]" "p" "" "" "")) $startpos $endpos) }
-| error Therefore_PROOF    { raise (parse_failure (pf_of_form "therefore proof" (sprintf (proof_sf "Therefore") "p" "q" "" "" "")) $startpos $endpos) }
+  error { raise (parse_failure (pf_of_form "implies intro" (proof_sf_ImpliesR "[A]" "p")) $startpos $endpos) }
+| error Therefore_PROOF    { raise (parse_failure (pf_of_form "therefore proof" (proof_sf_Therefore "p" "q")) $startpos $endpos) }
 | Choose_PROOF       
-  error { raise (parse_failure (pf_of_form "exists intro" (sprintf (proof_sf "ExistsR") "t" "p" "" "" "")) $startpos $endpos) }
+  error { raise (parse_failure (pf_of_form "exists intro" (proof_sf_ExistsR "t" "p")) $startpos $endpos) }
 | Let_PROOF VAR      
-  error { raise (parse_failure (pf_of_form "exists elim" (sprintf (proof_sf "ExistsL") "x" "[A]" "[exists x.A]" "p" "")) $startpos $endpos) }
-| Assume_PROOF VAR   error { raise (parse_failure (pf_of_form "forall intro" (sprintf (proof_sf "ForallR") "x" "tau" "p" "" "")) $startpos $endpos) } 
+  error { raise (parse_failure (pf_of_form "exists elim" (proof_sf_ExistsL "x" "[A]" "[exists x.A]" "p")) $startpos $endpos) }
+| Assume_PROOF VAR   error { raise (parse_failure (pf_of_form "forall intro" (proof_sf_ForallR "x" "tau" "p")) $startpos $endpos) } 
 | Let_PROOF h_var Eq_OP         
-  error { raise (parse_failure (pf_of_form "forall elim" (sprintf (proof_sf "ForallL") "[A]" "[forall x.A]" "x" "p" "")) $startpos $endpos) }
+  error { raise (parse_failure (pf_of_form "forall elim" (proof_sf_ForallL "[A]" "[forall x.A]" "x" "p")) $startpos $endpos) }
 | By_PROOF Induction_PROOF Nat_TYPE     
-  error { raise (parse_failure (pf_of_form "induction on nat" (sprintf (proof_sf "ByIndNat") "p" "n" "[IH]" "q" "")) $startpos $endpos) }
+  error { raise (parse_failure (pf_of_form "induction on nat" (proof_sf_ByIndNat "p" "n" "[IH]" "q")) $startpos $endpos) }
 | By_PROOF Induction_PROOF List_TYPE_OP 
-  error { raise (parse_failure (pf_of_form "induction on list" (sprintf (proof_sf "ByIndList") "p" "x" "xs" "[IH]" "q")) $startpos $endpos) }
+  error { raise (parse_failure (pf_of_form "induction on list" (proof_sf_ByIndList "p" "x" "xs" "[IH]" "q")) $startpos $endpos) }
 | By_PROOF Induction_PROOF Bool_TYPE    
-  error { raise (parse_failure (pf_of_form "induction on bool" (sprintf (proof_sf "ByIndBool") "p" "q" "" "" "")) $startpos $endpos) }
+  error { raise (parse_failure (pf_of_form "induction on bool" (proof_sf_ByIndBool "p" "q")) $startpos $endpos) }
 | WeKnow_PROOF       
-  error { raise (parse_failure (pf_of_form "hypothesis labelling" (sprintf (proof_sf "HypLabel") "[A]" "A" "p" "q" "")) $startpos $endpos) } 
+  error { raise (parse_failure (pf_of_form "hypothesis labelling" (proof_sf_HypLabel "[A]" "A" "p" "q")) $startpos $endpos) } 
 | By_PROOF Induction_PROOF error { raise (parse_failure ("missing type for induction, e.g. 'by induction on nat'") $startpos $endpos) }
 | error { raise (parse_failure ("syntax error") $startpos $endpos) }
 

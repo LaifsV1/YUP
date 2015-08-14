@@ -1249,7 +1249,7 @@ and _menhir_error261 : _menhir_env -> ('ttv_tail * _menhir_state * Lexing.positi
     let ((_menhir_stack, _menhir_s, _startpos__1_), _, _, _startpos__2_, _endpos__2_) = _menhir_stack in
     let _startpos = _startpos__1_ in
     let _endpos = _endpos__3_ in
-    let _v : (AbstractSyntax.pf) =         ( raise (parse_failure (pf_of_form "implies intro" (sprintf (proof_sf "ImpliesR") "[A]" "p" "" "" "")) _startpos _endpos) ) in
+    let _v : (AbstractSyntax.pf) =         ( raise (parse_failure (pf_of_form "implies intro" (proof_sf_ImpliesR "[A]" "p")) _startpos _endpos) ) in
     _menhir_goto_proof_errors _menhir_env _menhir_stack _menhir_s _v _startpos _endpos
 
 and _menhir_goto_spine : _menhir_env -> 'ttv_tail -> _menhir_state -> (AbstractSyntax.spine) -> 'ttv_return =
@@ -1332,7 +1332,7 @@ and _menhir_reduce102 : _menhir_env -> 'ttv_tail * _menhir_state * (AbstractSynt
     let (_menhir_stack, _menhir_s, _, _startpos__1_, _endpos__1_) = _menhir_stack in
     let _startpos = _startpos__1_ in
     let _endpos = _endpos__1_ in
-    let _v : (AbstractSyntax.pf) =                      ( raise (parse_failure (pf_of_form "to use hypotheses," (sprintf (proof_sf "By") "[H]" "" "" "" "")) _startpos _endpos) ) in
+    let _v : (AbstractSyntax.pf) =                      ( raise (parse_failure (pf_of_form "to use hypotheses," (proof_sf_By "[H]")) _startpos _endpos) ) in
     _menhir_goto_spf_errors _menhir_env _menhir_stack _menhir_s _v _startpos _endpos
 
 and _menhir_run250 : _menhir_env -> 'ttv_tail * _menhir_state * (AbstractSyntax.hvar) * Lexing.position * Lexing.position -> _menhir_state -> 'ttv_return =
@@ -5710,7 +5710,7 @@ and _menhir_error93 : _menhir_env -> 'ttv_tail * _menhir_state * Lexing.position
     let (_menhir_stack, _menhir_s, _startpos__1_) = _menhir_stack in
     let _startpos = _startpos__1_ in
     let _endpos = _endpos__2_ in
-    let _v : (AbstractSyntax.pf) =         ( raise (parse_failure (pf_of_form "hypothesis labelling" (sprintf (proof_sf "HypLabel") "[A]" "A" "p" "q" "")) _startpos _endpos) ) in
+    let _v : (AbstractSyntax.pf) =         ( raise (parse_failure (pf_of_form "hypothesis labelling" (proof_sf_HypLabel "[A]" "A" "p" "q")) _startpos _endpos) ) in
     _menhir_goto_proof_errors _menhir_env _menhir_stack _menhir_s _v _startpos _endpos
 
 and _menhir_goto_simple_proof : _menhir_env -> 'ttv_tail -> _menhir_state -> (AbstractSyntax.pf) -> Lexing.position -> Lexing.position -> 'ttv_return =
@@ -6077,7 +6077,7 @@ and _menhir_error221 : _menhir_env -> (('ttv_tail * _menhir_state * Lexing.posit
     let (((_menhir_stack, _menhir_s, _startpos__1_), _), _startpos__3_, _endpos__3_) = _menhir_stack in
     let _startpos = _startpos__1_ in
     let _endpos = _endpos__4_ in
-    let _v : (AbstractSyntax.pf) =         ( raise (parse_failure (pf_of_form "induction on nat" (sprintf (proof_sf "ByIndNat") "p" "n" "[IH]" "q" "")) _startpos _endpos) ) in
+    let _v : (AbstractSyntax.pf) =         ( raise (parse_failure (pf_of_form "induction on nat" (proof_sf_ByIndNat "p" "n" "[IH]" "q")) _startpos _endpos) ) in
     _menhir_goto_proof_errors _menhir_env _menhir_stack _menhir_s _v _startpos _endpos
 
 and _menhir_error281 : _menhir_env -> (('ttv_tail * _menhir_state * Lexing.position) * _menhir_state) * Lexing.position * Lexing.position -> 'ttv_return =
@@ -6092,7 +6092,7 @@ and _menhir_error281 : _menhir_env -> (('ttv_tail * _menhir_state * Lexing.posit
     let (((_menhir_stack, _menhir_s, _startpos__1_), _), _startpos__3_, _endpos__3_) = _menhir_stack in
     let _startpos = _startpos__1_ in
     let _endpos = _endpos__4_ in
-    let _v : (AbstractSyntax.pf) =         ( raise (parse_failure (pf_of_form "induction on list" (sprintf (proof_sf "ByIndList") "p" "x" "xs" "[IH]" "q")) _startpos _endpos) ) in
+    let _v : (AbstractSyntax.pf) =         ( raise (parse_failure (pf_of_form "induction on list" (proof_sf_ByIndList "p" "x" "xs" "[IH]" "q")) _startpos _endpos) ) in
     _menhir_goto_proof_errors _menhir_env _menhir_stack _menhir_s _v _startpos _endpos
 
 and _menhir_error298 : _menhir_env -> (('ttv_tail * _menhir_state * Lexing.position) * _menhir_state) * Lexing.position * Lexing.position -> 'ttv_return =
@@ -6107,7 +6107,7 @@ and _menhir_error298 : _menhir_env -> (('ttv_tail * _menhir_state * Lexing.posit
     let (((_menhir_stack, _menhir_s, _startpos__1_), _), _startpos__3_, _endpos__3_) = _menhir_stack in
     let _startpos = _startpos__1_ in
     let _endpos = _endpos__4_ in
-    let _v : (AbstractSyntax.pf) =         ( raise (parse_failure (pf_of_form "induction on bool" (sprintf (proof_sf "ByIndBool") "p" "q" "" "" "")) _startpos _endpos) ) in
+    let _v : (AbstractSyntax.pf) =         ( raise (parse_failure (pf_of_form "induction on bool" (proof_sf_ByIndBool "p" "q")) _startpos _endpos) ) in
     _menhir_goto_proof_errors _menhir_env _menhir_stack _menhir_s _v _startpos _endpos
 
 and _menhir_run103 : _menhir_env -> 'ttv_tail -> _menhir_state -> Lexing.position -> 'ttv_return =
@@ -6475,7 +6475,7 @@ and _menhir_error191 : _menhir_env -> ('ttv_tail * _menhir_state * Lexing.positi
     let ((_menhir_stack, _menhir_s, _startpos__1_), _, _, _startpos__2_, _endpos__2_) = _menhir_stack in
     let _startpos = _startpos__1_ in
     let _endpos = _endpos__3_ in
-    let _v : (AbstractSyntax.pf) =         ( raise (parse_failure (pf_of_form "or elim" (sprintf (proof_sf "OrL") "[A or B]" "[A]" "p" "[B]" "q")) _startpos _endpos) ) in
+    let _v : (AbstractSyntax.pf) =         ( raise (parse_failure (pf_of_form "or elim" (proof_sf_OrL "[A or B]" "[A]" "p" "[B]" "q")) _startpos _endpos) ) in
     _menhir_goto_proof_errors _menhir_env _menhir_stack _menhir_s _v _startpos _endpos
 
 and _menhir_error206 : _menhir_env -> ('ttv_tail * _menhir_state * Lexing.position) * _menhir_state * (AbstractSyntax.var) * Lexing.position * Lexing.position -> 'ttv_return =
@@ -6490,7 +6490,7 @@ and _menhir_error206 : _menhir_env -> ('ttv_tail * _menhir_state * Lexing.positi
     let ((_menhir_stack, _menhir_s, _startpos__1_), _, _, _startpos__2_, _endpos__2_) = _menhir_stack in
     let _startpos = _startpos__1_ in
     let _endpos = _endpos__3_ in
-    let _v : (AbstractSyntax.pf) =         ( raise (parse_failure (pf_of_form "exists elim" (sprintf (proof_sf "ExistsL") "x" "[A]" "[exists x.A]" "p" "")) _startpos _endpos) ) in
+    let _v : (AbstractSyntax.pf) =         ( raise (parse_failure (pf_of_form "exists elim" (proof_sf_ExistsL "x" "[A]" "[exists x.A]" "p")) _startpos _endpos) ) in
     _menhir_goto_proof_errors _menhir_env _menhir_stack _menhir_s _v _startpos _endpos
 
 and _menhir_reduce132 : _menhir_env -> 'ttv_tail * _menhir_state * Lexing.position * Lexing.position -> 'ttv_return =
@@ -6525,7 +6525,7 @@ and _menhir_error342 : _menhir_env -> ('ttv_tail * _menhir_state * Lexing.positi
     let ((_menhir_stack, _menhir_s, _startpos__1_), _, _) = _menhir_stack in
     let _startpos = _startpos__1_ in
     let _endpos = _endpos__3_ in
-    let _v : (AbstractSyntax.pf) =         ( raise (parse_failure (pf_of_form "and elim" (sprintf (proof_sf "AndL") "[A]" "[B]" "[A and B]" "p" "")) _startpos _endpos) ) in
+    let _v : (AbstractSyntax.pf) =         ( raise (parse_failure (pf_of_form "and elim" (proof_sf_AndL "[A]" "[B]" "[A and B]" "p")) _startpos _endpos) ) in
     _menhir_goto_proof_errors _menhir_env _menhir_stack _menhir_s _v _startpos _endpos
 
 and _menhir_reduce19 : _menhir_env -> 'ttv_tail * _menhir_state * (AbstractSyntax.var) * Lexing.position * Lexing.position -> 'ttv_return =
@@ -6553,7 +6553,7 @@ and _menhir_run249 : _menhir_env -> 'ttv_tail * _menhir_state * (AbstractSyntax.
     let (_menhir_stack, _menhir_s, _, _startpos__1_, _endpos__1_) = _menhir_stack in
     let _startpos = _startpos__1_ in
     let _endpos = _endpos__2_ in
-    let _v : (AbstractSyntax.pf) =               ( raise (parse_failure (pf_of_form "with clause" (sprintf (proof_sf "SpineApp") "[H]" "(a,b,c)" "" "" "")) _startpos _endpos) ) in
+    let _v : (AbstractSyntax.pf) =               ( raise (parse_failure (pf_of_form "with clause" (proof_sf_SpineApp "[H]" "(a,b,c)")) _startpos _endpos) ) in
     _menhir_goto_spf_errors _menhir_env _menhir_stack _menhir_s _v _startpos _endpos
 
 and _menhir_reduce116 : _menhir_env -> ('ttv_tail * _menhir_state * Lexing.position) * Lexing.position -> 'ttv_return =
@@ -6647,7 +6647,7 @@ and _menhir_run91 : _menhir_env -> 'ttv_tail -> _menhir_state -> Lexing.position
         let (_menhir_stack, _menhir_s, _startpos__1_, _endpos__1_) = _menhir_stack in
         let _startpos = _startpos__1_ in
         let _endpos = _endpos__2_ in
-        let _v : (AbstractSyntax.pf) =                            ( raise (parse_failure (pf_of_form "therefore proof" (sprintf (proof_sf "Therefore") "p" "q" "" "" "")) _startpos _endpos) ) in
+        let _v : (AbstractSyntax.pf) =                            ( raise (parse_failure (pf_of_form "therefore proof" (proof_sf_Therefore "p" "q")) _startpos _endpos) ) in
         _menhir_goto_proof_errors _menhir_env _menhir_stack _menhir_s _v _startpos _endpos
     | CLOSE_PAREN | COMMA | Case_PROOF | DOT | EOF | PIPE | QED ->
         let _menhir_stack = Obj.magic _menhir_stack in
@@ -7010,7 +7010,7 @@ and _menhir_run100 : _menhir_env -> 'ttv_tail -> _menhir_state -> Lexing.positio
         let (_menhir_stack, _menhir_s, _startpos__1_, _endpos__1_) = _menhir_stack in
         let _startpos = _startpos__1_ in
         let _endpos = _endpos__1_ in
-        let _v : (AbstractSyntax.pf) =                  ( raise (parse_failure (pf_of_form "right or intro" (sprintf (proof_sf "OrR2") "q" "" "" "" "")) _startpos _endpos) ) in
+        let _v : (AbstractSyntax.pf) =                  ( raise (parse_failure (pf_of_form "right or intro" (proof_sf_OrR2 "q")) _startpos _endpos) ) in
         _menhir_goto_proof_errors _menhir_env _menhir_stack _menhir_s _v _startpos _endpos
     | _ ->
         assert (not _menhir_env._menhir_error);
@@ -7216,7 +7216,7 @@ and _menhir_run213 : _menhir_env -> 'ttv_tail -> _menhir_state -> Lexing.positio
         let (_menhir_stack, _menhir_s, _startpos__1_, _endpos__1_) = _menhir_stack in
         let _startpos = _startpos__1_ in
         let _endpos = _endpos__1_ in
-        let _v : (AbstractSyntax.pf) =                  ( raise (parse_failure (pf_of_form "left or intro" (sprintf (proof_sf "OrR1") "p" "" "" "" "")) _startpos _endpos) ) in
+        let _v : (AbstractSyntax.pf) =                  ( raise (parse_failure (pf_of_form "left or intro" (proof_sf_OrR1 "p")) _startpos _endpos) ) in
         _menhir_goto_proof_errors _menhir_env _menhir_stack _menhir_s _v _startpos _endpos
     | _ ->
         assert (not _menhir_env._menhir_error);
@@ -7339,7 +7339,7 @@ and _menhir_run218 : _menhir_env -> 'ttv_tail -> _menhir_state -> Lexing.positio
             let ((_menhir_stack, _menhir_s, _startpos__1_), _, _endpos__2_) = _menhir_stack in
             let _startpos = _startpos__1_ in
             let _endpos = _endpos__2_ in
-            let _v : (AbstractSyntax.pf) =                           ( raise (parse_failure (pf_of_form "equality" (sprintf (proof_sf "ByEq") "([A],[B],[C])" "" "" "" "")) _startpos _endpos) ) in
+            let _v : (AbstractSyntax.pf) =                           ( raise (parse_failure (pf_of_form "equality" (proof_sf_ByEq "([A],[B],[C])")) _startpos _endpos) ) in
             _menhir_goto_spf_errors _menhir_env _menhir_stack _menhir_s _v _startpos _endpos
         | _ ->
             assert (not _menhir_env._menhir_error);
@@ -7648,7 +7648,7 @@ and _menhir_run227 : _menhir_env -> 'ttv_tail -> _menhir_state -> Lexing.positio
     let _endpos__1_ = _endpos in
     let _startpos = _startpos__1_ in
     let _endpos = _endpos__1_ in
-    let _v : (AbstractSyntax.pf) =                  ( raise (parse_failure (pf_of_form "implies elim" (sprintf (proof_sf "ImpliesL") "p" "[B]" "[A=>B]" "q" "")) _startpos _endpos) ) in
+    let _v : (AbstractSyntax.pf) =                  ( raise (parse_failure (pf_of_form "implies elim" (proof_sf_ImpliesL "p" "[B]" "[A=>B]" "q")) _startpos _endpos) ) in
     _menhir_goto_proof_errors _menhir_env _menhir_stack _menhir_s _v _startpos _endpos
 
 and _menhir_run228 : _menhir_env -> 'ttv_tail -> _menhir_state -> Lexing.position -> 'ttv_return =
@@ -7705,7 +7705,7 @@ and _menhir_run228 : _menhir_env -> 'ttv_tail -> _menhir_state -> Lexing.positio
             let ((_menhir_stack, _menhir_s, _startpos__1_), _, _, _startpos__2_, _endpos__2_) = _menhir_stack in
             let _startpos = _startpos__1_ in
             let _endpos = _endpos__3_ in
-            let _v : (AbstractSyntax.pf) =                            ( raise (parse_failure (pf_of_form "forall intro" (sprintf (proof_sf "ForallR") "x" "tau" "p" "" "")) _startpos _endpos) ) in
+            let _v : (AbstractSyntax.pf) =                            ( raise (parse_failure (pf_of_form "forall intro" (proof_sf_ForallR "x" "tau" "p")) _startpos _endpos) ) in
             _menhir_goto_proof_errors _menhir_env _menhir_stack _menhir_s _v _startpos _endpos)
     | _ ->
         assert (not _menhir_env._menhir_error);
@@ -8234,7 +8234,7 @@ and _menhir_errorcase : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return
         let ((_menhir_stack, _menhir_s, _startpos__1_), _, _, _startpos__2_, _endpos__2_) = _menhir_stack in
         let _startpos = _startpos__1_ in
         let _endpos = _endpos__4_ in
-        let _v : (AbstractSyntax.pf) =         ( raise (parse_failure (pf_of_form "forall elim" (sprintf (proof_sf "ForallL") "[A]" "[forall x.A]" "x" "p" "")) _startpos _endpos) ) in
+        let _v : (AbstractSyntax.pf) =         ( raise (parse_failure (pf_of_form "forall elim" (proof_sf_ForallL "[A]" "[forall x.A]" "x" "p")) _startpos _endpos) ) in
         _menhir_goto_proof_errors _menhir_env _menhir_stack _menhir_s _v _startpos _endpos
     | MenhirState326 ->
         let _menhir_stack = Obj.magic _menhir_stack in
@@ -8390,7 +8390,7 @@ and _menhir_errorcase : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return
             let ((_menhir_stack, _menhir_s, _startpos__1_), _, _startpos__2_, _endpos__2_) = _menhir_stack in
             let _startpos = _startpos__1_ in
             let _endpos = _endpos__2_ in
-            let _v : (AbstractSyntax.pf) =         ( raise (parse_failure (pf_of_form "exists intro" (sprintf (proof_sf "ExistsR") "t" "p" "" "" "")) _startpos _endpos) ) in
+            let _v : (AbstractSyntax.pf) =         ( raise (parse_failure (pf_of_form "exists intro" (proof_sf_ExistsR "t" "p")) _startpos _endpos) ) in
             _menhir_goto_proof_errors _menhir_env _menhir_stack _menhir_s _v _startpos _endpos
         | _ ->
             assert (not _menhir_env._menhir_error);

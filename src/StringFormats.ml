@@ -5,64 +5,35 @@ open Lexing
 exception SyntaxError of string * pos_range
 exception ParseError of string * pos_range
 
+(***********************************)
+(*** FORMATED STRING FROM INPUTS ***)
+(***********************************)
+
 let line_sprintf p1 p2 = sprintf "(line %d , col %d) to (line %d , col %d)"
                             (p1.pos_lnum) (p1.pos_cnum - p1.pos_bol + 1) (p2.pos_lnum) (p2.pos_cnum - p2.pos_bol + 1)
 
-(*array that holds all format types, *)
-(*This is done in a horrendous way.*)
-(*I don't like it, but I don't understand format6 types*)
-let proof_arr_sf =                                                             (*extra inputs to work around the type checker*)
-  [| "tt"                                                                      ^^"%s%s%s%s%s"; (*need 5 extra*)
-     "absurd %s"                                                               ^^"%s%s%s%s";   (*need 4 extra*)
-     "@[let ( %s , %s ) = %s in @,%s @]"                                       ^^"%s" ;        (*need 1 extra*)
-     "( %s , %s )"                                                             ^^"%s%s%s";     (*need 3 extra*)
-     "@[match %s with @,| @[%s .@, %s @] @,| @[ %s .@, %s @] @]"               ^^"" ;          (*need 0 extra*)
-     "left %s"                                                                 ^^"%s%s%s%s" ;  (*need 4 extra*)
-     "right %s"                                                                ^^"%s%s%s%s" ;  (*need 4 extra*)
-     "@[%s .@, %s because %s .@, %s @]"                                        ^^"%s" ;        (*need 1 extra*)
-     "@[assume %s .@, %s @]"                                                   ^^"%s%s%s" ;    (*need 3 extra*)
-     "@[by %s @]"                                                              ^^"%s%s%s%s" ;  (*need 4 extra*)
-     "@[%s .@, therefore %s @]"                                                ^^"%s%s%s" ;    (*need 3 extra*)
-     "@[choose %s .@, %s @]"                                                   ^^"%s%s%s" ;    (*need 3 extra*)
-     "@[let %s , %s = %s in @,%s @]"                                           ^^"%s" ;        (*need 1 extra*)
-     "@[assume %s : %s .@, %s @]"                                              ^^"%s%s" ;      (*need 2 extra*)
-     "@[let %s = %s with %s in @,%s @]"                                        ^^"%s" ;        (*need 1 extra*)
-     "@[by induction on nat : @,case zero : %s @,case (suc %s) : %s .@, %s @]" ^^"%s" ;        (*need 1 extra*)
-     "@[by induction on list : @,case [] : %s @,case (%s :: %s) : %s .@, %s @]"^^"" ;          (*need 0 extra*)
-     "@[by induction on bool : @,case true : %s @,case false : %s @]"          ^^"%s%s%s" ;    (*need 3 extra*)
-     "@[by equality on ( %s ) @]"                                              ^^"%s%s%s%s" ;  (*need 4 extra*)
-     "@[we know %s : %s because %s .@, %s"                                     ^^"%s" ;        (*need 1 extra*)
-     "%s with ( %s )"                                                          ^^"%s%s%s" ;    (*need 3 extra*)
-    |]
-
-(*this is useful for printing errors. However, it bypasses the type checker*)
-(*this means you won't know if the code is wrong until each case is tested*)
-(*to use, each format string has 5 inputs, so you must use the first n inputs*)
-(*e.g. sprintf (proof_sf "TruthR") "" "" "" "" "", because TruthR doesn't need any extra input*)
-(*e.g. sprintf (proof_sf "By") "[H]" "" "" "" "", because By needs one input*)
-let proof_sf = function
-  | "TruthR"   -> proof_arr_sf.(0)
-  | "FalsityL" -> proof_arr_sf.(1)
-  | "AndL"     -> proof_arr_sf.(2)
-  | "AndR"     -> proof_arr_sf.(3)
-  | "OrL"      -> proof_arr_sf.(4)
-  | "OrR1"     -> proof_arr_sf.(5)
-  | "OrR2"     -> proof_arr_sf.(6)
-  | "ImpliesL" -> proof_arr_sf.(7)
-  | "ImpliesR" -> proof_arr_sf.(8)
-  | "By"       -> proof_arr_sf.(9)
-  | "Therefore"-> proof_arr_sf.(10)
-  | "ExistsR"  -> proof_arr_sf.(11)
-  | "ExistsL"  -> proof_arr_sf.(12)
-  | "ForallR"  -> proof_arr_sf.(13)
-  | "ForallL"  -> proof_arr_sf.(14)
-  | "ByIndNat" -> proof_arr_sf.(15)
-  | "ByIndList"-> proof_arr_sf.(16)
-  | "ByIndBool"-> proof_arr_sf.(17)
-  | "ByEq"     -> proof_arr_sf.(18)
-  | "HypLabel" -> proof_arr_sf.(19)
-  | "SpineApp" -> proof_arr_sf.(20)
-  | _           -> failwith "proof string format not found"
+(*all proof sprintf formatted functions*)
+let proof_sf_TruthR    = "tt"
+let proof_sf_FalsityL  = sprintf "absurd %s"
+let proof_sf_AndL      = sprintf "@[let ( %s , %s ) = %s in @,%s @]"
+let proof_sf_AndR      = sprintf "( %s , %s )"
+let proof_sf_OrL       = sprintf "@[match %s with @,| @[%s .@, %s @] @,| @[ %s .@, %s @] @]"
+let proof_sf_OrR1      = sprintf "left %s"
+let proof_sf_OrR2      = sprintf "right %s"
+let proof_sf_ImpliesL  = sprintf "@[%s .@, %s because %s .@, %s @]"
+let proof_sf_ImpliesR  = sprintf "@[assume %s .@, %s @]"
+let proof_sf_By        = sprintf "@[by %s @]"
+let proof_sf_Therefore = sprintf "@[%s .@, therefore %s @]"
+let proof_sf_ExistsR   = sprintf "@[choose %s .@, %s @]"
+let proof_sf_ExistsL   = sprintf "@[let %s , %s = %s in @,%s @]"
+let proof_sf_ForallR   = sprintf "@[assume %s : %s .@, %s @]"
+let proof_sf_ForallL   = sprintf "@[let %s = %s with %s in @,%s @]"
+let proof_sf_ByIndNat  = sprintf "@[by induction on nat : @,case zero : %s @,case (suc %s) : %s .@, %s @]"
+let proof_sf_ByIndList = sprintf "@[by induction on list : @,case [] : %s @,case (%s :: %s) : %s .@, %s @]"
+let proof_sf_ByIndBool = sprintf "@[by induction on bool : @,case true : %s @,case false : %s @]"
+let proof_sf_ByEq      = sprintf "@[by equality on ( %s ) @]"
+let proof_sf_HypLabel  = sprintf "@[we know %s : %s because %s .@, %s"
+let proof_sf_SpineApp  = sprintf "%s with ( %s )"
 
 
 (***************************)
@@ -129,42 +100,42 @@ let rec to_string_spine (sp : spine) =
 (*highest number of inputs is 5 so I had to add empty arguments*)
 let rec to_string_pf ((_,p) : pf) :(string) =
   match p with
-  | TruthR                 -> sprintf proof_arr_sf.(0) "" "" "" "" ""
-  | FalsityL h             -> sprintf proof_arr_sf.(1) (to_string_hvar h) "" "" "" ""
-  | AndL ((h1,h2),h,p)     -> sprintf proof_arr_sf.(2) (to_string_hvar h1) (to_string_hvar h2)
-                                                       (to_string_hvar h)
-                                                       (to_string_pf p) ""
-  | AndR (p,q)             -> sprintf proof_arr_sf.(3) (to_string_pf p) (to_string_pf q) "" "" ""
-  | OrL (h,(h1,p),(h2,q))  -> sprintf proof_arr_sf.(4) (to_string_hvar h)
-                                                       (to_string_hvar h1) (to_string_pf p)
-                                                       (to_string_hvar h2) (to_string_pf q)
-  | OrR1 p                 -> sprintf proof_arr_sf.(5) (to_string_pf p) "" "" "" ""
-  | OrR2 q                 -> sprintf proof_arr_sf.(6) (to_string_pf q) "" "" "" ""
-  | ImpliesL (p,(h1,h2),q) -> sprintf proof_arr_sf.(7) (to_string_pf p)
-                                                       (to_string_hvar h1) (to_string_hvar h2)
-                                                       (to_string_pf q) ""
-  | ImpliesR (h,p)         -> sprintf proof_arr_sf.(8) (to_string_hvar h) (to_string_pf p) "" "" ""
-  | By h                   -> sprintf proof_arr_sf.(9) (to_string_hvar h) "" "" "" ""
-  | Therefore (p,a)        -> sprintf proof_arr_sf.(10) (to_string_pf p) (to_string_prop a) "" "" ""
-  | ExistsR (t,p)          -> sprintf proof_arr_sf.(11) (to_string_term t) (to_string_pf p) "" "" ""
-  | ExistsL ((x,h'),h,p)   -> sprintf proof_arr_sf.(12) x (to_string_hvar h')
-                                                        (to_string_hvar h)
-                                                        (to_string_pf p) ""
-  | ForallR ((x,tau),p)    -> sprintf proof_arr_sf.(13) x (to_string_tp tau) (to_string_pf p) "" ""
-  | ForallL (h',h,t,p)     -> sprintf proof_arr_sf.(14) (to_string_hvar h')
-                                                        (to_string_hvar h)
-                                                        (to_string_term t)
-                                                        (to_string_pf p) ""
-  | ByIndNat  (p,(n,h,q))      -> sprintf proof_arr_sf.(15) (to_string_pf p)
-                                                            n (to_string_hvar h) (to_string_pf q) ""
-  | ByIndList (p,((x,xs),h,q)) -> sprintf proof_arr_sf.(16) (to_string_pf p)
-                                                            x xs (to_string_hvar h) (to_string_pf q)
-  | ByIndBool (p,q)            -> sprintf proof_arr_sf.(17) (to_string_pf p) (to_string_pf q) "" "" ""
-  | ByEq hs                    -> sprintf proof_arr_sf.(18) (to_string_hs hs) "" "" "" ""
-  | HypLabel (h,a,p,q)         -> sprintf proof_arr_sf.(19) h (to_string_prop a)
-                                                            (to_string_pf p)
-                                                            (to_string_pf q) ""
-  | SpineApp (h,sp)            -> sprintf proof_arr_sf.(20) (to_string_hvar h) (to_string_spine sp) "" "" ""
+  | TruthR                 -> proof_sf_TruthR
+  | FalsityL h             -> proof_sf_FalsityL (to_string_hvar h)
+  | AndL ((h1,h2),h,p)     -> proof_sf_AndL (to_string_hvar h1) (to_string_hvar h2)
+                                            (to_string_hvar h) (to_string_pf p)
+  | AndR (p,q)             -> proof_sf_AndR (to_string_pf p) (to_string_pf q)
+  | OrL (h,(h1,p),(h2,q))  -> proof_sf_OrL (to_string_hvar h)
+                                           (to_string_hvar h1) (to_string_pf p)
+                                           (to_string_hvar h2) (to_string_pf q)
+  | OrR1 p                 -> proof_sf_OrR1 (to_string_pf p)
+  | OrR2 q                 -> proof_sf_OrR2 (to_string_pf q)
+  | ImpliesL (p,(h1,h2),q) -> proof_sf_ImpliesL (to_string_pf p)
+                                                (to_string_hvar h1) (to_string_hvar h2)
+                                                (to_string_pf q)
+  | ImpliesR (h,p)         -> proof_sf_ImpliesR (to_string_hvar h) (to_string_pf p)
+  | By h                   -> proof_sf_By (to_string_hvar h)
+  | Therefore (p,a)        -> proof_sf_Therefore (to_string_pf p) (to_string_prop a)
+  | ExistsR (t,p)          -> proof_sf_ExistsR (to_string_term t) (to_string_pf p)
+  | ExistsL ((x,h'),h,p)   -> proof_sf_ExistsL x (to_string_hvar h')
+                                               (to_string_hvar h)
+                                               (to_string_pf p)
+  | ForallR ((x,tau),p)    -> proof_sf_ForallR x (to_string_tp tau) (to_string_pf p)
+  | ForallL (h',h,t,p)     -> proof_sf_ForallL (to_string_hvar h')
+                                               (to_string_hvar h)
+                                               (to_string_term t)
+                                               (to_string_pf p)
+  | ByIndNat  (p,(n,h,q))      -> proof_sf_ByIndNat (to_string_pf p)
+                                                    n (to_string_hvar h) (to_string_pf q)
+  | ByIndList (p,((x,xs),h,q)) -> proof_sf_ByIndList (to_string_pf p)
+                                                     x xs (to_string_hvar h) (to_string_pf q)
+  | ByIndBool (p,q)            -> proof_sf_ByIndBool (to_string_pf p) (to_string_pf q)
+  | ByEq hs                    -> proof_sf_ByEq (to_string_hs hs)
+  | HypLabel (h,a,p,q)         -> proof_sf_HypLabel h (to_string_prop a)
+                                                    (to_string_pf p)
+                                                    (to_string_pf q)
+  | SpineApp (h,sp)            -> proof_sf_SpineApp (to_string_hvar h) (to_string_spine sp)
+
 
 (**********************)
 (*** ERROR MESSAGES ***)
