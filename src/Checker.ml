@@ -196,17 +196,18 @@ let rec check_pf (psi : ctx) (gamma : hyps) ((pf_pos,proof) : pf) ((prop_pos,pro
           (check_pf psi gamma q (subs_prop b (prop_pos,Boolean false) pred)))
   | ByIndBool _ , _ -> (encountered_while "evaluating 'by induction on bool'")
                          (Wrong (proof_not_of_type (pf_pos,proof) (prop_pos,prop),pf_pos))
-  | ByEq hs , Eq (t,t',tau) -> (List.fold_right                                          (*ByEquality*)
-                                  (fun h hs ->
-                                   (lookup_hyps_result gamma h pf_pos) >>=
-                                     (function
-                                       | (pos,Eq (x,y,tau')) ->
-                                          (match hs with
-                                           | Ok hs -> return ((depos_term x,depos_term y)::hs)
-                                           | _     -> return [(depos_term x,depos_term y)])
-                                       | d -> Wrong (hyp_not_eq h d tau,pf_pos))) hs
-                                  (Wrong (equality_error,pf_pos))) >>=
-                                 (fun e -> cong_entails_result e (depos_term t,depos_term t') pf_pos)
+  | ByEq hs , Eq (t,t',tau) -> (encountered_while "evaluating 'by equality' clause")     (*ByEquality*)
+                                 ((List.fold_right
+                                     (fun h hs ->
+                                      (lookup_hyps_result gamma h pf_pos) >>=
+                                        (function
+                                          | (pos,Eq (x,y,tau')) ->
+                                             (match hs with
+                                              | Ok hs -> return ((depos_term x,depos_term y)::hs)
+                                              | _     -> return [(depos_term x,depos_term y)])
+                                          | d -> Wrong (hyp_not_eq h d tau,pf_pos))) hs
+                                     (Wrong (equality_error,pf_pos))) >>=
+                                    (fun e -> cong_entails_result e (depos_term t,depos_term t') pf_pos))
   | ByEq hs , _ -> (encountered_while "evaluating 'by equality' clause")
                      (Wrong (proof_not_of_type (pf_pos,proof) (prop_pos,prop),pf_pos))
   | HypLabel (h,a,spf,p) , c -> (encountered_while "evaluating 'we know because' clause")(*HypLabel*)
