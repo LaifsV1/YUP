@@ -18,11 +18,11 @@ let rec infer_term (psi : ctx) ((p,t) : term) :(tp result) =
   match t with
   | Zero      -> return Nat                                                              (*nat-zero*)
   | Suc (t')  -> (check_term psi t' Nat) >> (return Nat)                                 (*nat-suc-n*)
-  | Var x     -> (lookup_ctx_result psi x p) >>= (fun v -> return v)                     (*var*)
+  | Var x     -> lookup_ctx_result psi x p                                               (*var*)
   | App (e,v) -> (infer_term psi e) >>=                                                  (*application*)
                    (function
-                     |(Arrow (a,b)) -> (check_term psi v a) >> (return b)
-                     | _            -> Wrong (term_not_function e v,p))
+                     | Arrow (a,b) -> (check_term psi v a) >> (return b)
+                     | _           -> Wrong (term_not_function e v,p))
   | Boolean (true)  -> return Bool                                                       (*bool-true*)
   | Boolean (false) -> return Bool                                                       (*bool-false*)
   | Cons (v,v')     -> Wrong (inference_error,p)                                         (*list-hd::tl*)
@@ -64,7 +64,7 @@ let rec apply_spine (psi : ctx) (gamma : hyps) (s : spine) ((p,a) : prop) (p : p
                                                         (apply_spine psi gamma s' b p))
   | SpineT t :: s' , Forall (x,tau,a) -> (check_term psi t tau) >>                       (*forall-spine-app*)
                                            (apply_spine psi gamma s' (subs_prop x t a) p)
-  | _              , c                -> Wrong (apply_spine_error (p,a),p)
+  | sarg     :: s' , c                ->  Wrong (apply_spine_error sarg (p,a),p)
 
 
 (******************** CHECK SIMPLE-PROOFS FUNCTION ********************)
@@ -78,7 +78,7 @@ let rec check_spf ((pos,p) : pf) :(unit result) =
   | ByEq hs        -> return ()
   | By h           -> return ()
   | SpineApp (h,s) -> return ()
-  | _              -> Wrong (not_simple_proof (pos,p),pos)
+  | _              -> (Wrong (not_simple_proof (pos,p),pos))
 
 
 (******************** CHECK PROOF FUNCTION ********************)
@@ -86,89 +86,116 @@ let rec check_spf ((pos,p) : pf) :(unit result) =
 let rec check_pf (psi : ctx) (gamma : hyps) ((pf_pos,proof) : pf) ((prop_pos,prop) : prop) :(unit result) =
   match proof , prop with
   | TruthR , Truth -> return ()                                                          (*TruthR*)
-  | TruthR , _     -> Wrong (proof_not_of_type (pf_pos,proof) (prop_pos,prop),pf_pos)
-  | FalsityL h , _ -> (lookup_hyps_result gamma h pf_pos) >>=                            (*FalsityL/Absurd*)
-                        (function
-                          | (pos,Falsity) -> return ()
-                          | c             -> Wrong (hyp_of_type h c "Falsity",pf_pos))
-  | AndR (p,q) , And (a,b)  -> (check_pf psi gamma p a) >>                               (*AndR*)
-                                 (check_pf psi gamma q b)
-  | AndR (p,q) , _          -> Wrong (proof_not_of_type (pf_pos,proof) (prop_pos,prop),pf_pos)
-  | AndL (((h',a'),(h'',b')),h,p) , c -> (lookup_hyps_result gamma h pf_pos) >>=         (*AndL*)
-                                           (function
-                                             | (pos,And (a,b)) ->
-                                                (some_alpha_equiv_result a' a) >>
-                                                  ((some_alpha_equiv_result b' b) >>
-                                                     (check_pf psi ((h',a)::(h'',b)::gamma) p (prop_pos,c)))
-                                             | d -> Wrong (hyp_of_type h d "and elim",pf_pos))
-  | OrR1 p  , Or (a,b)         -> check_pf psi gamma p a                                 (*OrR_1*)
-  | OrR1 p  , _                -> Wrong (proof_not_of_type (pf_pos,proof) (prop_pos,prop),pf_pos)
-  | OrR2 q  , Or (a,b)         -> check_pf psi gamma q b                                 (*OrR_2*)
-  | OrR2 q  , _                -> Wrong (proof_not_of_type (pf_pos,proof) (prop_pos,prop),pf_pos)
-  | OrL (h,((h',a'),p),((h'',b'),q)) , c -> (lookup_hyps_result gamma h pf_pos) >>=      (*OrL*)
+  | TruthR , _     -> (encountered_while "evaluating 'Truth' introduction")
+                        (Wrong (proof_not_of_type (pf_pos,proof) (prop_pos,prop),pf_pos))
+  | FalsityL h , _ -> (encountered_while "evaluating 'Falsity' elimination")             (*FalsityL/Absurd*)
+                        ((lookup_hyps_result gamma h pf_pos) >>=
+                           (function
+                             | (pos,Falsity) -> return ()
+                             | c             -> Wrong (hyp_of_type h c "Falsity",pf_pos)))
+  | AndR (p,q) , And (a,b)  -> (encountered_while "evaluating 'and' introduction")       (*AndR*)
+                                 ((check_pf psi gamma p a) >>
+                                    (check_pf psi gamma q b))
+  | AndR (p,q) , _          -> (encountered_while "evaluating 'and' introduction")
+                                 (Wrong (proof_not_of_type (pf_pos,proof) (prop_pos,prop),pf_pos))
+  | AndL (((h',a'),(h'',b')),h,p) , c -> (encountered_while "evaluating 'and' elimination")
+                                           ((lookup_hyps_result gamma h pf_pos) >>=      (*AndL*)
+                                              (function
+                                                | (pos,And (a,b)) ->
+                                                   (some_alpha_equiv_result a' a) >>
+                                                     ((some_alpha_equiv_result b' b) >>
+                                                        (check_pf psi ((h',a)::(h'',b)::gamma) p (prop_pos,c)))
+                                                | d -> Wrong (hyp_of_type h d "'and' elimination",pf_pos)))
+  | OrR1 p  , Or (a,b)         -> (encountered_while "evaluating 'or-left' introduction")(*OrR_1*)
+                                    (check_pf psi gamma p a)
+  | OrR1 p  , _                -> (encountered_while "evaluating 'or-left' introduction")
+                                    (Wrong (proof_not_of_type (pf_pos,proof) (prop_pos,prop),pf_pos))
+  | OrR2 q  , Or (a,b)         -> (encountered_while "evaluating 'or-right' introduction")
+                                    (check_pf psi gamma q b)                             (*OrR_2*)
+  | OrR2 q  , _                -> (encountered_while "evaluating 'or-right' introduction")
+                                    (Wrong (proof_not_of_type (pf_pos,proof) (prop_pos,prop),pf_pos))
+  | OrL (h,((h',a'),p),((h'',b'),q)) , c -> (encountered_while "evaluating 'or' elimination")
+                                              (lookup_hyps_result gamma h pf_pos) >>=    (*OrL*)
                                               (function
                                                 | (pos,Or (a,b)) ->
                                                    (some_alpha_equiv_result a' a) >>
                                                      ((some_alpha_equiv_result b' b) >>
                                                         ((check_pf psi ((h',a)::gamma) p (prop_pos,c)) >>
                                                            (check_pf psi ((h'',b)::gamma) q (prop_pos,c))))
-                                                | d -> Wrong (hyp_of_type h d "or elim",pf_pos))
-  | ImpliesR ((h,a'),p)   , Implies (a,b) -> (some_alpha_equiv_result a' a) >>           (*ImpliesR*)
-                                               (check_pf psi ((h,a)::gamma) p b)
-  | ImpliesR (h,p)        , _             -> Wrong (proof_not_of_type (pf_pos,proof) (prop_pos,prop),pf_pos)
-  | ImpliesL (p,((h',b'),h),q) , c        -> (lookup_hyps_result gamma h pf_pos) >>=     (*ImpliesL*)
-                                               (function
-                                                 | (pos,Implies (a,b)) ->
-                                                    (some_alpha_equiv_result b' b) >>
-                                                      ((check_pf psi gamma p a) >>
-                                                         (check_pf psi ((h',b)::gamma) q (prop_pos,c)))
-                                                 | d -> Wrong (hyp_of_type h d "=> elim",pf_pos))
-  | By h , b -> (lookup_hyps_result gamma h pf_pos) >>=                                  (*By*)
-                  (fun a -> prop_entails a (prop_pos,b))
-  | Therefore (p,a) , b -> (alpha_equiv_prop_result a (prop_pos,b)) >>                   (*Therefore*)
-                             (check_pf psi gamma p (prop_pos,b))
-  | ExistsR (t,p) , Exists (x,tau,a) -> (check_term psi t tau) >>                        (*ExistsR*)
-                                          (check_pf psi gamma p (subs_prop x t a))
-  | ExistsR _     , _                -> Wrong (proof_not_of_type (pf_pos,proof) (prop_pos,prop),pf_pos)
-  | ExistsL ((y,(h',a')),h,p) , c    -> (lookup_hyps_result gamma h pf_pos) >>=          (*ExistsL*)
-                                          (function
-                                            | (pos,Exists (x,tau,a)) ->
-                                               (some_alpha_equiv_result a' a) >>
-                                                 (check_pf ((y,tau)::psi)
-                                                           ((h',subs_prop x (prop_pos,Var y) a)::gamma)
-                                                           p (prop_pos,c))
-                                            | d -> Wrong (hyp_of_type h d "exists elim",pf_pos))
-  | ForallR ((y,tau),p) , Forall (x,tau',a) -> check_pf ((y,tau)::psi) gamma p           (*ForallR*)
-                                                        (subs_prop x (prop_pos,Var y) a)
-  | ForallR _           , _ -> Wrong (proof_not_of_type (pf_pos,proof) (prop_pos,prop),pf_pos)
-  | ForallL ((h',a'),h,t,p)  , c -> (lookup_hyps_result gamma h pf_pos) >>=
-                                      (function
-                                        | (pos,Forall (x,tau,a)) ->
-                                           (some_alpha_equiv_result a' a) >>
-                                             ((check_term psi t tau) >>
-                                                (check_pf psi ((h',subs_prop x t a)::gamma)
-                                                          p (prop_pos,c)))
-                                        | d -> Wrong (hyp_of_type h d "forall elim",pf_pos))
+                                                | d -> Wrong (hyp_of_type h d "'or' elimination",pf_pos))
+  | ImpliesR ((h,a'),p)   , Implies (a,b) -> (encountered_while "evaluating '=>' introduction")
+                                               ((some_alpha_equiv_result a' a) >>        (*ImpliesR*)
+                                                  (check_pf psi ((h,a)::gamma) p b))
+  | ImpliesR (h,p)        , _             -> (encountered_while "evaluating '=>' introduction")
+                                               (Wrong (proof_not_of_type (pf_pos,proof) (prop_pos,prop),pf_pos))
+  | ImpliesL (p,((h',b'),h),q) , c        -> (encountered_while "evaluating '=>' elimination")
+                                               ((lookup_hyps_result gamma h pf_pos) >>=  (*ImpliesL*)
+                                                  (function
+                                                    | (pos,Implies (a,b)) ->
+                                                       (some_alpha_equiv_result b' b) >>
+                                                         ((check_pf psi gamma p a) >>
+                                                            (check_pf psi ((h',b)::gamma) q (prop_pos,c)))
+                                                    | d -> Wrong (hyp_of_type h d "'=>' elimination",pf_pos)))
+  | By h , b -> (encountered_while "evaluating 'by' clause")                             (*By*)
+                  ((lookup_hyps_result gamma h pf_pos) >>=
+                     (fun a -> prop_entails a (prop_pos,b)))
+  | Therefore (p,a) , b -> (encountered_while "evaluating 'therefore' clause")           (*Therefore*)
+                             ((alpha_equiv_prop_result a (prop_pos,b)) >>
+                                (check_pf psi gamma p (prop_pos,b)))
+  | ExistsR (t,p) , Exists (x,tau,a) -> (encountered_while "evaluating 'exists' introduction")
+                                          ((check_term psi t tau) >>                     (*ExistsR*)
+                                             (check_pf psi gamma p (subs_prop x t a)))
+  | ExistsR _     , _                -> (encountered_while "evaluating 'exists' introduction")
+                                          (Wrong (proof_not_of_type (pf_pos,proof) (prop_pos,prop),pf_pos))
+  | ExistsL ((y,(h',a')),h,p) , c    -> (encountered_while "evaluating 'exists' elimination")
+                                          ((lookup_hyps_result gamma h pf_pos) >>=       (*ExistsL*)
+                                             (function
+                                               | (pos,Exists (x,tau,a)) ->
+                                                  (some_alpha_equiv_result a' a) >>
+                                                    (check_pf ((y,tau)::psi)
+                                                              ((h',subs_prop x (prop_pos,Var y) a)::gamma)
+                                                              p (prop_pos,c))
+                                               | d -> Wrong (hyp_of_type h d "exists elim",pf_pos)))
+  | ForallR ((y,tau),p) , Forall (x,tau',a) -> (encountered_while "evaluating 'forall' introduction")
+                                                 (check_pf ((y,tau)::psi) gamma p        (*ForallR*)
+                                                           (subs_prop x (prop_pos,Var y) a))
+  | ForallR _           , _ -> (encountered_while "evaluating 'forall' introduction")
+                                 (Wrong (proof_not_of_type (pf_pos,proof) (prop_pos,prop),pf_pos))
+  | ForallL ((h',a'),h,t,p)  , c -> (encountered_while "evaluating 'forall' elimination")
+                                      ((lookup_hyps_result gamma h pf_pos) >>=
+                                         (function
+                                           | (pos,Forall (x,tau,a)) ->
+                                              (some_alpha_equiv_result a' a) >>
+                                                ((check_term psi t tau) >>
+                                                   (check_pf psi ((h',subs_prop x t a)::gamma)
+                                                             p (prop_pos,c)))
+                                           | d -> Wrong (hyp_of_type h d "forall elim",pf_pos)))
   | ByIndNat  (p,(n,(h,a'),q)) , Forall (m,Nat,pred) ->                                  (*ByInd-Nat*)
      let pred_0     = subs_prop m (prop_pos,Zero)                 pred in
      let pred_n     = subs_prop m (prop_pos,Var n)                pred in
      let pred_suc_n = subs_prop m (prop_pos,Suc (prop_pos,Var n)) pred in
-     (some_alpha_equiv_result a' pred_n) >>
-       ((check_pf psi gamma p pred_0) >>
-          (check_pf ((n,Nat)::psi) ((h,pred_n)::gamma) q pred_suc_n))
-  | ByIndNat _ , _ -> Wrong (proof_not_of_type (pf_pos,proof) (prop_pos,prop),pf_pos)
+     (encountered_while "evaluating 'by induction on nat'")
+       ((some_alpha_equiv_result a' pred_n) >>
+          ((check_pf psi gamma p pred_0) >>
+             (check_pf ((n,Nat)::psi) ((h,pred_n)::gamma) q pred_suc_n)))
+  | ByIndNat _ , _ -> (encountered_while "evaluating 'by induction on nat'")
+                        (Wrong (proof_not_of_type (pf_pos,proof) (prop_pos,prop),pf_pos))
   | ByIndList (p,((x,xs),(h,a'),q)) , Forall (ys,List tau,pred) ->                       (*ByInd-List*)
      let pred_nil  = subs_prop ys (prop_pos,Nil)                                       pred in
      let pred_xs   = subs_prop ys (prop_pos,Var xs)                                    pred in (*IH*)
      let pred_x_xs = subs_prop ys (prop_pos,Cons ((prop_pos,Var x),(prop_pos,Var xs))) pred in
-     (some_alpha_equiv_result a' pred_xs) >>
-       ((check_pf psi gamma p pred_nil) >>
-          (check_pf ((x,tau)::(xs,List tau)::psi) ((h,pred_xs)::gamma) q pred_x_xs))
-  | ByIndList _ , _ -> Wrong (proof_not_of_type (pf_pos,proof) (prop_pos,prop),pf_pos)
+     (encountered_while "evaluating 'by induction on list'")
+       ((some_alpha_equiv_result a' pred_xs) >>
+          ((check_pf psi gamma p pred_nil) >>
+             (check_pf ((x,tau)::(xs,List tau)::psi) ((h,pred_xs)::gamma) q pred_x_xs)))
+  | ByIndList _ , _ -> (encountered_while "evaluating 'by induction on list'")
+                         (Wrong (proof_not_of_type (pf_pos,proof) (prop_pos,prop),pf_pos))
   | ByIndBool (p,q)     , Forall (b,Bool,pred) ->                                        (*ByInd-Bool*)
-     (check_pf psi gamma p (subs_prop b (prop_pos,Boolean true) pred)) >>
-       (check_pf psi gamma q (subs_prop b (prop_pos,Boolean false) pred))
-  | ByIndBool _ , _ -> Wrong (proof_not_of_type (pf_pos,proof) (prop_pos,prop),pf_pos)
+     (encountered_while "evaluating 'by induction on bool'")
+       ((check_pf psi gamma p (subs_prop b (prop_pos,Boolean true) pred)) >>
+          (check_pf psi gamma q (subs_prop b (prop_pos,Boolean false) pred)))
+  | ByIndBool _ , _ -> (encountered_while "evaluating 'by induction on bool'")
+                         (Wrong (proof_not_of_type (pf_pos,proof) (prop_pos,prop),pf_pos))
   | ByEq hs , Eq (t,t',tau) -> (List.fold_right                                          (*ByEquality*)
                                   (fun h hs ->
                                    (lookup_hyps_result gamma h pf_pos) >>=
@@ -180,11 +207,14 @@ let rec check_pf (psi : ctx) (gamma : hyps) ((pf_pos,proof) : pf) ((prop_pos,pro
                                        | d -> Wrong (hyp_not_eq h d tau,pf_pos))) hs
                                   (Wrong (equality_error,pf_pos))) >>=
                                  (fun e -> cong_entails_result e (depos_term t,depos_term t') pf_pos)
-  | ByEq hs , _ -> Wrong (proof_not_of_type (pf_pos,proof) (prop_pos,prop),pf_pos)
-  | HypLabel (h,a,spf,p) , c -> (check_pf psi gamma spf a) >>                            (*HypLabel*)
-                                  ((check_spf spf) >>
-                                     (check_pf psi ((h,a)::gamma) p (prop_pos,c)))
-  | SpineApp (h,s)       , c -> (lookup_hyps_result gamma h pf_pos) >>=                  (*SpineApp*)
-                                  (fun a ->
-                                   (apply_spine psi gamma s a pf_pos) >>=
-                                     (fun b -> alpha_equiv_prop_result b (prop_pos,c)))
+  | ByEq hs , _ -> (encountered_while "evaluating 'by equality' clause")
+                     (Wrong (proof_not_of_type (pf_pos,proof) (prop_pos,prop),pf_pos))
+  | HypLabel (h,a,spf,p) , c -> (encountered_while "evaluating 'we know because' clause")(*HypLabel*)
+                                  ((check_pf psi gamma spf a) >>
+                                     ((check_spf spf) >>
+                                        (check_pf psi ((h,a)::gamma) p (prop_pos,c))))
+  | SpineApp (h,s)       , c -> (encountered_while "evaluating 'with' clause")           (*SpineApp*)
+                                  ((lookup_hyps_result gamma h pf_pos) >>=
+                                     (fun a ->
+                                      (apply_spine psi gamma s a pf_pos) >>=
+                                        (fun b -> alpha_equiv_prop_result b (prop_pos,c))))

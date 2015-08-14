@@ -142,42 +142,55 @@ let rec to_string_pf ((_,p) : pf) :(string) =
 (**********************)
 
 let alpha_equiv_error (a : prop) (b : prop) :(string) =
-  sprintf "@[propositions @,'%s' and @,'%s' @,are not alpha-equivalent.@]" (to_string_prop a) (to_string_prop b)
+  sprintf "@['%s' @, is not an equivalent proposition to @,'%s'.@]" (to_string_prop a) (to_string_prop b)
 
 let ctx_not_found (x : var) :(string) =
-  sprintf "@[variable @,'%s' @,is not in scope (missing from context).@]" x
+  sprintf "@[Variable @,'%s' @,is not in scope (missing variable).@]" x
 
 let hyp_not_found (h : hvar) :(string) =
-  sprintf "@[hypotehsis @,'%s' @,is not in scope (missing from context).@]" (to_string_hvar h)
+  sprintf "@[Hypotehsis @,'%s' @,is not in scope (missing hypothesis).@]" (to_string_hvar h)
 
 let etails_error ((t,t') : (npTerm * npTerm)) :(string) =
-  sprintf "@[cannot prove term @,'%s' entails term @,'%s' in proof by equality. @,To use 'by equality on eq', 'eq' must be a tuple of hypothesis labels ([A1],[A2],...,[AN]) where every label points at an equality proposition.@]" (to_string_npterm t) (to_string_npterm t')
+  sprintf "@[Could not prove term @,'%s' entails term @,'%s' in proof by equality.@]" (to_string_npterm t) (to_string_npterm t')
 
 let term_not_function (e : term) (v : term) :(string) =
   let e_s = (to_string_term e) in
-  sprintf "@[term @,'%s' is not of type 'a->b' in @,'%s %s', @,you can only apply to functions.@]" e_s e_s (to_string_term v)
+  sprintf "@[Term @,'%s' is not of type 'a->b' in @,'%s %s', @,you can only apply to functions.@]" e_s e_s (to_string_term v)
 
-let inference_error = "you shouldn't have reached this error; attempted to infer non-inferable type."
+let inference_error = "Internal error, you shouldn't have reached this error. Attempted to infer non-inferable type, please contact the maintainer of the checker."
 
 let term_not_of_type (t : term) (tau : tp) :(string) =
-  sprintf "@[term @,'%s' is not of type @,'%s'.@]" (to_string_term t) (to_string_tp tau)
+  sprintf "@[Expected term of type @,'%s', but got term @,'%s' of different type.@]"
+          (to_string_tp tau) (to_string_term t)
 
 let term_of_type (t : term) (tau : tp) (tau' : tp) :(string) =
-  sprintf "@[term @,'%s' is of type @,'%s', not @,'%s'.@]" (to_string_term t) (to_string_tp tau) (to_string_tp tau')
+  sprintf "@[Expected term of type @,'%s', but got term @,'%s' of different type (%s).@]"
+          (to_string_tp tau') (to_string_term t) (to_string_tp tau)
 
-let apply_spine_error (a : prop) :(string) =
-  sprintf "@[error applying spine, @,%s is not a valid element. @,'with' clauses are a form of elimination proof for universal quantifiers and implications. To use '[H] with s', 's' must be a tuple of hypothesis labels (to eliminate implication), or terms (to eliminate universals). Order matters when applying a spine to a hypothesis. e.g. in 'forall x:tau. forall y:tau. x=y : tau', you must eliminate (x,y) in that order.@]" (to_string_prop a)
+let apply_spine_error (sarg : spine_arg) (a : prop) :(string) =
+  match sarg with
+  | SpineH h -> sprintf "@[Expected implication proposition (=>) to use hypothesis '%s' but got a different proposition (%s).@]"
+                        (to_string_hvar h) (to_string_prop a)
+  | SpineT t -> sprintf "@[Expected universal quantifier (forall) to use term '%s' but got a different proposition (%s).@]"
+                        (to_string_term t) (to_string_prop a)
+
 
 let not_simple_proof (p : pf) :(string) =
-  sprintf "@[proof @,%s is not a simple proof, @,you can only use simple proofs when labelling hypotheses. @,To use 'we know [H] because p', 'p' must be of form 'tt', '(p,q)' , 'left p' , 'right q' , 'by equality on (a,b,c)' , 'by [H]' , or '[H] with (a,b,c)'.@]" (to_string_pf p)
+  sprintf "@[Expected proof of form: @,'tt', @,'(p,q)', @,'left p', @,'right q', @,'by equality on (e)', @,'by [H]', or @,'[H] with (s)'; @,but got '%s'.@]" (to_string_pf p)
 
 let proof_not_of_type (p : pf) (a : prop) =
   sprintf "@['%s' is not of type @,'%s', @,proofs must match the proposition being proven.@]" (to_string_pf p) (to_string_prop a)
 
 let hyp_of_type (h : hvar) (a : prop) (c : string) :(string) =
-  sprintf "@['%s' is of type @,'%s', not @,'%s'.@]" (to_string_hvar h) (to_string_prop a) c
+  sprintf "@[Expected hypothesis for '%s', but '%s' points to a different proposition (%s).@]" c (to_string_hvar h) (to_string_prop a)
 
 let hyp_not_eq (h : hvar) (a : prop) (tau : tp) :(string) =
-  hyp_of_type h a (sprintf "(t=t': @,%s)" (to_string_tp tau))
+  hyp_of_type h a (sprintf "t=t': @,%s" (to_string_tp tau))
 
-let equality_error = "@[no hypothesis found in the equality tuple. @,To use 'by equality on eq', 'eq' must be a tuple of hypothesis labels ([A1],[A2],...,[AN]) where every label points at an equality proposition.@]"
+let equality_error = "@[Expected hypothesis in the equality tuple, found none.@]"
+
+let encountered_while (caller : string) (res : 'a result) :('a result) =
+  match res with
+  | Ok a          -> Ok a
+  | Wrong (msg,p) -> let new_msg = sprintf "%s @,Encountered while %s." msg caller
+                     in Wrong (new_msg,p)

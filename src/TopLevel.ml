@@ -44,18 +44,25 @@ let _ =
                         print_newline ();
      | Wrong (msg,(p1,p2)) -> printf ".....[error]***@]";
                         print_newline ();
-                        printf "    @[[VALIDATION FAILURE]: @ @[ %s @] @ %s @] @." msg (line_sprintf p1 p2);
+                        printf "    @[[VALIDATION FAILURE]:@] @.";
+                        printf "@[%s @] @." msg;
+                        printf "    @[%s @] @." (line_sprintf p1 p2);
                         print_newline ())
   with
   | Failure msg -> printf ".....[error]!***@]";
                    print_newline ();
-                   printf "    @[[UNDEFINED-FAILURE ERROR]: @ @[ %s @] @] @." msg ;
-                    print_newline ()
+                   printf "    @[[UNDEFINED-FAILURE ERROR]:@] @.";
+                   printf "    @[%s @] @." msg;
+                   print_newline ()
   | ParseError (msg,(p1,p2)) -> printf ".....[error]***@]";
                               print_newline ();
-                              printf "    @[[PARSE ERROR]: @ @[ %s @] @ %s @] @." msg (line_sprintf p1 p2);
+                              printf "    @[[PARSE ERROR]:@] @.";
+                              printf "@[%s @] @." msg;
+                              printf "    @[%s @] @." (line_sprintf p1 p2);
                               print_newline ()
   | SyntaxError (msg,(p1,p2)) -> printf ".....[error]***@]";
                                print_newline ();
-                               printf "    @[[SYNTAX ERROR]: @ @[ %s @] @ %s @] @. " msg (line_sprintf p1 p2);
+                               printf "    @[[SYNTAX ERROR]:@] @. ";
+                               printf "@[%s @] @." msg;
+                               printf "    @[%s @] @." (line_sprintf p1 p2);
                                print_newline ()
