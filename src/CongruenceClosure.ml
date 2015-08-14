@@ -9,6 +9,8 @@
 
 (* More details in section 8.1 of notes *)
 open AbstractSyntax
+open StringFormats
+open Format
 open Helper
 
   (*NOTE: when debugging, function calls will be listed in the following way:
@@ -159,7 +161,7 @@ let rec ext ((k,e,(cs,ds)) : state) :(state option) =                           
   | Some (ext_t , c) -> let e' = List.map (fun (t,t') -> (discard_expand_replace t  ext_t (Var c),
                                                           discard_expand_replace t' ext_t (Var c))) e
                         in
-                        if not debug then () else print_endline ("ext "^(toString ext_t)^","^c);
+                        if not debug then () else print_endline ("ext "^(to_string_npterm ext_t)^","^c);
                         Some (union_append c k , e' , (cs,union_append (ext_t,c) ds))
 
 let rec sim ((k,e,(cs,ds)) : state) :(state option) =                                    (*Simplification Transition*)
@@ -185,9 +187,9 @@ let rec ori_1 ((k,e,(cs,ds)) : state) :(state option) =                         
   with
   | None                      -> None
   | Some (c,k',(t,Var c'),e') ->
-     if not debug then () else print_endline ("ori_1 "^(toString t)^","^c);
+     if not debug then () else print_endline ("ori_1 "^(to_string_npterm t)^","^c);
      Some (union_append c k',e',(cs,union_append (t,c') ds))
-  | Some (_,_,(t,t'),_)       -> failwith ("ori1: " ^ (toString t) ^ " = " ^ (toString t'))
+  | Some (_,_,(t,t'),_)       -> failwith ("ori1: " ^ (to_string_npterm t) ^ " = " ^ (to_string_npterm t'))
 
 let rec ori_2 ((k,e,(cs,ds)) : state) :(state option) =                                    (*Orientation2 Transition*)
   match slide_find k (fun d -> fun (t,t') ->
@@ -199,7 +201,7 @@ let rec ori_2 ((k,e,(cs,ds)) : state) :(state option) =                         
   | Some (d,k',(Var c,Var d'),e') ->
      if not debug then () else print_endline ("ori_2 "^c^","^d');
      Some (union_append d k',e',(union_append (c,d') cs,ds))
-  | Some (_,_,(t,t'),_)           -> failwith ("ori2: " ^ (toString t) ^ " = " ^ (toString t'))
+  | Some (_,_,(t,t'),_)           -> failwith ("ori2: " ^ (to_string_npterm t) ^ " = " ^ (to_string_npterm t'))
 
 let rec ori_3 ((k,e,(cs,ds)) : state) :(state option) =                                    (*Orientation3 Transition*)
   match slide_find k (fun d -> fun (t,t') ->
@@ -211,7 +213,7 @@ let rec ori_3 ((k,e,(cs,ds)) : state) :(state option) =                         
   | Some (d,k',(Var c,Var d'),e') ->
      if not debug then () else print_endline ("ori_3 "^d'^","^c);
      Some (union_append d k',e',(union_append (d',c) cs,ds))
-  | Some (_,_,(t,t'),_)           -> failwith ("ori3: " ^ (toString t) ^ " = " ^ (toString t'))
+  | Some (_,_,(t,t'),_)           -> failwith ("ori3: " ^ (to_string_npterm t) ^ " = " ^ (to_string_npterm t'))
 
 let rec del ((k,e,r) : state) :(state option) =                                          (*Deletion Transition*)
   match find e (fun (t,t') -> t = t') with
@@ -225,7 +227,7 @@ let rec ded1 ((k,e,(cs,ds)) : state) :(state option) =                          
   with
   | None                    -> None
   | Some ((t',c),(t,d),ds') ->
-     if not debug then () else print_endline ("ded1 ("^c^","^d^") and ("^(toString t)^","^d^")");
+     if not debug then () else print_endline ("ded1 ("^c^","^d^") and ("^(to_string_npterm t)^","^d^")");
      Some (k,union_append (Var c, Var d) e,(cs,union_append (t,d) ds'))
 
 let rec ded2 ((k,e,(cs,ds)) : state) :(state option) =                                   (*Deduction2 Transition*)
@@ -298,4 +300,4 @@ let cong_entails (e : e_set) ((t,t') : (npTerm * npTerm)) :(unit option) =
 let cong_entails_result (e : e_set) (t : (npTerm * npTerm)) (p : pos_range) :(unit result) =
   match cong_entails e t with
   | Some () -> return ()
-  | None    -> Wrong p
+  | None    -> Wrong (etails_error t,p)

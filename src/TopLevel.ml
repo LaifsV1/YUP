@@ -2,8 +2,10 @@
 (* author: Yu-Yang Lin *)
 
 open AbstractSyntax
-open Checker
+open StringFormats
+open Format
 open Lexing
+open Checker
 
 (* TopLevel Functions *)
 let rec check_file (((types,axioms),proof) : proof_pair) :(unit result) =
@@ -23,20 +25,37 @@ let _ =
   try
     print_newline ();
     let file = Sys.argv.(1) in
-    print_string ("  ***Opening file: " ^ file );
+    printf "    @[***Opening file: %s" file;
     let lexbuf = from_file file in
-    print_endline (".....done***" );
-    print_string ("  ***Lexing and Parsing file.....");
+    printf ".....[done]***";
+    close_box ();
+    print_newline ();
+    printf "    @[***Lexing and Parsing file.....";
     let new_parser = Parser.file_toplevel Lexer.read in
     let new_proof = new_parser lexbuf in
-    print_endline (".....done***" );
-    print_string ("  ***Checking file...............");
+    printf ".....[done]*** @]";
+    print_newline ();
+    printf "    @[***Checking file...............";
     (match check_file (([],[]),new_proof) with
-     | Ok ()         -> print_endline (".....done***" ); print_endline ("  ***VALIDATION SUCCESSFUL****");print_newline ()
-     | Wrong (p1,p2) ->
-        print_endline ("  [VALIDATION FAILURE]: (line "^(string_of_int (p1.pos_lnum))^", col "^(string_of_int (p1.pos_cnum - p1.pos_bol + 1))
-                       ^") to ("^"line "^(string_of_int (p2.pos_lnum))^", col "^(string_of_int (p2.pos_cnum - p2.pos_bol + 1))^")");
-        print_newline ())
-
+     | Ok ()         -> printf ".....[done]***@]";
+                        print_newline ();
+                        printf "    @[***VALIDATION SUCCESSFUL****@]";
+                        print_newline ();
+                        print_newline ();
+     | Wrong (msg,(p1,p2)) -> printf ".....[error]***@]";
+                        print_newline ();
+                        printf "    @[[VALIDATION FAILURE]: @ @[ %s @] @ %s @] @." msg (line_sprintf p1 p2);
+                        print_newline ())
   with
-  | Failure msg -> print_newline ();print_endline ("  [FATAL ERROR] "^msg);print_newline ()
+  | Failure msg -> printf ".....[error]!***@]";
+                   print_newline ();
+                   printf "    @[[UNDEFINED-FAILURE ERROR]: @ @[ %s @] @] @." msg ;
+                    print_newline ()
+  | ParseError (msg,(p1,p2)) -> printf ".....[error]***@]";
+                              print_newline ();
+                              printf "    @[[PARSE ERROR]: @ @[ %s @] @ %s @] @." msg (line_sprintf p1 p2);
+                              print_newline ()
+  | SyntaxError (msg,(p1,p2)) -> printf ".....[error]***@]";
+                               print_newline ();
+                               printf "    @[[SYNTAX ERROR]: @ @[ %s @] @ %s @] @. " msg (line_sprintf p1 p2);
+                               print_newline ()

@@ -1,9 +1,8 @@
 # 1 "parser/Lexer.mll"
  
   open Parser
+  open StringFormats
   open Lexing
-
-  exception SyntaxError of string
 
   let next_line lexbuf =
     let pos = lexbuf.Lexing.lex_curr_p in
@@ -14,13 +13,10 @@
       }
 
   let lex_failure (msg : string) (pos1 : position) (pos2 : position) =
-    let col1 = (pos1.pos_cnum)-(pos1.pos_bol) in
-    let col2 = (pos2.pos_cnum)-(pos2.pos_bol) in
-    (Failure ( "error lexing "^ msg ^ " (line:"^(string_of_int (pos1.pos_lnum))^", col:"^(string_of_int (col1 + 1))^") to ("^
-                                        "line:"^(string_of_int (pos2.pos_lnum))^", col:"^(string_of_int (col2 + 1))^")") )
+    SyntaxError (("error lexing "^ msg),(pos1,pos2))
 
 
-# 24 "parser/Lexer.ml"
+# 20 "parser/Lexer.ml"
 let __ocaml_lex_tables = {
   Lexing.lex_base = 
    "\000\000\200\255\202\255\077\000\160\000\235\000\054\001\129\001\
@@ -3334,294 +3330,294 @@ let rec read lexbuf =
 and __ocaml_lex_read_rec lexbuf __ocaml_lex_state =
   match Lexing.engine __ocaml_lex_tables __ocaml_lex_state lexbuf with
       | 0 ->
-# 31 "parser/Lexer.mll"
+# 27 "parser/Lexer.mll"
                    ( read lexbuf )
-# 3340 "parser/Lexer.ml"
+# 3336 "parser/Lexer.ml"
 
   | 1 ->
-# 32 "parser/Lexer.mll"
+# 28 "parser/Lexer.mll"
                    ( next_line lexbuf; read lexbuf )
-# 3345 "parser/Lexer.ml"
+# 3341 "parser/Lexer.ml"
 
   | 2 ->
-# 33 "parser/Lexer.mll"
+# 29 "parser/Lexer.mll"
                    ( OPEN_PAREN )
-# 3350 "parser/Lexer.ml"
+# 3346 "parser/Lexer.ml"
 
   | 3 ->
-# 34 "parser/Lexer.mll"
+# 30 "parser/Lexer.mll"
                    ( CLOSE_PAREN )
-# 3355 "parser/Lexer.ml"
+# 3351 "parser/Lexer.ml"
 
   | 4 ->
-# 37 "parser/Lexer.mll"
+# 33 "parser/Lexer.mll"
                    ( Nil_TERM )
-# 3360 "parser/Lexer.ml"
+# 3356 "parser/Lexer.ml"
 
   | 5 ->
-# 38 "parser/Lexer.mll"
+# 34 "parser/Lexer.mll"
                    ( Nil_TERM )
-# 3365 "parser/Lexer.ml"
+# 3361 "parser/Lexer.ml"
 
   | 6 ->
-# 39 "parser/Lexer.mll"
+# 35 "parser/Lexer.mll"
                    ( COLON )
-# 3370 "parser/Lexer.ml"
+# 3366 "parser/Lexer.ml"
 
   | 7 ->
-# 40 "parser/Lexer.mll"
+# 36 "parser/Lexer.mll"
                    ( COMMA )
-# 3375 "parser/Lexer.ml"
+# 3371 "parser/Lexer.ml"
 
   | 8 ->
-# 41 "parser/Lexer.mll"
+# 37 "parser/Lexer.mll"
                    ( SEMICOLON )
-# 3380 "parser/Lexer.ml"
+# 3376 "parser/Lexer.ml"
 
   | 9 ->
-# 42 "parser/Lexer.mll"
+# 38 "parser/Lexer.mll"
                    ( DOT )
-# 3385 "parser/Lexer.ml"
+# 3381 "parser/Lexer.ml"
 
   | 10 ->
-# 43 "parser/Lexer.mll"
+# 39 "parser/Lexer.mll"
                    ( PIPE )
-# 3390 "parser/Lexer.ml"
+# 3386 "parser/Lexer.ml"
 
   | 11 ->
-# 44 "parser/Lexer.mll"
+# 40 "parser/Lexer.mll"
                    ( Bool_TYPE )
-# 3395 "parser/Lexer.ml"
+# 3391 "parser/Lexer.ml"
 
   | 12 ->
-# 45 "parser/Lexer.mll"
+# 41 "parser/Lexer.mll"
                    ( Nat_TYPE )
-# 3400 "parser/Lexer.ml"
+# 3396 "parser/Lexer.ml"
 
   | 13 ->
-# 46 "parser/Lexer.mll"
+# 42 "parser/Lexer.mll"
                    ( List_TYPE_OP )
-# 3405 "parser/Lexer.ml"
+# 3401 "parser/Lexer.ml"
 
   | 14 ->
-# 47 "parser/Lexer.mll"
+# 43 "parser/Lexer.mll"
                    ( Arrow_TYPE_OP )
-# 3410 "parser/Lexer.ml"
+# 3406 "parser/Lexer.ml"
 
   | 15 ->
-# 48 "parser/Lexer.mll"
+# 44 "parser/Lexer.mll"
                    ( True_TERM )
-# 3415 "parser/Lexer.ml"
+# 3411 "parser/Lexer.ml"
 
   | 16 ->
-# 49 "parser/Lexer.mll"
+# 45 "parser/Lexer.mll"
                    ( False_TERM )
-# 3420 "parser/Lexer.ml"
+# 3416 "parser/Lexer.ml"
 
   | 17 ->
-# 50 "parser/Lexer.mll"
+# 46 "parser/Lexer.mll"
                    ( Zero_TERM )
-# 3425 "parser/Lexer.ml"
+# 3421 "parser/Lexer.ml"
 
   | 18 ->
-# 51 "parser/Lexer.mll"
+# 47 "parser/Lexer.mll"
                    ( Cons_TERM_OP )
-# 3430 "parser/Lexer.ml"
+# 3426 "parser/Lexer.ml"
 
   | 19 ->
-# 52 "parser/Lexer.mll"
+# 48 "parser/Lexer.mll"
                    ( Suc_TERM_OP )
-# 3435 "parser/Lexer.ml"
+# 3431 "parser/Lexer.ml"
 
   | 20 ->
-# 53 "parser/Lexer.mll"
+# 49 "parser/Lexer.mll"
                    ( Truth_PROP )
-# 3440 "parser/Lexer.ml"
+# 3436 "parser/Lexer.ml"
 
   | 21 ->
-# 54 "parser/Lexer.mll"
+# 50 "parser/Lexer.mll"
                    ( Falsity_PROP )
-# 3445 "parser/Lexer.ml"
+# 3441 "parser/Lexer.ml"
 
   | 22 ->
-# 55 "parser/Lexer.mll"
+# 51 "parser/Lexer.mll"
                    ( And_PROP_OP )
-# 3450 "parser/Lexer.ml"
+# 3446 "parser/Lexer.ml"
 
   | 23 ->
-# 56 "parser/Lexer.mll"
+# 52 "parser/Lexer.mll"
                    ( Or_PROP_OP )
-# 3455 "parser/Lexer.ml"
+# 3451 "parser/Lexer.ml"
 
   | 24 ->
-# 57 "parser/Lexer.mll"
+# 53 "parser/Lexer.mll"
                    ( Implies_PROP_OP )
-# 3460 "parser/Lexer.ml"
+# 3456 "parser/Lexer.ml"
 
   | 25 ->
-# 58 "parser/Lexer.mll"
+# 54 "parser/Lexer.mll"
                    ( Eq_OP )
-# 3465 "parser/Lexer.ml"
+# 3461 "parser/Lexer.ml"
 
   | 26 ->
-# 59 "parser/Lexer.mll"
+# 55 "parser/Lexer.mll"
                    ( Forall_PROP )
-# 3470 "parser/Lexer.ml"
+# 3466 "parser/Lexer.ml"
 
   | 27 ->
-# 60 "parser/Lexer.mll"
+# 56 "parser/Lexer.mll"
                    ( Exists_PROP )
-# 3475 "parser/Lexer.ml"
+# 3471 "parser/Lexer.ml"
 
   | 28 ->
-# 61 "parser/Lexer.mll"
+# 57 "parser/Lexer.mll"
                    ( TT_PROOF )
-# 3480 "parser/Lexer.ml"
+# 3476 "parser/Lexer.ml"
 
   | 29 ->
-# 62 "parser/Lexer.mll"
+# 58 "parser/Lexer.mll"
                    ( Absurd_PROOF )
-# 3485 "parser/Lexer.ml"
+# 3481 "parser/Lexer.ml"
 
   | 30 ->
-# 63 "parser/Lexer.mll"
+# 59 "parser/Lexer.mll"
                    ( Let_PROOF )
-# 3490 "parser/Lexer.ml"
+# 3486 "parser/Lexer.ml"
 
   | 31 ->
-# 64 "parser/Lexer.mll"
+# 60 "parser/Lexer.mll"
                    ( In_PROOF )
-# 3495 "parser/Lexer.ml"
+# 3491 "parser/Lexer.ml"
 
   | 32 ->
-# 65 "parser/Lexer.mll"
+# 61 "parser/Lexer.mll"
                    ( Match_PROOF )
-# 3500 "parser/Lexer.ml"
+# 3496 "parser/Lexer.ml"
 
   | 33 ->
-# 66 "parser/Lexer.mll"
+# 62 "parser/Lexer.mll"
                    ( With_PROOF )
-# 3505 "parser/Lexer.ml"
+# 3501 "parser/Lexer.ml"
 
   | 34 ->
-# 67 "parser/Lexer.mll"
+# 63 "parser/Lexer.mll"
                    ( Left_PROOF )
-# 3510 "parser/Lexer.ml"
+# 3506 "parser/Lexer.ml"
 
   | 35 ->
-# 68 "parser/Lexer.mll"
+# 64 "parser/Lexer.mll"
                    ( Right_PROOF )
-# 3515 "parser/Lexer.ml"
+# 3511 "parser/Lexer.ml"
 
   | 36 ->
-# 69 "parser/Lexer.mll"
+# 65 "parser/Lexer.mll"
                    ( Because_PROOF )
-# 3520 "parser/Lexer.ml"
+# 3516 "parser/Lexer.ml"
 
   | 37 ->
-# 70 "parser/Lexer.mll"
+# 66 "parser/Lexer.mll"
                    ( Assume_PROOF )
-# 3525 "parser/Lexer.ml"
+# 3521 "parser/Lexer.ml"
 
   | 38 ->
-# 71 "parser/Lexer.mll"
+# 67 "parser/Lexer.mll"
                    ( By_PROOF )
-# 3530 "parser/Lexer.ml"
+# 3526 "parser/Lexer.ml"
 
   | 39 ->
-# 72 "parser/Lexer.mll"
+# 68 "parser/Lexer.mll"
                    ( Choose_PROOF )
-# 3535 "parser/Lexer.ml"
+# 3531 "parser/Lexer.ml"
 
   | 40 ->
-# 73 "parser/Lexer.mll"
+# 69 "parser/Lexer.mll"
                    ( Induction_PROOF )
-# 3540 "parser/Lexer.ml"
+# 3536 "parser/Lexer.ml"
 
   | 41 ->
-# 74 "parser/Lexer.mll"
+# 70 "parser/Lexer.mll"
                    ( Case_PROOF )
-# 3545 "parser/Lexer.ml"
+# 3541 "parser/Lexer.ml"
 
   | 42 ->
-# 75 "parser/Lexer.mll"
+# 71 "parser/Lexer.mll"
                    ( Equality_PROOF )
-# 3550 "parser/Lexer.ml"
+# 3546 "parser/Lexer.ml"
 
   | 43 ->
-# 76 "parser/Lexer.mll"
+# 72 "parser/Lexer.mll"
                    ( WeKnow_PROOF )
-# 3555 "parser/Lexer.ml"
+# 3551 "parser/Lexer.ml"
 
   | 44 ->
-# 77 "parser/Lexer.mll"
+# 73 "parser/Lexer.mll"
                    ( SIGNATURES )
-# 3560 "parser/Lexer.ml"
+# 3556 "parser/Lexer.ml"
 
   | 45 ->
-# 78 "parser/Lexer.mll"
+# 74 "parser/Lexer.mll"
                    ( DEFINITIONS )
-# 3565 "parser/Lexer.ml"
+# 3561 "parser/Lexer.ml"
 
   | 46 ->
-# 79 "parser/Lexer.mll"
+# 75 "parser/Lexer.mll"
                    ( THEOREM )
-# 3570 "parser/Lexer.ml"
+# 3566 "parser/Lexer.ml"
 
   | 47 ->
-# 80 "parser/Lexer.mll"
+# 76 "parser/Lexer.mll"
                    ( STATEMENT )
-# 3575 "parser/Lexer.ml"
+# 3571 "parser/Lexer.ml"
 
   | 48 ->
-# 81 "parser/Lexer.mll"
+# 77 "parser/Lexer.mll"
                    ( PROOF )
-# 3580 "parser/Lexer.ml"
+# 3576 "parser/Lexer.ml"
 
   | 49 ->
-# 82 "parser/Lexer.mll"
+# 78 "parser/Lexer.mll"
                    ( QED )
-# 3585 "parser/Lexer.ml"
+# 3581 "parser/Lexer.ml"
 
   | 50 ->
-# 83 "parser/Lexer.mll"
+# 79 "parser/Lexer.mll"
                    ( QED )
-# 3590 "parser/Lexer.ml"
+# 3586 "parser/Lexer.ml"
 
   | 51 ->
 let
-# 84 "parser/Lexer.mll"
+# 80 "parser/Lexer.mll"
             x
-# 3596 "parser/Lexer.ml"
+# 3592 "parser/Lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
-# 84 "parser/Lexer.mll"
+# 80 "parser/Lexer.mll"
                    ( HVAR x )
-# 3600 "parser/Lexer.ml"
+# 3596 "parser/Lexer.ml"
 
   | 52 ->
 let
-# 85 "parser/Lexer.mll"
+# 81 "parser/Lexer.mll"
            x
-# 3606 "parser/Lexer.ml"
+# 3602 "parser/Lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
-# 85 "parser/Lexer.mll"
+# 81 "parser/Lexer.mll"
                    ( VAR x )
-# 3610 "parser/Lexer.ml"
+# 3606 "parser/Lexer.ml"
 
   | 53 ->
-# 86 "parser/Lexer.mll"
+# 82 "parser/Lexer.mll"
                    ( EOF )
-# 3615 "parser/Lexer.ml"
+# 3611 "parser/Lexer.ml"
 
   | 54 ->
-# 87 "parser/Lexer.mll"
+# 83 "parser/Lexer.mll"
                    ( comment lexbuf )
-# 3620 "parser/Lexer.ml"
+# 3616 "parser/Lexer.ml"
 
   | 55 ->
-# 88 "parser/Lexer.mll"
+# 84 "parser/Lexer.mll"
                    ( raise (lex_failure ("unknown symbol '"^(lexeme lexbuf)^"'") (lexeme_start_p lexbuf) (lexeme_end_p lexbuf)) )
-# 3625 "parser/Lexer.ml"
+# 3621 "parser/Lexer.ml"
 
   | __ocaml_lex_state -> lexbuf.Lexing.refill_buff lexbuf; 
       __ocaml_lex_read_rec lexbuf __ocaml_lex_state
@@ -3631,21 +3627,21 @@ and comment lexbuf =
 and __ocaml_lex_comment_rec lexbuf __ocaml_lex_state =
   match Lexing.engine __ocaml_lex_tables __ocaml_lex_state lexbuf with
       | 0 ->
-# 90 "parser/Lexer.mll"
+# 86 "parser/Lexer.mll"
                    ( read lexbuf )
-# 3637 "parser/Lexer.ml"
+# 3633 "parser/Lexer.ml"
 
   | 1 ->
-# 91 "parser/Lexer.mll"
+# 87 "parser/Lexer.mll"
                    ( comment lexbuf )
-# 3642 "parser/Lexer.ml"
+# 3638 "parser/Lexer.ml"
 
   | __ocaml_lex_state -> lexbuf.Lexing.refill_buff lexbuf; 
       __ocaml_lex_comment_rec lexbuf __ocaml_lex_state
 
 ;;
 
-# 92 "parser/Lexer.mll"
+# 88 "parser/Lexer.mll"
  
 
-# 3652 "parser/Lexer.ml"
+# 3648 "parser/Lexer.ml"

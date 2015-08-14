@@ -53,6 +53,7 @@ nt11 -> nt24 [ label="" ] ;
 nt11 -> nt29 [ label="" ] ;
 nt12 -> nt9 [ label="" ] ;
 nt12 -> nt12 [ label="" ] ;
+nt12 -> nt25 [ label="" ] ;
 nt13 -> nt24 [ label="" ] ;
 nt13 -> nt25 [ label="" ] ;
 nt14 -> nt30 [ label="" ] ;

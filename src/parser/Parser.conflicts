@@ -1,5 +1,5 @@
 
-** Conflict (shift/reduce) in state 366.
+** Conflict (shift/reduce) in state 371.
 ** Token involved: DOT
 ** This state is reached from proof_toplevel after reading:
 
@@ -12,20 +12,20 @@ proof_toplevel
 proof EOF 
 (?)
 
-** In state 366, looking ahead at DOT, shifting is permitted
+** In state 371, looking ahead at DOT, shifting is permitted
 ** because of the following sub-derivation:
 
 WeKnow_PROOF HVAR COLON prop Because_PROOF proof DOT proof 
                                                      proof . DOT h_var Because_PROOF h_var DOT proof 
 
-** In state 366, looking ahead at DOT, reducing production
+** In state 371, looking ahead at DOT, reducing production
 ** proof -> WeKnow_PROOF HVAR COLON prop Because_PROOF proof DOT proof 
 ** is permitted because of the following sub-derivation:
 
 proof DOT h_var Because_PROOF h_var DOT proof // lookahead token appears
 WeKnow_PROOF HVAR COLON prop Because_PROOF proof DOT proof . 
 
-** Conflict (shift/reduce) in state 363.
+** Conflict (shift/reduce) in state 368.
 ** Token involved: DOT
 ** This state is reached from proof_toplevel after reading:
 
@@ -38,20 +38,20 @@ proof_toplevel
 proof EOF 
 (?)
 
-** In state 363, looking ahead at DOT, reducing production
+** In state 368, looking ahead at DOT, reducing production
 ** proof -> Right_PROOF proof 
 ** is permitted because of the following sub-derivation:
 
 proof DOT h_var Because_PROOF h_var DOT proof // lookahead token appears
 Right_PROOF proof . 
 
-** In state 363, looking ahead at DOT, shifting is permitted
+** In state 368, looking ahead at DOT, shifting is permitted
 ** because of the following sub-derivation:
 
 Right_PROOF proof 
             proof . DOT h_var Because_PROOF h_var DOT proof 
 
-** Conflict (shift/reduce) in state 358.
+** Conflict (shift/reduce) in state 363.
 ** Tokens involved: DOT COMMA CLOSE_PAREN
 ** The following explanations concentrate on token DOT.
 ** This state is reached from proof_toplevel after reading:
@@ -65,13 +65,13 @@ proof_toplevel
 proof EOF 
 (?)
 
-** In state 358, looking ahead at DOT, shifting is permitted
+** In state 363, looking ahead at DOT, shifting is permitted
 ** because of the following sub-derivation:
 
 OPEN_PAREN proof COMMA proof CLOSE_PAREN 
            proof . DOT h_var Because_PROOF h_var DOT proof 
 
-** In state 358, looking ahead at DOT, reducing production
+** In state 363, looking ahead at DOT, reducing production
 ** spf_errors -> OPEN_PAREN proof 
 ** is permitted because of the following sub-derivation:
 
@@ -80,7 +80,7 @@ simple_proof // lookahead token is inherited
 spf_errors // lookahead token is inherited
 OPEN_PAREN proof . 
 
-** Conflict (shift/reduce) in state 357.
+** Conflict (shift/reduce) in state 362.
 ** Token involved: CLOSE_PAREN
 ** This state is reached from proof_toplevel after reading:
 
@@ -94,7 +94,7 @@ proof EOF
 simple_proof 
 (?)
 
-** In state 357, looking ahead at CLOSE_PAREN, reducing production
+** In state 362, looking ahead at CLOSE_PAREN, reducing production
 ** h_var -> HVAR COLON prop 
 ** is permitted because of the following sub-derivation:
 
@@ -104,13 +104,13 @@ OPEN_PAREN proof CLOSE_PAREN // lookahead token appears
            h_var // lookahead token is inherited
            HVAR COLON prop . 
 
-** In state 357, looking ahead at CLOSE_PAREN, shifting is permitted
+** In state 362, looking ahead at CLOSE_PAREN, shifting is permitted
 ** because of the following sub-derivation:
 
 h_var With_PROOF OPEN_PAREN spine CLOSE_PAREN 
 OPEN_PAREN HVAR COLON prop . CLOSE_PAREN 
 
-** Conflict (shift/reduce) in state 354.
+** Conflict (shift/reduce) in state 359.
 ** Token involved: DOT
 ** This state is reached from proof_toplevel after reading:
 
@@ -123,24 +123,50 @@ proof_toplevel
 proof EOF 
 (?)
 
-** In state 354, looking ahead at DOT, reducing production
+** In state 359, looking ahead at DOT, reducing production
 ** proof -> Match_PROOF h_var With_PROOF h_var DOT proof PIPE h_var DOT proof 
 ** is permitted because of the following sub-derivation:
 
 proof DOT h_var Because_PROOF h_var DOT proof // lookahead token appears
 Match_PROOF h_var With_PROOF h_var DOT proof PIPE h_var DOT proof . 
 
-** In state 354, looking ahead at DOT, shifting is permitted
+** In state 359, looking ahead at DOT, shifting is permitted
 ** because of the following sub-derivation:
 
 Match_PROOF h_var With_PROOF h_var DOT proof PIPE h_var DOT proof 
                                                             proof . DOT h_var Because_PROOF h_var DOT proof 
 
-** Conflict (shift/reduce) in state 347.
+** Conflict (shift/reduce) in state 352.
 ** Token involved: DOT
 ** This state is reached from proof_toplevel after reading:
 
 Match_PROOF h_var With_PROOF PIPE h_var DOT proof PIPE h_var DOT proof 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+proof_toplevel 
+proof EOF 
+(?)
+
+** In state 352, looking ahead at DOT, reducing production
+** proof -> Match_PROOF h_var With_PROOF PIPE h_var DOT proof PIPE h_var DOT proof 
+** is permitted because of the following sub-derivation:
+
+proof DOT h_var Because_PROOF h_var DOT proof // lookahead token appears
+Match_PROOF h_var With_PROOF PIPE h_var DOT proof PIPE h_var DOT proof . 
+
+** In state 352, looking ahead at DOT, shifting is permitted
+** because of the following sub-derivation:
+
+Match_PROOF h_var With_PROOF PIPE h_var DOT proof PIPE h_var DOT proof 
+                                                                 proof . DOT h_var Because_PROOF h_var DOT proof 
+
+** Conflict (shift/reduce) in state 347.
+** Token involved: DOT
+** This state is reached from proof_toplevel after reading:
+
+Let_PROOF h_pair Eq_OP h_var In_PROOF proof 
 
 ** The derivations that appear below have the following common factor:
 ** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
@@ -150,45 +176,19 @@ proof EOF
 (?)
 
 ** In state 347, looking ahead at DOT, reducing production
-** proof -> Match_PROOF h_var With_PROOF PIPE h_var DOT proof PIPE h_var DOT proof 
-** is permitted because of the following sub-derivation:
-
-proof DOT h_var Because_PROOF h_var DOT proof // lookahead token appears
-Match_PROOF h_var With_PROOF PIPE h_var DOT proof PIPE h_var DOT proof . 
-
-** In state 347, looking ahead at DOT, shifting is permitted
-** because of the following sub-derivation:
-
-Match_PROOF h_var With_PROOF PIPE h_var DOT proof PIPE h_var DOT proof 
-                                                                 proof . DOT h_var Because_PROOF h_var DOT proof 
-
-** Conflict (shift/reduce) in state 342.
-** Token involved: DOT
-** This state is reached from proof_toplevel after reading:
-
-Let_PROOF h_pair Eq_OP h_var In_PROOF proof 
-
-** The derivations that appear below have the following common factor:
-** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
-
-proof_toplevel 
-proof EOF 
-(?)
-
-** In state 342, looking ahead at DOT, reducing production
 ** proof -> Let_PROOF h_pair Eq_OP h_var In_PROOF proof 
 ** is permitted because of the following sub-derivation:
 
 proof DOT h_var Because_PROOF h_var DOT proof // lookahead token appears
 Let_PROOF h_pair Eq_OP h_var In_PROOF proof . 
 
-** In state 342, looking ahead at DOT, shifting is permitted
+** In state 347, looking ahead at DOT, shifting is permitted
 ** because of the following sub-derivation:
 
 Let_PROOF h_pair Eq_OP h_var In_PROOF proof 
                                       proof . DOT h_var Because_PROOF h_var DOT proof 
 
-** Conflict (shift/reduce) in state 334.
+** Conflict (shift/reduce) in state 339.
 ** Token involved: DOT
 ** This state is reached from proof_toplevel after reading:
 
@@ -201,20 +201,20 @@ proof_toplevel
 proof EOF 
 (?)
 
-** In state 334, looking ahead at DOT, shifting is permitted
+** In state 339, looking ahead at DOT, shifting is permitted
 ** because of the following sub-derivation:
 
 Let_PROOF h_var Eq_OP h_var With_PROOF term In_PROOF proof 
                                                      proof . DOT h_var Because_PROOF h_var DOT proof 
 
-** In state 334, looking ahead at DOT, reducing production
+** In state 339, looking ahead at DOT, reducing production
 ** proof -> Let_PROOF h_var Eq_OP h_var With_PROOF term In_PROOF proof 
 ** is permitted because of the following sub-derivation:
 
 proof DOT h_var Because_PROOF h_var DOT proof // lookahead token appears
 Let_PROOF h_var Eq_OP h_var With_PROOF term In_PROOF proof . 
 
-** Conflict (shift/reduce) in state 315.
+** Conflict (shift/reduce) in state 319.
 ** Token involved: DOT
 ** This state is reached from proof_toplevel after reading:
 
@@ -227,20 +227,20 @@ proof_toplevel
 proof EOF 
 (?)
 
-** In state 315, looking ahead at DOT, shifting is permitted
+** In state 319, looking ahead at DOT, shifting is permitted
 ** because of the following sub-derivation:
 
 Let_PROOF VAR COMMA h_var Eq_OP h_var In_PROOF proof 
                                                proof . DOT h_var Because_PROOF h_var DOT proof 
 
-** In state 315, looking ahead at DOT, reducing production
+** In state 319, looking ahead at DOT, reducing production
 ** proof -> Let_PROOF VAR COMMA h_var Eq_OP h_var In_PROOF proof 
 ** is permitted because of the following sub-derivation:
 
 proof DOT h_var Because_PROOF h_var DOT proof // lookahead token appears
 Let_PROOF VAR COMMA h_var Eq_OP h_var In_PROOF proof . 
 
-** Conflict (shift/reduce) in state 314.
+** Conflict (shift/reduce) in state 318.
 ** Token involved: DOT
 ** This state is reached from proof_toplevel after reading:
 
@@ -253,20 +253,20 @@ proof_toplevel
 proof EOF 
 (?)
 
-** In state 314, looking ahead at DOT, reducing production
+** In state 318, looking ahead at DOT, reducing production
 ** proof -> Left_PROOF proof 
 ** is permitted because of the following sub-derivation:
 
 proof DOT h_var Because_PROOF h_var DOT proof // lookahead token appears
 Left_PROOF proof . 
 
-** In state 314, looking ahead at DOT, shifting is permitted
+** In state 318, looking ahead at DOT, shifting is permitted
 ** because of the following sub-derivation:
 
 Left_PROOF proof 
            proof . DOT h_var Because_PROOF h_var DOT proof 
 
-** Conflict (shift/reduce) in state 313.
+** Conflict (shift/reduce) in state 317.
 ** Token involved: DOT
 ** This state is reached from proof_toplevel after reading:
 
@@ -279,20 +279,20 @@ proof_toplevel
 proof EOF 
 (?)
 
-** In state 313, looking ahead at DOT, shifting is permitted
+** In state 317, looking ahead at DOT, shifting is permitted
 ** because of the following sub-derivation:
 
 Choose_PROOF term DOT proof 
                       proof . DOT h_var Because_PROOF h_var DOT proof 
 
-** In state 313, looking ahead at DOT, reducing production
+** In state 317, looking ahead at DOT, reducing production
 ** proof -> Choose_PROOF term DOT proof 
 ** is permitted because of the following sub-derivation:
 
 proof DOT h_var Because_PROOF h_var DOT proof // lookahead token appears
 Choose_PROOF term DOT proof . 
 
-** Conflict (shift/reduce) in state 304.
+** Conflict (shift/reduce) in state 308.
 ** Token involved: DOT
 ** This state is reached from proof_toplevel after reading:
 
@@ -305,20 +305,20 @@ proof_toplevel
 proof EOF 
 (?)
 
-** In state 304, looking ahead at DOT, shifting is permitted
+** In state 308, looking ahead at DOT, shifting is permitted
 ** because of the following sub-derivation:
 
 By_PROOF Induction_PROOF Bool_TYPE COLON Case_PROOF True_TERM COLON proof Case_PROOF False_TERM COLON proof 
                                                                                                       proof . DOT h_var Because_PROOF h_var DOT proof 
 
-** In state 304, looking ahead at DOT, reducing production
+** In state 308, looking ahead at DOT, reducing production
 ** proof -> By_PROOF Induction_PROOF Bool_TYPE COLON Case_PROOF True_TERM COLON proof Case_PROOF False_TERM COLON proof 
 ** is permitted because of the following sub-derivation:
 
 proof DOT h_var Because_PROOF h_var DOT proof // lookahead token appears
 By_PROOF Induction_PROOF Bool_TYPE COLON Case_PROOF True_TERM COLON proof Case_PROOF False_TERM COLON proof . 
 
-** Conflict (shift/reduce) in state 293.
+** Conflict (shift/reduce) in state 297.
 ** Token involved: DOT
 ** This state is reached from proof_toplevel after reading:
 
@@ -331,20 +331,20 @@ proof_toplevel
 proof EOF 
 (?)
 
-** In state 293, looking ahead at DOT, shifting is permitted
+** In state 297, looking ahead at DOT, shifting is permitted
 ** because of the following sub-derivation:
 
 By_PROOF Induction_PROOF List_TYPE_OP COLON Case_PROOF Nil_TERM COLON proof Case_PROOF OPEN_PAREN VAR Cons_TERM_OP VAR CLOSE_PAREN COLON h_var DOT proof 
                                                                                                                                                    proof . DOT h_var Because_PROOF h_var DOT proof 
 
-** In state 293, looking ahead at DOT, reducing production
+** In state 297, looking ahead at DOT, reducing production
 ** proof -> By_PROOF Induction_PROOF List_TYPE_OP COLON Case_PROOF Nil_TERM COLON proof Case_PROOF OPEN_PAREN VAR Cons_TERM_OP VAR CLOSE_PAREN COLON h_var DOT proof 
 ** is permitted because of the following sub-derivation:
 
 proof DOT h_var Because_PROOF h_var DOT proof // lookahead token appears
 By_PROOF Induction_PROOF List_TYPE_OP COLON Case_PROOF Nil_TERM COLON proof Case_PROOF OPEN_PAREN VAR Cons_TERM_OP VAR CLOSE_PAREN COLON h_var DOT proof . 
 
-** Conflict (shift/reduce) in state 276.
+** Conflict (shift/reduce) in state 280.
 ** Token involved: DOT
 ** This state is reached from proof_toplevel after reading:
 
@@ -357,20 +357,20 @@ proof_toplevel
 proof EOF 
 (?)
 
-** In state 276, looking ahead at DOT, shifting is permitted
+** In state 280, looking ahead at DOT, shifting is permitted
 ** because of the following sub-derivation:
 
 By_PROOF Induction_PROOF Nat_TYPE COLON Case_PROOF Zero_TERM COLON proof Case_PROOF OPEN_PAREN Suc_TERM_OP VAR CLOSE_PAREN COLON h_var DOT proof 
                                                                                                                                            proof . DOT h_var Because_PROOF h_var DOT proof 
 
-** In state 276, looking ahead at DOT, reducing production
+** In state 280, looking ahead at DOT, reducing production
 ** proof -> By_PROOF Induction_PROOF Nat_TYPE COLON Case_PROOF Zero_TERM COLON proof Case_PROOF OPEN_PAREN Suc_TERM_OP VAR CLOSE_PAREN COLON h_var DOT proof 
 ** is permitted because of the following sub-derivation:
 
 proof DOT h_var Because_PROOF h_var DOT proof // lookahead token appears
 By_PROOF Induction_PROOF Nat_TYPE COLON Case_PROOF Zero_TERM COLON proof Case_PROOF OPEN_PAREN Suc_TERM_OP VAR CLOSE_PAREN COLON h_var DOT proof . 
 
-** Conflict (shift/reduce) in state 268.
+** Conflict (shift/reduce) in state 272.
 ** Token involved: DOT
 ** This state is reached from proof_toplevel after reading:
 
@@ -383,20 +383,20 @@ proof_toplevel
 proof EOF 
 (?)
 
-** In state 268, looking ahead at DOT, shifting is permitted
+** In state 272, looking ahead at DOT, shifting is permitted
 ** because of the following sub-derivation:
 
 By_PROOF Induction_PROOF Nat_TYPE COLON Case_PROOF Zero_TERM COLON proof Case_PROOF Suc_TERM_OP VAR COLON h_var DOT proof 
                                                                                                                     proof . DOT h_var Because_PROOF h_var DOT proof 
 
-** In state 268, looking ahead at DOT, reducing production
+** In state 272, looking ahead at DOT, reducing production
 ** proof -> By_PROOF Induction_PROOF Nat_TYPE COLON Case_PROOF Zero_TERM COLON proof Case_PROOF Suc_TERM_OP VAR COLON h_var DOT proof 
 ** is permitted because of the following sub-derivation:
 
 proof DOT h_var Because_PROOF h_var DOT proof // lookahead token appears
 By_PROOF Induction_PROOF Nat_TYPE COLON Case_PROOF Zero_TERM COLON proof Case_PROOF Suc_TERM_OP VAR COLON h_var DOT proof . 
 
-** Conflict (shift/reduce) in state 260.
+** Conflict (shift/reduce) in state 264.
 ** Token involved: DOT
 ** This state is reached from proof_toplevel after reading:
 
@@ -409,24 +409,50 @@ proof_toplevel
 proof EOF 
 (?)
 
-** In state 260, looking ahead at DOT, shifting is permitted
+** In state 264, looking ahead at DOT, shifting is permitted
 ** because of the following sub-derivation:
 
 Assume_PROOF h_var DOT proof 
                        proof . DOT h_var Because_PROOF h_var DOT proof 
 
-** In state 260, looking ahead at DOT, reducing production
+** In state 264, looking ahead at DOT, reducing production
 ** proof -> Assume_PROOF h_var DOT proof 
 ** is permitted because of the following sub-derivation:
 
 proof DOT h_var Because_PROOF h_var DOT proof // lookahead token appears
 Assume_PROOF h_var DOT proof . 
 
-** Conflict (shift/reduce) in state 239.
+** Conflict (shift/reduce) in state 247.
 ** Token involved: DOT
 ** This state is reached from proof_toplevel after reading:
 
 proof DOT h_var Because_PROOF h_var DOT proof 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+proof_toplevel 
+proof EOF 
+(?)
+
+** In state 247, looking ahead at DOT, shifting is permitted
+** because of the following sub-derivation:
+
+proof DOT h_var Because_PROOF h_var DOT proof 
+                                        proof . DOT h_var Because_PROOF h_var DOT proof 
+
+** In state 247, looking ahead at DOT, reducing production
+** proof -> proof DOT h_var Because_PROOF h_var DOT proof 
+** is permitted because of the following sub-derivation:
+
+proof DOT h_var Because_PROOF h_var DOT proof // lookahead token appears
+proof DOT h_var Because_PROOF h_var DOT proof . 
+
+** Conflict (shift/reduce) in state 239.
+** Token involved: DOT
+** This state is reached from proof_toplevel after reading:
+
+Assume_PROOF VAR COLON complex_type DOT proof 
 
 ** The derivations that appear below have the following common factor:
 ** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
@@ -438,43 +464,17 @@ proof EOF
 ** In state 239, looking ahead at DOT, shifting is permitted
 ** because of the following sub-derivation:
 
-proof DOT h_var Because_PROOF h_var DOT proof 
+Assume_PROOF VAR COLON complex_type DOT proof 
                                         proof . DOT h_var Because_PROOF h_var DOT proof 
 
 ** In state 239, looking ahead at DOT, reducing production
-** proof -> proof DOT h_var Because_PROOF h_var DOT proof 
-** is permitted because of the following sub-derivation:
-
-proof DOT h_var Because_PROOF h_var DOT proof // lookahead token appears
-proof DOT h_var Because_PROOF h_var DOT proof . 
-
-** Conflict (shift/reduce) in state 231.
-** Token involved: DOT
-** This state is reached from proof_toplevel after reading:
-
-Assume_PROOF VAR COLON complex_type DOT proof 
-
-** The derivations that appear below have the following common factor:
-** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
-
-proof_toplevel 
-proof EOF 
-(?)
-
-** In state 231, looking ahead at DOT, shifting is permitted
-** because of the following sub-derivation:
-
-Assume_PROOF VAR COLON complex_type DOT proof 
-                                        proof . DOT h_var Because_PROOF h_var DOT proof 
-
-** In state 231, looking ahead at DOT, reducing production
 ** proof -> Assume_PROOF VAR COLON complex_type DOT proof 
 ** is permitted because of the following sub-derivation:
 
 proof DOT h_var Because_PROOF h_var DOT proof // lookahead token appears
 Assume_PROOF VAR COLON complex_type DOT proof . 
 
-** Conflict (reduce/reduce) in state 209.
+** Conflict (reduce/reduce) in state 215.
 ** Token involved: DOT
 ** This state is reached from proof_toplevel after reading:
 
@@ -487,7 +487,7 @@ proof_toplevel
 proof EOF 
 (?)
 
-** In state 209, looking ahead at DOT, reducing production
+** In state 215, looking ahead at DOT, reducing production
 ** proof_errors -> Choose_PROOF error 
 ** is permitted because of the following sub-derivation:
 
@@ -495,7 +495,7 @@ proof DOT h_var Because_PROOF h_var DOT proof // lookahead token appears
 proof_errors // lookahead token is inherited
 Choose_PROOF error . 
 
-** In state 209, looking ahead at DOT, reducing production
+** In state 215, looking ahead at DOT, reducing production
 ** term_errors -> error 
 ** is permitted because of the following sub-derivation:
 
@@ -503,7 +503,7 @@ Choose_PROOF term DOT proof // lookahead token appears
              term_errors // lookahead token is inherited
              error . 
 
-** Conflict (shift/reduce) in state 204.
+** Conflict (shift/reduce) in state 187.
 ** Tokens involved: Or_PROP_OP Implies_PROP_OP CLOSE_PAREN And_PROP_OP
 ** The following explanations concentrate on token Or_PROP_OP.
 ** This state is reached from proof_toplevel after reading:
@@ -520,14 +520,14 @@ h_var With_PROOF OPEN_PAREN spine CLOSE_PAREN
 HVAR COLON prop 
            (?)
 
-** In state 204, looking ahead at Or_PROP_OP, shifting is permitted
+** In state 187, looking ahead at Or_PROP_OP, shifting is permitted
 ** because of the following sub-derivation:
 
 simple_prop 
 OPEN_PAREN prop CLOSE_PAREN 
            prop . Or_PROP_OP prop 
 
-** In state 204, looking ahead at Or_PROP_OP, reducing production
+** In state 187, looking ahead at Or_PROP_OP, reducing production
 ** prop_errors -> OPEN_PAREN prop 
 ** is permitted because of the following sub-derivation:
 
@@ -535,7 +535,7 @@ prop Or_PROP_OP prop // lookahead token appears
 prop_errors // lookahead token is inherited
 OPEN_PAREN prop . 
 
-** Conflict (shift/reduce) in state 200.
+** Conflict (shift/reduce) in state 183.
 ** Token involved: CLOSE_PAREN
 ** This state is reached from proof_toplevel after reading:
 
@@ -551,12 +551,12 @@ h_var With_PROOF OPEN_PAREN spine CLOSE_PAREN
 HVAR COLON prop 
            (?)
 
-** In state 200, looking ahead at CLOSE_PAREN, shifting is permitted
+** In state 183, looking ahead at CLOSE_PAREN, shifting is permitted
 ** because of the following sub-derivation:
 
 OPEN_PAREN term Eq_OP term . CLOSE_PAREN COLON complex_type 
 
-** In state 200, looking ahead at CLOSE_PAREN, reducing production
+** In state 183, looking ahead at CLOSE_PAREN, reducing production
 ** prop_errors -> term Eq_OP term 
 ** is permitted because of the following sub-derivation:
 
@@ -565,7 +565,7 @@ OPEN_PAREN prop CLOSE_PAREN // lookahead token appears
            prop_errors // lookahead token is inherited
            term Eq_OP term . 
 
-** Conflict (shift/reduce) in state 198.
+** Conflict (shift/reduce) in state 181.
 ** Tokens involved: Zero_TERM VAR True_TERM OPEN_PAREN Nil_TERM False_TERM Eq_OP Cons_TERM_OP CLOSE_PAREN
 ** The following explanations concentrate on token Zero_TERM.
 ** This state is reached from proof_toplevel after reading:
@@ -582,14 +582,14 @@ h_var With_PROOF OPEN_PAREN spine CLOSE_PAREN
 HVAR COLON prop 
            (?)
 
-** In state 198, looking ahead at Zero_TERM, shifting is permitted
+** In state 181, looking ahead at Zero_TERM, shifting is permitted
 ** because of the following sub-derivation:
 
 OPEN_PAREN term Eq_OP term CLOSE_PAREN COLON complex_type 
            term simple_term 
                 . Zero_TERM 
 
-** In state 198, looking ahead at Zero_TERM, reducing production
+** In state 181, looking ahead at Zero_TERM, reducing production
 ** term_errors -> OPEN_PAREN term 
 ** is permitted because of the following sub-derivation:
 
@@ -598,7 +598,7 @@ term simple_term // lookahead token appears because simple_term can begin with Z
 term_errors // lookahead token is inherited
 OPEN_PAREN term . 
 
-** Conflict (shift/reduce) in state 196.
+** Conflict (shift/reduce) in state 179.
 ** Tokens involved: Or_PROP_OP Implies_PROP_OP And_PROP_OP
 ** The following explanations concentrate on token Or_PROP_OP.
 ** This state is reached from proof_toplevel after reading:
@@ -615,20 +615,20 @@ h_var With_PROOF OPEN_PAREN spine CLOSE_PAREN
 HVAR COLON prop 
            (?)
 
-** In state 196, looking ahead at Or_PROP_OP, shifting is permitted
+** In state 179, looking ahead at Or_PROP_OP, shifting is permitted
 ** because of the following sub-derivation:
 
 Forall_PROP VAR COLON complex_type DOT prop 
                                        prop . Or_PROP_OP prop 
 
-** In state 196, looking ahead at Or_PROP_OP, reducing production
+** In state 179, looking ahead at Or_PROP_OP, reducing production
 ** prop -> Forall_PROP VAR COLON complex_type DOT prop 
 ** is permitted because of the following sub-derivation:
 
 prop Or_PROP_OP prop // lookahead token appears
 Forall_PROP VAR COLON complex_type DOT prop . 
 
-** Conflict (shift/reduce) in state 194.
+** Conflict (shift/reduce) in state 177.
 ** Token involved: error
 ** This state is reached from proof_toplevel after reading:
 
@@ -642,7 +642,7 @@ proof EOF
 simple_proof 
 (?)
 
-** In state 194, looking ahead at error, reducing production
+** In state 177, looking ahead at error, reducing production
 ** prop_errors -> prop Implies_PROP_OP 
 ** is permitted because of the following sub-derivation:
 
@@ -652,7 +652,7 @@ HVAR COLON prop // lookahead token is inherited
            prop_errors // lookahead token is inherited
            prop Implies_PROP_OP . 
 
-** In state 194, looking ahead at error, shifting is permitted
+** In state 177, looking ahead at error, shifting is permitted
 ** because of the following sub-derivation:
 
 h_var With_PROOF OPEN_PAREN spine CLOSE_PAREN 
@@ -661,7 +661,7 @@ HVAR COLON prop
                                 prop_errors 
                                 . error 
 
-** Conflict (shift/reduce) in state 192.
+** Conflict (shift/reduce) in state 175.
 ** Token involved: error
 ** This state is reached from proof_toplevel after reading:
 
@@ -675,7 +675,7 @@ proof EOF
 simple_proof 
 (?)
 
-** In state 192, looking ahead at error, reducing production
+** In state 175, looking ahead at error, reducing production
 ** prop_errors -> prop And_PROP_OP 
 ** is permitted because of the following sub-derivation:
 
@@ -685,7 +685,7 @@ HVAR COLON prop // lookahead token is inherited
            prop_errors // lookahead token is inherited
            prop And_PROP_OP . 
 
-** In state 192, looking ahead at error, shifting is permitted
+** In state 175, looking ahead at error, shifting is permitted
 ** because of the following sub-derivation:
 
 h_var With_PROOF OPEN_PAREN spine CLOSE_PAREN 
@@ -694,7 +694,7 @@ HVAR COLON prop
                             prop_errors 
                             . error 
 
-** Conflict (shift/reduce) in state 190.
+** Conflict (shift/reduce) in state 173.
 ** Token involved: error
 ** This state is reached from proof_toplevel after reading:
 
@@ -708,7 +708,7 @@ proof EOF
 simple_proof 
 (?)
 
-** In state 190, looking ahead at error, reducing production
+** In state 173, looking ahead at error, reducing production
 ** prop_errors -> prop Or_PROP_OP 
 ** is permitted because of the following sub-derivation:
 
@@ -718,7 +718,7 @@ HVAR COLON prop // lookahead token is inherited
            prop_errors // lookahead token is inherited
            prop Or_PROP_OP . 
 
-** In state 190, looking ahead at error, shifting is permitted
+** In state 173, looking ahead at error, shifting is permitted
 ** because of the following sub-derivation:
 
 h_var With_PROOF OPEN_PAREN spine CLOSE_PAREN 
@@ -727,7 +727,7 @@ HVAR COLON prop
                            prop_errors 
                            . error 
 
-** Conflict (shift/reduce) in state 189.
+** Conflict (shift/reduce) in state 172.
 ** Tokens involved: Or_PROP_OP Implies_PROP_OP And_PROP_OP
 ** The following explanations concentrate on token Or_PROP_OP.
 ** This state is reached from proof_toplevel after reading:
@@ -744,45 +744,43 @@ h_var With_PROOF OPEN_PAREN spine CLOSE_PAREN
 HVAR COLON prop 
            (?)
 
-** In state 189, looking ahead at Or_PROP_OP, shifting is permitted
+** In state 172, looking ahead at Or_PROP_OP, shifting is permitted
 ** because of the following sub-derivation:
 
 Exists_PROP VAR COLON complex_type DOT prop 
                                        prop . Or_PROP_OP prop 
 
-** In state 189, looking ahead at Or_PROP_OP, reducing production
+** In state 172, looking ahead at Or_PROP_OP, reducing production
 ** prop -> Exists_PROP VAR COLON complex_type DOT prop 
 ** is permitted because of the following sub-derivation:
 
 prop Or_PROP_OP prop // lookahead token appears
 Exists_PROP VAR COLON complex_type DOT prop . 
 
-** Conflict (shift/reduce) in state 184.
+** Conflict (shift/reduce) in state 167.
 ** Tokens involved: List_TYPE_OP CLOSE_PAREN Arrow_TYPE_OP
 ** The following explanations concentrate on token List_TYPE_OP.
-** This state is reached from proof_toplevel after reading:
+** This state is reached from file_toplevel after reading:
 
-HVAR COLON term Eq_OP term COLON OPEN_PAREN complex_type 
+SIGNATURES COLON VAR COLON OPEN_PAREN complex_type 
 
 ** The derivations that appear below have the following common factor:
 ** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
 
-proof_toplevel 
-proof EOF 
-simple_proof 
-h_var With_PROOF OPEN_PAREN spine CLOSE_PAREN 
-HVAR COLON prop 
-           term Eq_OP term COLON complex_type 
-                                 (?)
+file_toplevel 
+syntax_toplevel file_toplevel 
+SIGNATURES COLON signatures 
+                 VAR COLON complex_type SEMICOLON signatures 
+                           (?)
 
-** In state 184, looking ahead at List_TYPE_OP, shifting is permitted
+** In state 167, looking ahead at List_TYPE_OP, shifting is permitted
 ** because of the following sub-derivation:
 
 simple_type 
 OPEN_PAREN complex_type CLOSE_PAREN 
            complex_type . List_TYPE_OP 
 
-** In state 184, looking ahead at List_TYPE_OP, reducing production
+** In state 167, looking ahead at List_TYPE_OP, reducing production
 ** type_errors -> OPEN_PAREN complex_type 
 ** is permitted because of the following sub-derivation:
 
@@ -790,97 +788,90 @@ complex_type List_TYPE_OP // lookahead token appears
 type_errors // lookahead token is inherited
 OPEN_PAREN complex_type . 
 
-** Conflict (shift/reduce) in state 183.
+** Conflict (shift/reduce) in state 166.
 ** Token involved: List_TYPE_OP
-** This state is reached from proof_toplevel after reading:
+** This state is reached from file_toplevel after reading:
 
-HVAR COLON term Eq_OP term COLON complex_type Arrow_TYPE_OP complex_type 
+SIGNATURES COLON VAR COLON complex_type Arrow_TYPE_OP complex_type 
 
 ** The derivations that appear below have the following common factor:
 ** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
 
-proof_toplevel 
-proof EOF 
-simple_proof 
-h_var With_PROOF OPEN_PAREN spine CLOSE_PAREN 
-HVAR COLON prop 
-           term Eq_OP term COLON complex_type 
-                                 (?)
+file_toplevel 
+syntax_toplevel file_toplevel 
+SIGNATURES COLON signatures 
+                 VAR COLON complex_type SEMICOLON signatures 
+                           (?)
 
-** In state 183, looking ahead at List_TYPE_OP, reducing production
+** In state 166, looking ahead at List_TYPE_OP, reducing production
 ** complex_type -> complex_type Arrow_TYPE_OP complex_type 
 ** is permitted because of the following sub-derivation:
 
 complex_type List_TYPE_OP // lookahead token appears
 complex_type Arrow_TYPE_OP complex_type . 
 
-** In state 183, looking ahead at List_TYPE_OP, shifting is permitted
+** In state 166, looking ahead at List_TYPE_OP, shifting is permitted
 ** because of the following sub-derivation:
 
 complex_type Arrow_TYPE_OP complex_type 
                            complex_type . List_TYPE_OP 
 
-** Conflict (shift/reduce) in state 182.
+** Conflict (shift/reduce) in state 165.
 ** Tokens involved: error List_TYPE_OP
 ** The following explanations concentrate on token error.
-** This state is reached from proof_toplevel after reading:
+** This state is reached from file_toplevel after reading:
 
-HVAR COLON term Eq_OP term COLON complex_type Arrow_TYPE_OP 
+SIGNATURES COLON VAR COLON complex_type Arrow_TYPE_OP 
 
 ** The derivations that appear below have the following common factor:
 ** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
 
-proof_toplevel 
-proof EOF 
-simple_proof 
+file_toplevel 
 (?)
 
-** In state 182, looking ahead at error, reducing production
+** In state 165, looking ahead at error, reducing production
 ** type_errors -> complex_type Arrow_TYPE_OP 
 ** is permitted because of the following sub-derivation:
 
-spf_errors 
-h_var error // lookahead token appears
-HVAR COLON prop // lookahead token is inherited
-           term Eq_OP term COLON complex_type // lookahead token is inherited
-                                 type_errors // lookahead token is inherited
-                                 complex_type Arrow_TYPE_OP . 
+syntax_toplevel file_toplevel // lookahead token appears because file_toplevel can begin with error
+SIGNATURES COLON signatures // lookahead token is inherited
+                 VAR COLON complex_type // lookahead token is inherited
+                           type_errors // lookahead token is inherited
+                           complex_type Arrow_TYPE_OP . 
 
-** In state 182, looking ahead at error, shifting is permitted
+** In state 165, looking ahead at error, shifting is permitted
 ** because of the following sub-derivation:
 
-h_var With_PROOF OPEN_PAREN spine CLOSE_PAREN 
-HVAR COLON prop 
-           term Eq_OP term COLON complex_type 
-                                 complex_type Arrow_TYPE_OP complex_type 
-                                                            type_errors 
-                                                            . error 
+syntax_toplevel file_toplevel 
+SIGNATURES COLON signatures 
+                 VAR COLON complex_type SEMICOLON signatures 
+                           complex_type Arrow_TYPE_OP complex_type 
+                                                      type_errors 
+                                                      . error 
 
-** Conflict (shift/reduce) in state 180.
+** Conflict (shift/reduce) in state 163.
 ** Token involved: List_TYPE_OP
-** This state is reached from proof_toplevel after reading:
+** This state is reached from file_toplevel after reading:
 
-HVAR COLON term Eq_OP term COLON Arrow_TYPE_OP complex_type 
+SIGNATURES COLON VAR COLON Arrow_TYPE_OP complex_type 
 
 ** The derivations that appear below have the following common factor:
 ** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
 
-proof_toplevel 
-proof EOF 
-simple_proof 
-h_var With_PROOF OPEN_PAREN spine CLOSE_PAREN 
-HVAR COLON prop 
-           term Eq_OP term COLON complex_type 
-                                 (?)
+file_toplevel 
+syntax_toplevel file_toplevel 
+SIGNATURES COLON signatures 
+                 VAR COLON complex_type SEMICOLON signatures 
+                           (?)
 
-** In state 180, looking ahead at List_TYPE_OP, shifting is permitted
+** In state 163, looking ahead at List_TYPE_OP, shifting is permitted
 ** because of the following sub-derivation:
 
 type_errors 
 Arrow_TYPE_OP complex_type 
               complex_type . List_TYPE_OP 
 
-** In state 180, looking ahead at List_TYPE_OP, reducing production
+** In state 163, looking ahead at List_TYPE_OP, reducing production
 ** type_errors -> Arrow_TYPE_OP complex_type 
 ** is permitted because of the following sub-derivation:
 
@@ -888,7 +879,7 @@ complex_type List_TYPE_OP // lookahead token appears
 type_errors // lookahead token is inherited
 Arrow_TYPE_OP complex_type . 
 
-** Conflict (shift/reduce) in state 165.
+** Conflict (shift/reduce) in state 148.
 ** Tokens involved: Zero_TERM VAR True_TERM OPEN_PAREN Nil_TERM False_TERM Cons_TERM_OP
 ** The following explanations concentrate on token Zero_TERM.
 ** This state is reached from proof_toplevel after reading:
@@ -906,21 +897,21 @@ HVAR COLON prop
            term Eq_OP term COLON complex_type 
                       (?)
 
-** In state 165, looking ahead at Zero_TERM, shifting is permitted
+** In state 148, looking ahead at Zero_TERM, shifting is permitted
 ** because of the following sub-derivation:
 
 Suc_TERM_OP term 
             term simple_term 
                  . Zero_TERM 
 
-** In state 165, looking ahead at Zero_TERM, reducing production
+** In state 148, looking ahead at Zero_TERM, reducing production
 ** term -> Suc_TERM_OP term 
 ** is permitted because of the following sub-derivation:
 
 term simple_term // lookahead token appears because simple_term can begin with Zero_TERM
 Suc_TERM_OP term . 
 
-** Conflict (shift/reduce) in state 164.
+** Conflict (shift/reduce) in state 147.
 ** Tokens involved: Zero_TERM VAR True_TERM OPEN_PAREN Nil_TERM False_TERM Cons_TERM_OP CLOSE_PAREN
 ** The following explanations concentrate on token Zero_TERM.
 ** This state is reached from proof_toplevel after reading:
@@ -938,7 +929,7 @@ HVAR COLON prop
            term Eq_OP term COLON complex_type 
                       (?)
 
-** In state 164, looking ahead at Zero_TERM, shifting is permitted
+** In state 147, looking ahead at Zero_TERM, shifting is permitted
 ** because of the following sub-derivation:
 
 simple_term 
@@ -946,7 +937,7 @@ OPEN_PAREN term CLOSE_PAREN
            term simple_term 
                 . Zero_TERM 
 
-** In state 164, looking ahead at Zero_TERM, reducing production
+** In state 147, looking ahead at Zero_TERM, reducing production
 ** term_errors -> OPEN_PAREN term 
 ** is permitted because of the following sub-derivation:
 
@@ -954,7 +945,7 @@ term simple_term // lookahead token appears because simple_term can begin with Z
 term_errors // lookahead token is inherited
 OPEN_PAREN term . 
 
-** Conflict (shift/reduce) in state 161.
+** Conflict (shift/reduce) in state 144.
 ** Tokens involved: Zero_TERM VAR True_TERM OPEN_PAREN Nil_TERM False_TERM
 ** The following explanations concentrate on token Zero_TERM.
 ** This state is reached from proof_toplevel after reading:
@@ -972,21 +963,21 @@ HVAR COLON prop
            term Eq_OP term COLON complex_type 
                       (?)
 
-** In state 161, looking ahead at Zero_TERM, shifting is permitted
+** In state 144, looking ahead at Zero_TERM, shifting is permitted
 ** because of the following sub-derivation:
 
 term Cons_TERM_OP term 
                   term simple_term 
                        . Zero_TERM 
 
-** In state 161, looking ahead at Zero_TERM, reducing production
+** In state 144, looking ahead at Zero_TERM, reducing production
 ** term -> term Cons_TERM_OP term 
 ** is permitted because of the following sub-derivation:
 
 term simple_term // lookahead token appears because simple_term can begin with Zero_TERM
 term Cons_TERM_OP term . 
 
-** Conflict (shift/reduce) in state 160.
+** Conflict (shift/reduce) in state 143.
 ** Tokens involved: error Zero_TERM VAR True_TERM OPEN_PAREN Nil_TERM False_TERM
 ** The following explanations concentrate on token error.
 ** This state is reached from proof_toplevel after reading:
@@ -1001,7 +992,7 @@ proof EOF
 simple_proof 
 (?)
 
-** In state 160, looking ahead at error, reducing production
+** In state 143, looking ahead at error, reducing production
 ** term_errors -> term Cons_TERM_OP 
 ** is permitted because of the following sub-derivation:
 
@@ -1013,7 +1004,7 @@ HVAR COLON prop // lookahead token is inherited
                       term_errors // lookahead token is inherited
                       term Cons_TERM_OP . 
 
-** In state 160, looking ahead at error, shifting is permitted
+** In state 143, looking ahead at error, shifting is permitted
 ** because of the following sub-derivation:
 
 h_var With_PROOF OPEN_PAREN spine CLOSE_PAREN 
@@ -1023,7 +1014,7 @@ HVAR COLON prop
                                         term_errors 
                                         . error 
 
-** Conflict (shift/reduce) in state 156.
+** Conflict (shift/reduce) in state 139.
 ** Tokens involved: Zero_TERM VAR True_TERM OPEN_PAREN Nil_TERM False_TERM
 ** The following explanations concentrate on token Zero_TERM.
 ** This state is reached from proof_toplevel after reading:
@@ -1041,7 +1032,7 @@ HVAR COLON prop
            term Eq_OP term COLON complex_type 
                       (?)
 
-** In state 156, looking ahead at Zero_TERM, shifting is permitted
+** In state 139, looking ahead at Zero_TERM, shifting is permitted
 ** because of the following sub-derivation:
 
 term_errors 
@@ -1049,7 +1040,7 @@ Cons_TERM_OP term
              term simple_term 
                   . Zero_TERM 
 
-** In state 156, looking ahead at Zero_TERM, reducing production
+** In state 139, looking ahead at Zero_TERM, reducing production
 ** term_errors -> Cons_TERM_OP term 
 ** is permitted because of the following sub-derivation:
 
@@ -1057,7 +1048,7 @@ term simple_term // lookahead token appears because simple_term can begin with Z
 term_errors // lookahead token is inherited
 Cons_TERM_OP term . 
 
-** Conflict (shift/reduce) in state 150.
+** Conflict (shift/reduce) in state 133.
 ** Tokens involved: error Zero_TERM VAR True_TERM OPEN_PAREN Nil_TERM False_TERM Cons_TERM_OP
 ** The following explanations concentrate on token error.
 ** This state is reached from proof_toplevel after reading:
@@ -1072,7 +1063,7 @@ proof EOF
 simple_proof 
 (?)
 
-** In state 150, looking ahead at error, reducing production
+** In state 133, looking ahead at error, reducing production
 ** term_errors -> Suc_TERM_OP 
 ** is permitted because of the following sub-derivation:
 
@@ -1084,7 +1075,7 @@ HVAR COLON prop // lookahead token is inherited
                       term_errors // lookahead token is inherited
                       Suc_TERM_OP . 
 
-** In state 150, looking ahead at error, shifting is permitted
+** In state 133, looking ahead at error, shifting is permitted
 ** because of the following sub-derivation:
 
 h_var With_PROOF OPEN_PAREN spine CLOSE_PAREN 
@@ -1094,7 +1085,7 @@ HVAR COLON prop
                                   term_errors 
                                   . error 
 
-** Conflict (reduce/reduce) in state 127.
+** Conflict (reduce/reduce) in state 110.
 ** Tokens involved: Eq_OP CLOSE_PAREN
 ** The following explanations concentrate on token CLOSE_PAREN.
 ** This state is reached from proof_toplevel after reading:
@@ -1111,7 +1102,7 @@ h_var With_PROOF OPEN_PAREN spine CLOSE_PAREN
 HVAR COLON prop 
            (?)
 
-** In state 127, looking ahead at CLOSE_PAREN, reducing production
+** In state 110, looking ahead at CLOSE_PAREN, reducing production
 ** prop_errors -> error 
 ** is permitted because of the following sub-derivation:
 
@@ -1120,7 +1111,7 @@ OPEN_PAREN prop CLOSE_PAREN // lookahead token appears
            prop_errors // lookahead token is inherited
            error . 
 
-** In state 127, looking ahead at CLOSE_PAREN, reducing production
+** In state 110, looking ahead at CLOSE_PAREN, reducing production
 ** term_errors -> error 
 ** is permitted because of the following sub-derivation:
 
@@ -1130,7 +1121,7 @@ OPEN_PAREN term CLOSE_PAREN // lookahead token appears
            term_errors // lookahead token is inherited
            error . 
 
-** Conflict (shift/reduce) in state 84.
+** Conflict (shift/reduce) in state 85.
 ** Tokens involved: Or_PROP_OP Implies_PROP_OP CLOSE_PAREN And_PROP_OP
 ** The following explanations concentrate on token Or_PROP_OP.
 ** This state is reached from prop_toplevel after reading:
@@ -1144,14 +1135,14 @@ prop_toplevel
 prop EOF 
 (?)
 
-** In state 84, looking ahead at Or_PROP_OP, shifting is permitted
+** In state 85, looking ahead at Or_PROP_OP, shifting is permitted
 ** because of the following sub-derivation:
 
 simple_prop 
 OPEN_PAREN prop CLOSE_PAREN 
            prop . Or_PROP_OP prop 
 
-** In state 84, looking ahead at Or_PROP_OP, reducing production
+** In state 85, looking ahead at Or_PROP_OP, reducing production
 ** prop_errors -> OPEN_PAREN prop 
 ** is permitted because of the following sub-derivation:
 
@@ -1159,7 +1150,7 @@ prop Or_PROP_OP prop // lookahead token appears
 prop_errors // lookahead token is inherited
 OPEN_PAREN prop . 
 
-** Conflict (shift/reduce) in state 80.
+** Conflict (shift/reduce) in state 81.
 ** Token involved: CLOSE_PAREN
 ** This state is reached from prop_toplevel after reading:
 
@@ -1172,12 +1163,12 @@ prop_toplevel
 prop EOF 
 (?)
 
-** In state 80, looking ahead at CLOSE_PAREN, shifting is permitted
+** In state 81, looking ahead at CLOSE_PAREN, shifting is permitted
 ** because of the following sub-derivation:
 
 OPEN_PAREN term Eq_OP term . CLOSE_PAREN COLON complex_type 
 
-** In state 80, looking ahead at CLOSE_PAREN, reducing production
+** In state 81, looking ahead at CLOSE_PAREN, reducing production
 ** prop_errors -> term Eq_OP term 
 ** is permitted because of the following sub-derivation:
 
@@ -1186,7 +1177,7 @@ OPEN_PAREN prop CLOSE_PAREN // lookahead token appears
            prop_errors // lookahead token is inherited
            term Eq_OP term . 
 
-** Conflict (shift/reduce) in state 78.
+** Conflict (shift/reduce) in state 79.
 ** Tokens involved: Zero_TERM VAR True_TERM OPEN_PAREN Nil_TERM False_TERM Eq_OP Cons_TERM_OP CLOSE_PAREN
 ** The following explanations concentrate on token Zero_TERM.
 ** This state is reached from prop_toplevel after reading:
@@ -1200,14 +1191,14 @@ prop_toplevel
 prop EOF 
 (?)
 
-** In state 78, looking ahead at Zero_TERM, shifting is permitted
+** In state 79, looking ahead at Zero_TERM, shifting is permitted
 ** because of the following sub-derivation:
 
 OPEN_PAREN term Eq_OP term CLOSE_PAREN COLON complex_type 
            term simple_term 
                 . Zero_TERM 
 
-** In state 78, looking ahead at Zero_TERM, reducing production
+** In state 79, looking ahead at Zero_TERM, reducing production
 ** term_errors -> OPEN_PAREN term 
 ** is permitted because of the following sub-derivation:
 
@@ -1216,7 +1207,7 @@ term simple_term // lookahead token appears because simple_term can begin with Z
 term_errors // lookahead token is inherited
 OPEN_PAREN term . 
 
-** Conflict (shift/reduce) in state 76.
+** Conflict (shift/reduce) in state 77.
 ** Tokens involved: Or_PROP_OP Implies_PROP_OP And_PROP_OP
 ** The following explanations concentrate on token Or_PROP_OP.
 ** This state is reached from prop_toplevel after reading:
@@ -1230,20 +1221,20 @@ prop_toplevel
 prop EOF 
 (?)
 
-** In state 76, looking ahead at Or_PROP_OP, shifting is permitted
+** In state 77, looking ahead at Or_PROP_OP, shifting is permitted
 ** because of the following sub-derivation:
 
 Forall_PROP VAR COLON complex_type DOT prop 
                                        prop . Or_PROP_OP prop 
 
-** In state 76, looking ahead at Or_PROP_OP, reducing production
+** In state 77, looking ahead at Or_PROP_OP, reducing production
 ** prop -> Forall_PROP VAR COLON complex_type DOT prop 
 ** is permitted because of the following sub-derivation:
 
 prop Or_PROP_OP prop // lookahead token appears
 Forall_PROP VAR COLON complex_type DOT prop . 
 
-** Conflict (shift/reduce) in state 69.
+** Conflict (shift/reduce) in state 70.
 ** Tokens involved: Or_PROP_OP Implies_PROP_OP And_PROP_OP
 ** The following explanations concentrate on token Or_PROP_OP.
 ** This state is reached from prop_toplevel after reading:
@@ -1257,20 +1248,20 @@ prop_toplevel
 prop EOF 
 (?)
 
-** In state 69, looking ahead at Or_PROP_OP, shifting is permitted
+** In state 70, looking ahead at Or_PROP_OP, shifting is permitted
 ** because of the following sub-derivation:
 
 Exists_PROP VAR COLON complex_type DOT prop 
                                        prop . Or_PROP_OP prop 
 
-** In state 69, looking ahead at Or_PROP_OP, reducing production
+** In state 70, looking ahead at Or_PROP_OP, reducing production
 ** prop -> Exists_PROP VAR COLON complex_type DOT prop 
 ** is permitted because of the following sub-derivation:
 
 prop Or_PROP_OP prop // lookahead token appears
 Exists_PROP VAR COLON complex_type DOT prop . 
 
-** Conflict (shift/reduce) in state 51.
+** Conflict (shift/reduce) in state 52.
 ** Tokens involved: List_TYPE_OP CLOSE_PAREN Arrow_TYPE_OP
 ** The following explanations concentrate on token List_TYPE_OP.
 ** This state is reached from type_toplevel after reading:
@@ -1284,14 +1275,14 @@ type_toplevel
 complex_type EOF 
 (?)
 
-** In state 51, looking ahead at List_TYPE_OP, shifting is permitted
+** In state 52, looking ahead at List_TYPE_OP, shifting is permitted
 ** because of the following sub-derivation:
 
 simple_type 
 OPEN_PAREN complex_type CLOSE_PAREN 
            complex_type . List_TYPE_OP 
 
-** In state 51, looking ahead at List_TYPE_OP, reducing production
+** In state 52, looking ahead at List_TYPE_OP, reducing production
 ** type_errors -> OPEN_PAREN complex_type 
 ** is permitted because of the following sub-derivation:
 
@@ -1299,7 +1290,7 @@ complex_type List_TYPE_OP // lookahead token appears
 type_errors // lookahead token is inherited
 OPEN_PAREN complex_type . 
 
-** Conflict (shift/reduce) in state 50.
+** Conflict (shift/reduce) in state 51.
 ** Token involved: List_TYPE_OP
 ** This state is reached from type_toplevel after reading:
 
@@ -1312,14 +1303,14 @@ type_toplevel
 complex_type EOF 
 (?)
 
-** In state 50, looking ahead at List_TYPE_OP, shifting is permitted
+** In state 51, looking ahead at List_TYPE_OP, shifting is permitted
 ** because of the following sub-derivation:
 
 type_errors 
 Arrow_TYPE_OP complex_type 
               complex_type . List_TYPE_OP 
 
-** In state 50, looking ahead at List_TYPE_OP, reducing production
+** In state 51, looking ahead at List_TYPE_OP, reducing production
 ** type_errors -> Arrow_TYPE_OP complex_type 
 ** is permitted because of the following sub-derivation:
 
@@ -1327,7 +1318,7 @@ complex_type List_TYPE_OP // lookahead token appears
 type_errors // lookahead token is inherited
 Arrow_TYPE_OP complex_type . 
 
-** Conflict (shift/reduce) in state 48.
+** Conflict (shift/reduce) in state 49.
 ** Token involved: List_TYPE_OP
 ** This state is reached from type_toplevel after reading:
 
@@ -1340,20 +1331,20 @@ type_toplevel
 complex_type EOF 
 (?)
 
-** In state 48, looking ahead at List_TYPE_OP, reducing production
+** In state 49, looking ahead at List_TYPE_OP, reducing production
 ** complex_type -> complex_type Arrow_TYPE_OP complex_type 
 ** is permitted because of the following sub-derivation:
 
 complex_type List_TYPE_OP // lookahead token appears
 complex_type Arrow_TYPE_OP complex_type . 
 
-** In state 48, looking ahead at List_TYPE_OP, shifting is permitted
+** In state 49, looking ahead at List_TYPE_OP, shifting is permitted
 ** because of the following sub-derivation:
 
 complex_type Arrow_TYPE_OP complex_type 
                            complex_type . List_TYPE_OP 
 
-** Conflict (shift/reduce) in state 47.
+** Conflict (shift/reduce) in state 48.
 ** Token involved: List_TYPE_OP
 ** This state is reached from type_toplevel after reading:
 
@@ -1366,7 +1357,7 @@ type_toplevel
 complex_type EOF 
 (?)
 
-** In state 47, looking ahead at List_TYPE_OP, reducing production
+** In state 48, looking ahead at List_TYPE_OP, reducing production
 ** type_errors -> complex_type Arrow_TYPE_OP 
 ** is permitted because of the following sub-derivation:
 
@@ -1374,14 +1365,14 @@ complex_type List_TYPE_OP // lookahead token appears
 type_errors // lookahead token is inherited
 complex_type Arrow_TYPE_OP . 
 
-** In state 47, looking ahead at List_TYPE_OP, shifting is permitted
+** In state 48, looking ahead at List_TYPE_OP, shifting is permitted
 ** because of the following sub-derivation:
 
 complex_type Arrow_TYPE_OP complex_type 
                            type_errors 
                            . List_TYPE_OP 
 
-** Conflict (shift/reduce) in state 28.
+** Conflict (shift/reduce) in state 29.
 ** Tokens involved: Zero_TERM VAR True_TERM OPEN_PAREN Nil_TERM False_TERM Cons_TERM_OP
 ** The following explanations concentrate on token Zero_TERM.
 ** This state is reached from prop_toplevel after reading:
@@ -1396,21 +1387,21 @@ prop EOF
 term Eq_OP term COLON complex_type 
 (?)
 
-** In state 28, looking ahead at Zero_TERM, shifting is permitted
+** In state 29, looking ahead at Zero_TERM, shifting is permitted
 ** because of the following sub-derivation:
 
 Suc_TERM_OP term 
             term simple_term 
                  . Zero_TERM 
 
-** In state 28, looking ahead at Zero_TERM, reducing production
+** In state 29, looking ahead at Zero_TERM, reducing production
 ** term -> Suc_TERM_OP term 
 ** is permitted because of the following sub-derivation:
 
 term simple_term // lookahead token appears because simple_term can begin with Zero_TERM
 Suc_TERM_OP term . 
 
-** Conflict (shift/reduce) in state 27.
+** Conflict (shift/reduce) in state 28.
 ** Tokens involved: Zero_TERM VAR True_TERM OPEN_PAREN Nil_TERM False_TERM Cons_TERM_OP CLOSE_PAREN
 ** The following explanations concentrate on token Zero_TERM.
 ** This state is reached from term_toplevel after reading:
@@ -1424,7 +1415,7 @@ term_toplevel
 term EOF 
 (?)
 
-** In state 27, looking ahead at Zero_TERM, shifting is permitted
+** In state 28, looking ahead at Zero_TERM, shifting is permitted
 ** because of the following sub-derivation:
 
 simple_term 
@@ -1432,7 +1423,7 @@ OPEN_PAREN term CLOSE_PAREN
            term simple_term 
                 . Zero_TERM 
 
-** In state 27, looking ahead at Zero_TERM, reducing production
+** In state 28, looking ahead at Zero_TERM, reducing production
 ** term_errors -> OPEN_PAREN term 
 ** is permitted because of the following sub-derivation:
 
@@ -1440,7 +1431,7 @@ term simple_term // lookahead token appears because simple_term can begin with Z
 term_errors // lookahead token is inherited
 OPEN_PAREN term . 
 
-** Conflict (shift/reduce) in state 23.
+** Conflict (shift/reduce) in state 24.
 ** Tokens involved: Zero_TERM VAR True_TERM OPEN_PAREN Nil_TERM False_TERM
 ** The following explanations concentrate on token Zero_TERM.
 ** This state is reached from prop_toplevel after reading:
@@ -1455,21 +1446,21 @@ prop EOF
 term Eq_OP term COLON complex_type 
 (?)
 
-** In state 23, looking ahead at Zero_TERM, shifting is permitted
+** In state 24, looking ahead at Zero_TERM, shifting is permitted
 ** because of the following sub-derivation:
 
 term Cons_TERM_OP term 
                   term simple_term 
                        . Zero_TERM 
 
-** In state 23, looking ahead at Zero_TERM, reducing production
+** In state 24, looking ahead at Zero_TERM, reducing production
 ** term -> term Cons_TERM_OP term 
 ** is permitted because of the following sub-derivation:
 
 term simple_term // lookahead token appears because simple_term can begin with Zero_TERM
 term Cons_TERM_OP term . 
 
-** Conflict (shift/reduce) in state 22.
+** Conflict (shift/reduce) in state 23.
 ** Tokens involved: Zero_TERM VAR True_TERM OPEN_PAREN Nil_TERM False_TERM
 ** The following explanations concentrate on token Zero_TERM.
 ** This state is reached from prop_toplevel after reading:
@@ -1484,14 +1475,14 @@ prop EOF
 term Eq_OP term COLON complex_type 
 (?)
 
-** In state 22, looking ahead at Zero_TERM, shifting is permitted
+** In state 23, looking ahead at Zero_TERM, shifting is permitted
 ** because of the following sub-derivation:
 
 term Cons_TERM_OP term 
                   simple_term 
                   . Zero_TERM 
 
-** In state 22, looking ahead at Zero_TERM, reducing production
+** In state 23, looking ahead at Zero_TERM, reducing production
 ** term_errors -> term Cons_TERM_OP 
 ** is permitted because of the following sub-derivation:
 
@@ -1499,7 +1490,7 @@ term simple_term // lookahead token appears because simple_term can begin with Z
 term_errors // lookahead token is inherited
 term Cons_TERM_OP . 
 
-** Conflict (shift/reduce) in state 19.
+** Conflict (shift/reduce) in state 20.
 ** Tokens involved: Zero_TERM VAR True_TERM OPEN_PAREN Nil_TERM False_TERM
 ** The following explanations concentrate on token Zero_TERM.
 ** This state is reached from prop_toplevel after reading:
@@ -1514,7 +1505,7 @@ prop EOF
 term Eq_OP term COLON complex_type 
 (?)
 
-** In state 19, looking ahead at Zero_TERM, shifting is permitted
+** In state 20, looking ahead at Zero_TERM, shifting is permitted
 ** because of the following sub-derivation:
 
 term_errors 
@@ -1522,7 +1513,7 @@ Cons_TERM_OP term
              term simple_term 
                   . Zero_TERM 
 
-** In state 19, looking ahead at Zero_TERM, reducing production
+** In state 20, looking ahead at Zero_TERM, reducing production
 ** term_errors -> Cons_TERM_OP term 
 ** is permitted because of the following sub-derivation:
 
@@ -1530,7 +1521,7 @@ term simple_term // lookahead token appears because simple_term can begin with Z
 term_errors // lookahead token is inherited
 Cons_TERM_OP term . 
 
-** Conflict (shift/reduce) in state 12.
+** Conflict (shift/reduce) in state 13.
 ** Tokens involved: Zero_TERM VAR True_TERM OPEN_PAREN Nil_TERM False_TERM Cons_TERM_OP
 ** The following explanations concentrate on token Zero_TERM.
 ** This state is reached from prop_toplevel after reading:
@@ -1545,14 +1536,14 @@ prop EOF
 term Eq_OP term COLON complex_type 
 (?)
 
-** In state 12, looking ahead at Zero_TERM, shifting is permitted
+** In state 13, looking ahead at Zero_TERM, shifting is permitted
 ** because of the following sub-derivation:
 
 Suc_TERM_OP term 
             simple_term 
             . Zero_TERM 
 
-** In state 12, looking ahead at Zero_TERM, reducing production
+** In state 13, looking ahead at Zero_TERM, reducing production
 ** term_errors -> Suc_TERM_OP 
 ** is permitted because of the following sub-derivation:
 
@@ -1560,7 +1551,7 @@ term simple_term // lookahead token appears because simple_term can begin with Z
 term_errors // lookahead token is inherited
 Suc_TERM_OP . 
 
-** Conflict (reduce/reduce) in state 7.
+** Conflict (reduce/reduce) in state 8.
 ** Tokens involved: Eq_OP CLOSE_PAREN
 ** The following explanations concentrate on token CLOSE_PAREN.
 ** This state is reached from prop_toplevel after reading:
@@ -1574,7 +1565,7 @@ prop_toplevel
 prop EOF 
 (?)
 
-** In state 7, looking ahead at CLOSE_PAREN, reducing production
+** In state 8, looking ahead at CLOSE_PAREN, reducing production
 ** prop_errors -> error 
 ** is permitted because of the following sub-derivation:
 
@@ -1583,7 +1574,7 @@ OPEN_PAREN prop CLOSE_PAREN // lookahead token appears
            prop_errors // lookahead token is inherited
            error . 
 
-** In state 7, looking ahead at CLOSE_PAREN, reducing production
+** In state 8, looking ahead at CLOSE_PAREN, reducing production
 ** term_errors -> error 
 ** is permitted because of the following sub-derivation:
 

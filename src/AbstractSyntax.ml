@@ -36,27 +36,18 @@ type prop' = Truth | Falsity            (*top and bot*)
            | Exists of var * tp * prop  (*exists*)
 and prop = pos_range * prop'
 
-(* no position prop *)
-type npProp = Truth | Falsity              (*top and bot*)
-            | And of npProp * npProp       (*and*)
-            | Or of npProp * npProp        (*or*)
-            | Implies of npProp * npProp   (*implies*)
-            | Eq of npTerm * npTerm * tp   (*eq*)
-            | Forall of var * tp * npProp  (*forall*)
-            | Exists of var * tp * npProp  (*exists*)
-
-(* Spines *)
-type spine_arg = SpineT of term | SpineH of var
-type spine = spine_arg list
-
 (* Term Context *)
 type ctx = ( var * tp ) list
+
+(* Propositions Context *)
+type hyps = ( var * prop ) list
 
 (* Hypotheses Labels *)
 type hvar = var * (prop option)
 
-(* Propositions Context *)
-type hyps = ( var * prop ) list
+(* Spines *)
+type spine_arg = SpineT of term | SpineH of hvar
+type spine = spine_arg list
 
 (* Proofs *)
 type pf' = TruthR                                  (*Truth-R,  T : A*) (***SPF***)
@@ -83,35 +74,15 @@ type pf' = TruthR                                  (*Truth-R,  T : A*) (***SPF**
 and pf = pos_range * pf'
 
 (* Monadic Errors *)
-type 'a result = Ok of 'a | Wrong of pos_range
+type 'a result = Ok of 'a | Wrong of string * pos_range
 
 (* Monadic Operations *)
 let return x = Ok x
 let (>>=) x f =
   match x with
   | Ok v    -> f v
-  | Wrong e -> Wrong e
+  | Wrong (s,e) -> Wrong (s,e)
 let (>>) x y = x >>= (fun _ -> y)
-
-(* TO STRING FUNCTIONS *)
-let rec toString_tp (tau : tp) :(string) =
-  match tau with
-  | Bool -> "bool"
-  | Nat  -> "nat"
-  | List  x -> "[" ^ (toString_tp x) ^ "]"
-  | Arrow (a,b)-> "(" ^ (toString_tp a) ^"->" ^ (toString_tp b) ^ ")"
-
-let rec toString (t : npTerm) :(string) =
-  match t with
-  | Var x     -> "Var(\""^x^"\")"
-  | App (f,x) -> "App("^(toString f)^","^(toString x)^")"
-  | Boolean true -> "Boolean(true)"
-  | Boolean false -> "Boolean(false)"
-  | Zero          -> "Zero"
-  | Suc n         -> "Suc("^(toString n)^")"
-  | Nil           -> "Nil"
-  | Cons (x,xs)   -> "Cons("^(toString x)^","^(toString xs)^")"
-
 
 (* TopLevel Syntax *)
 type toplevel = Sig of ctx | Def of hyps | Theorem of var * pf * prop

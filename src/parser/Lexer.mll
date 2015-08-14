@@ -1,8 +1,7 @@
 {
   open Parser
+  open StringFormats
   open Lexing
-
-  exception SyntaxError of string
 
   let next_line lexbuf =
     let pos = lexbuf.Lexing.lex_curr_p in
@@ -13,10 +12,7 @@
       }
 
   let lex_failure (msg : string) (pos1 : position) (pos2 : position) =
-    let col1 = (pos1.pos_cnum)-(pos1.pos_bol) in
-    let col2 = (pos2.pos_cnum)-(pos2.pos_bol) in
-    (Failure ( "error lexing "^ msg ^ " (line:"^(string_of_int (pos1.pos_lnum))^", col:"^(string_of_int (col1 + 1))^") to ("^
-                                        "line:"^(string_of_int (pos2.pos_lnum))^", col:"^(string_of_int (col2 + 1))^")") )
+    SyntaxError (("error lexing "^ msg),(pos1,pos2))
 
 }
 

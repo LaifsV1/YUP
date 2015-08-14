@@ -15,7 +15,7 @@ Theorem [rev lemma] :
     Statement: forall xs : nat list . forall x : nat . rev (append xs (x::[])) = x :: (rev xs) : nat list
     Proof:
 
-        by induction on list :
+        by induction on nat :
 
         case [] :
 

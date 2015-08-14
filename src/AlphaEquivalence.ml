@@ -2,6 +2,7 @@
 (* author: Yu-Yang Lin *)
 (* Details in section 6 of notes *)
 open AbstractSyntax
+open StringFormats
 open Helper
 open Lexing
 
@@ -145,32 +146,26 @@ let rec alpha_equiv_prop ((_,a_prop) : prop) ((_,b_prop) : prop) :(unit option) 
                                                                    (swap_prop y z a')
   | Exists _         , _                  -> None
 
-
-let is_alpha_equiv_prop (a : prop) (b : prop) :(bool) =
-  match alpha_equiv_prop a b with
-  | Some () -> true
-  | None    -> false
-
-let alpha_equiv_prop_result (a : prop) (b : prop) (p : pos_range) :(unit result) =
+let alpha_equiv_prop_result (a : prop) (b : prop) :(unit result) =
   match alpha_equiv_prop a b with
   | Some () -> return ()
-  | None    -> Wrong p
+  | None    -> Wrong (alpha_equiv_error a b,(getpos a))
 
 
 (******************** LOOKUP FUNCTIONS ********************)
 (* lookup function for the context *)
 let lookup_ctx_result (psi : ctx) (x : var) (p : pos_range) :(tp result) =
-  (try Ok (List.assoc x psi) with Not_found -> Wrong p)
+  (try Ok (List.assoc x psi) with Not_found -> Wrong (ctx_not_found x,p))
 
 (* lookup function for hypotheses *)
 let lookup_hyps_result (gamma : hyps) ((h,a) : hvar) (p : pos_range) :(prop result) =
   (try let a' = (List.assoc h gamma) in
        (match a with
-        | Some a -> if is_alpha_equiv_prop a a' then Ok a' else Wrong (getpos a)
-        | None   -> Ok a')
-   with Not_found -> Wrong p)
+        | Some a  -> (alpha_equiv_prop_result a a') >> (return a)
+        | None    -> Ok a')
+   with Not_found -> Wrong (hyp_not_found (h,a),p))
 
-let check_hyp_result (a : prop option) (a' : prop) :(unit result) =
+let some_alpha_equiv_result (a : prop option) (b : prop) :(unit result) =
   match a with
   | None   -> Ok ()
-  | Some (p,a) -> if is_alpha_equiv_prop (p,a) a' then Ok () else Wrong p
+  | Some (p,a) -> alpha_equiv_prop_result (p,a) b

@@ -1,12 +1,13 @@
 %{
   open AbstractSyntax
+  open StringFormats
+  open Format
   open Lexing
   
+  let pf_of_form msg msg2 = sprintf "proof: %s must be of form @,'%s'" msg msg2
+    
   let parse_failure (msg : string) (pos1 : position) (pos2 : position) = 
-    let col1 = (pos1.pos_cnum)-(pos1.pos_bol) in
-    let col2 = (pos2.pos_cnum)-(pos2.pos_bol) in 
-    (Failure ( "error parsing "^ msg ^ " \n    (line:"^(string_of_int (pos1.pos_lnum))^", col:"^(string_of_int (col1 + 1))^") to ("^
-                                               "line:"^(string_of_int (pos2.pos_lnum))^", col:"^(string_of_int (col2 + 1))^")") )
+    ParseError ((sprintf "error parsing %s" msg),(pos1,pos2))
 %}
 
 /*=================*/
@@ -116,6 +117,7 @@ syntax_toplevel:
 | DEFINITIONS COLON definitions { Def $3 }
 | THEOREM HVAR COLON STATEMENT COLON prop PROOF COLON proof QED DOT { Theorem ($2,$9,$6) }
 | syntax_toplevel_errors        { $1 }
+| error                         { raise (parse_failure "toplevel: files must use keywords 'Signatures' 'Definitions' or 'Theorem'" $startpos $endpos) }
 
 syntax_toplevel_errors:
 | SIGNATURES COLON              { raise (parse_failure "signatures: missing signatures" $startpos $endpos) }
@@ -206,7 +208,7 @@ prop:
 
 prop_errors:
 | prop Implies_PROP_OP    { raise (parse_failure "proposition: expected something after '=>'" $startpos $endpos) }
-| Implies_PROP_OP prop         { raise (parse_failure "proposition: expected something before '=>'" $startpos $endpos) }
+| Implies_PROP_OP prop    { raise (parse_failure "proposition: expected something before '=>'" $startpos $endpos) }
 | prop And_PROP_OP        { raise (parse_failure "proposition: expected something after 'and'" $startpos $endpos) }
 | And_PROP_OP prop        { raise (parse_failure "proposition: expected something before 'and'" $startpos $endpos) }
 | prop Or_PROP_OP         { raise (parse_failure "proposition: expected something after 'or'" $startpos $endpos) }
@@ -229,11 +231,11 @@ simple_proof:
 | spf_errors                                                              { $1 }
 
 spf_errors:
-| h_var              { raise (parse_failure "proof: to use hypotheses, must be in form 'by [label]'" $startpos $endpos) }
+| h_var              { raise (parse_failure (pf_of_form "to use hypotheses," (sprintf (proof_sf "By") "[H]" "" "" "" "")) $startpos $endpos) }
 | OPEN_PAREN proof   { raise (parse_failure "proof: unmatched '('" $startpos $endpos) }
 | Absurd_PROOF       { raise (parse_failure "proof: missing hypothesis after 'absurd'" $startpos $endpos) }
-| h_var error { raise (parse_failure "proof: keyword 'with' must be in form '[H] with (a,b,c,..,n)'" $startpos $endpos) }
-| By_PROOF Equality_PROOF { raise (parse_failure "proof: equality proof must be in form 'by equality on ([h1],[h2],...,[hn])'" $startpos $endpos) }
+| By_PROOF Equality_PROOF { raise (parse_failure (pf_of_form "equality" (sprintf (proof_sf "ByEq") "([A],[B],[C])" "" "" "" "")) $startpos $endpos) }
+| h_var error { raise (parse_failure (pf_of_form "with clause" (sprintf (proof_sf "SpineApp") "[H]" "(a,b,c)" "" "" "")) $startpos $endpos) }
 
 proof:
 | simple_proof                                                            { $1 }
@@ -267,22 +269,33 @@ proof:
 | proof_errors                                                            { $1 }
 
 proof_errors:
-| Let_PROOF h_pair error   { raise (parse_failure "proof: conjunction elimination must be in form 'let ([h1],[h2])=[h] in p'" $startpos $endpos) }
-| Match_PROOF error        { raise (parse_failure "proof: disjunction elimination must be in form 'match [h] with | [h1].p | [h2].q'" $startpos $endpos) }
-| Left_PROOF  error        { raise (parse_failure "proof: disjunction left introduction must be in form 'left p'" $startpos $endpos) }
-| Right_PROOF error        { raise (parse_failure "proof: disjunction right introduction must be in form 'right q'" $startpos $endpos) }
-| Assume_PROOF h_var error { raise (parse_failure "proof: implication introduction must be in form 'assume [h] . p'" $startpos $endpos) }
-| Choose_PROOF error       { raise (parse_failure "proof: existential introduction must be in form 'choose t . p'" $startpos $endpos) }
-| Let_PROOF VAR error      { raise (parse_failure "proof: existential elimination must be in form 'let x,[h'] = [h] in p'" $startpos $endpos) }
-| Assume_PROOF VAR error   { raise (parse_failure "proof: universal introduction must be in form 'assume x : type . p'" $startpos $endpos) }
-| Let_PROOF h_var Eq_OP    { raise (parse_failure "proof: universal elimination must be in form 'let [h']=[h] with t in p'" $startpos $endpos) }
-| By_PROOF Induction_PROOF Nat_TYPE
-  error { raise (parse_failure "proof: induction on nat must be in form 'by induction on nat : case zero : p case (suc n) : [IH] . q'" $startpos $endpos) }
-| By_PROOF Induction_PROOF List_TYPE_OP
-  error { raise (parse_failure "proof: induction on list must be in form 'by induction on list : case [] : p case (hd::tl) : [IH] . q'" $startpos $endpos) }
-| By_PROOF Induction_PROOF Bool_TYPE
-  error { raise (parse_failure "proof: induction on bool must be in form 'by induction on bool : case true : p case false : q'" $startpos $endpos) }
-| WeKnow_PROOF error { raise (parse_failure "proof: hypothesis-label instantiation must be in form 'we know [h] because p." $startpos $endpos) }
+| Let_PROOF h_pair   
+  error { raise (parse_failure (pf_of_form "and elim" (sprintf (proof_sf "AndL") "[A]" "[B]" "[A and B]" "p" "")) $startpos $endpos) }
+| Match_PROOF h_var  
+  error { raise (parse_failure (pf_of_form "or elim" (sprintf (proof_sf "OrL") "[A or B]" "[A]" "p" "[B]" "q")) $startpos $endpos) }
+| Left_PROOF     { raise (parse_failure (pf_of_form "left or intro" (sprintf (proof_sf "OrR1") "p" "" "" "" "")) $startpos $endpos) }
+| Right_PROOF    { raise (parse_failure (pf_of_form "right or intro" (sprintf (proof_sf "OrR2") "q" "" "" "" "")) $startpos $endpos) }
+| Because_PROOF  { raise (parse_failure (pf_of_form "implies elim" (sprintf (proof_sf "ImpliesL") "p" "[B]" "[A=>B]" "q" "")) $startpos $endpos) }
+| Assume_PROOF h_var 
+  error { raise (parse_failure (pf_of_form "implies intro" (sprintf (proof_sf "ImpliesR") "[A]" "p" "" "" "")) $startpos $endpos) }
+| error Therefore_PROOF    { raise (parse_failure (pf_of_form "therefore proof" (sprintf (proof_sf "Therefore") "p" "q" "" "" "")) $startpos $endpos) }
+| Choose_PROOF       
+  error { raise (parse_failure (pf_of_form "exists intro" (sprintf (proof_sf "ExistsR") "t" "p" "" "" "")) $startpos $endpos) }
+| Let_PROOF VAR      
+  error { raise (parse_failure (pf_of_form "exists elim" (sprintf (proof_sf "ExistsL") "x" "[A]" "[exists x.A]" "p" "")) $startpos $endpos) }
+| Assume_PROOF VAR   error { raise (parse_failure (pf_of_form "forall intro" (sprintf (proof_sf "ForallR") "x" "tau" "p" "" "")) $startpos $endpos) } 
+| Let_PROOF h_var Eq_OP         
+  error { raise (parse_failure (pf_of_form "forall elim" (sprintf (proof_sf "ForallL") "[A]" "[forall x.A]" "x" "p" "")) $startpos $endpos) }
+| By_PROOF Induction_PROOF Nat_TYPE     
+  error { raise (parse_failure (pf_of_form "induction on nat" (sprintf (proof_sf "ByIndNat") "p" "n" "[IH]" "q" "")) $startpos $endpos) }
+| By_PROOF Induction_PROOF List_TYPE_OP 
+  error { raise (parse_failure (pf_of_form "induction on list" (sprintf (proof_sf "ByIndList") "p" "x" "xs" "[IH]" "q")) $startpos $endpos) }
+| By_PROOF Induction_PROOF Bool_TYPE    
+  error { raise (parse_failure (pf_of_form "induction on bool" (sprintf (proof_sf "ByIndBool") "p" "q" "" "" "")) $startpos $endpos) }
+| WeKnow_PROOF       
+  error { raise (parse_failure (pf_of_form "hypothesis labelling" (sprintf (proof_sf "HypLabel") "[A]" "A" "p" "q" "")) $startpos $endpos) } 
+| By_PROOF Induction_PROOF error { raise (parse_failure ("missing type for induction, e.g. 'by induction on nat'") $startpos $endpos) }
+| error { raise (parse_failure ("syntax error") $startpos $endpos) }
 
 h_pair:
 | h_var COMMA h_var              { ($1,$3) }
@@ -298,7 +311,7 @@ eq_tuple:
 | h_var COMMA eq_tuple  { $1 :: $3 }
 
 spine:
-| HVAR              { SpineH $1 :: [] }
+| h_var             { SpineH $1 :: [] }
 | term              { SpineT $1 :: [] }
-| HVAR COMMA spine  { SpineH $1 :: $3 }
+| h_var COMMA spine { SpineH $1 :: $3 }
 | term COMMA spine  { SpineT $1 :: $3 }
