@@ -19,6 +19,7 @@
 %token Nat_TYPE
 %token List_TYPE_OP
 %token Arrow_TYPE_OP
+%token Prop_TYPE
 
 (*** TERMS-TOKENS ***)
 %token True_TERM False_TERM
@@ -149,6 +150,7 @@ proof_toplevel: proof EOF        { $1 }
 simple_type:
 | Bool_TYPE                           { Bool }
 | Nat_TYPE                            { Nat }
+| Prop_TYPE                           { Prop }
 | OPEN_PAREN complex_type CLOSE_PAREN { $2 }
 
 complex_type:
@@ -192,6 +194,7 @@ term_errors:
 simple_prop:
 | Truth_PROP                  { ($startpos , $endpos) , Truth }
 | Falsity_PROP                { ($startpos , $endpos) , Falsity }
+| VAR                         { ($startpos , $endpos) , PropVar $1 }
 | OPEN_PAREN prop CLOSE_PAREN { ($startpos , $endpos) , snd $2 }
 
 prop:

@@ -15,6 +15,7 @@ type token =
   | SEMICOLON
   | Right_PROOF
   | QED
+  | Prop_TYPE
   | PROOF
   | PIPE
   | Or_PROP_OP

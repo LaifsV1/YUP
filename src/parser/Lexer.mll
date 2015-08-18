@@ -41,6 +41,7 @@ rule read = parse
   | "nat"          { Nat_TYPE }
   | "list"         { List_TYPE_OP }
   | "->"           { Arrow_TYPE_OP }
+  | "prop"         { Prop_TYPE }
   | "true"         { True_TERM }
   | "false"        { False_TERM }
   | "zero"         { Zero_TERM }

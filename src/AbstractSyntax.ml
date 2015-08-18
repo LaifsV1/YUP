@@ -8,7 +8,7 @@ type pos_range = (Lexing.position * Lexing.position)
 type var = string
 
 (* Types *)
-type tp = Bool | Nat | List of tp | Arrow of tp * tp
+type tp = Bool | Nat | List of tp | Arrow of tp * tp | Prop
 
 (* Terms *)
 (* f ( c_0 , ... , c_k ) where c_i : term *)
@@ -34,6 +34,7 @@ type prop' = Truth | Falsity            (*top and bot*)
            | Eq of term * term * tp     (*eq*)
            | Forall of var * tp * prop  (*forall*)
            | Exists of var * tp * prop  (*exists*)
+           | PropVar of var
 and prop = pos_range * prop'
 
 (* Term Context *)

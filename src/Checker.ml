@@ -52,6 +52,10 @@ let rec check_prop (psi : ctx) ((p,prop) : prop) :(unit result) =
   | Eq (t,t',tau) -> (check_term psi t tau) >> (check_term psi t' tau)                   (*eq-prop*)
   | Forall (x,tau,a) -> check_prop ((x,tau)::psi) a                                      (*forall-prop*)
   | Exists (x,tau,a) -> check_prop ((x,tau)::psi) a                                      (*exists-prop*)
+  | PropVar x     -> (lookup_ctx_result psi x p) >>=
+                       (fun t -> (match t with
+                                  | Prop -> return ()
+                                  | t    -> Wrong (not_Prop x t,p)))
 
 
 (******************** APPLY SPINE FUNCTION ********************)
@@ -210,8 +214,8 @@ let rec check_pf (psi : ctx) (gamma : hyps) ((pf_pos,proof) : pf) ((prop_pos,pro
                                     (fun e -> cong_entails_result e (depos_term t,depos_term t') pf_pos))
   | ByEq hs , _ -> (encountered_while "evaluating 'by equality' clause")
                      (Wrong (proof_not_of_type (pf_pos,proof) (prop_pos,prop),pf_pos))
-  | HypLabel (h,a,spf,p) , c -> (encountered_while "evaluating 'we know because' clause")(*HypLabel*)
-                                  ((check_pf psi gamma spf a) >>
+  | HypLabel (h,a,spf,p) , c -> (encountered_while ("evaluating 'we know "^h^" because' clause"))
+                                  ((check_pf psi gamma spf a) >>                         (*HypLabel*)
                                      ((check_spf spf) >>
                                         (check_pf psi ((h,a)::gamma) p (prop_pos,c))))
   | SpineApp (h,s)       , c -> (encountered_while "evaluating 'with' clause")           (*SpineApp*)

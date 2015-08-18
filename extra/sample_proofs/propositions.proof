@@ -1,0 +1,17 @@
+Signatures:
+    A : prop;
+    B : prop;
+    C : prop;
+
+Definitions:
+    [AtoB] : A => B;
+    [BtoC] : B => C;
+
+Theorem [tans]:
+    Statement: A => C
+    Proof:
+        assume [A] : A .
+        we know [B] : B because [AtoB] with ([A]).
+        we know [C] : C because [BtoC] with ([B]).
+        by [C]
+    QED.

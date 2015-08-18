@@ -45,6 +45,7 @@ let rec to_string_tp (tau : tp) :(string) =
   | Bool -> "bool"
   | Nat  -> "nat"
   | List  x -> sprintf "(%s) list" (to_string_tp x)
+  | Prop -> "prop"
   | Arrow (a,b)->  sprintf "%s -> %s" (to_string_tp a) (to_string_tp b)
 
 let rec to_string_term ((_,t) : term) :(string) =
@@ -79,6 +80,7 @@ let rec to_string_prop ((_,a) : prop) :(string) =
   | Eq   (t,e,tau) -> sprintf "(%s = %s : %s)" (to_string_term t) (to_string_term e) (to_string_tp tau)
   | Forall (x,tau,a) -> sprintf "(forall %s : %s . %s)" x (to_string_tp tau) (to_string_prop a)
   | Exists (x,tau,a) -> sprintf "(exists %s : %s . %s)" x (to_string_tp tau) (to_string_prop a)
+  | PropVar x -> x
 
 let to_string_hvar ((h,a) : hvar) :(string) =
   match a with
@@ -194,3 +196,6 @@ let encountered_while (caller : string) (res : 'a result) :('a result) =
   | Ok a          -> Ok a
   | Wrong (msg,p) -> let new_msg = sprintf "%s @,Encountered while %s." msg caller
                      in Wrong (new_msg,p)
+
+let not_Prop (x : var) (t : tp) :(string) =
+  sprintf "@[Expected type 'prop' but got variable @,'%s' of type '%s'.@]" x (to_string_tp t)

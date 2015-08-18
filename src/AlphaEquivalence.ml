@@ -28,6 +28,7 @@ let rec swap_prop (x : var) (z : var) ((pos,a) : prop) :(prop) =
   match a with
   | Truth   -> pos , Truth
   | Falsity -> pos , Falsity
+  | PropVar x -> pos , PropVar x
   | And (a,b)     -> pos , And (swap_prop x z a, swap_prop x z b)
   | Or (a,b)      -> pos , Or  (swap_prop x z a, swap_prop x z b)
   | Implies (a,b) -> pos , Implies (swap_prop x z a, swap_prop x z b)
@@ -50,7 +51,7 @@ let rec freevars_term ((pos,t_term) : term) :(var list) =
 
 let rec freevars ((pos,a_prop) : prop) :(var list) =
   match a_prop with
-  | Truth | Falsity -> []
+  | Truth | Falsity | PropVar _ -> []
   | And (a,b)
   | Or (a,b)
   | Implies (a,b) -> (freevars a) @ (freevars b)
@@ -76,6 +77,7 @@ let rec subs_prop' (x : var) (t_term : term) ((pos,a) : prop) (fv : var list) :(
   match a with
   | Truth   -> pos , Truth
   | Falsity -> pos , Falsity
+  | PropVar x -> pos , PropVar x
   | And (a,b)     -> pos , And (subs_prop' x t_term a fv, subs_prop' x t_term b fv)
   | Or (a,b)      -> pos , Or  (subs_prop' x t_term a fv, subs_prop' x t_term b fv)
   | Implies (a,b) -> pos , Implies (subs_prop' x t_term a fv, subs_prop' x t_term b fv)
@@ -145,6 +147,8 @@ let rec alpha_equiv_prop ((_,a_prop) : prop) ((_,b_prop) : prop) :(unit option) 
                                                   alpha_equiv_prop (swap_prop x z a)
                                                                    (swap_prop y z a')
   | Exists _         , _                  -> None
+  | PropVar x        , PropVar y          -> if x = y then Some () else None
+  | PropVar _        , _                  -> None
 
 let alpha_equiv_prop_result (a : prop) (b : prop) :(unit result) =
   match alpha_equiv_prop a b with
