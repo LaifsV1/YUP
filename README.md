@@ -18,7 +18,7 @@ You can compile the tool from Cygwin. I used [make for Windows](http://gnuwin32.
 
 ## Usage
 
-To use the tool, run `proof_checker.exe` from the command-line on a target proof file. By default, the extension for proof files is ".proof".
+To use the tool, run `proof_checker.exe` from the command-line on a target proof file. By default, the extension for proof files is `.proof`.
 e.g.
 
     .\proof_checker.exe "testing\test_proof.proof"
@@ -31,7 +31,7 @@ Sample syntax for proof files can be seen in the test proof file found in `testi
 
 Under [extra](/extra), you can find a syntax highlight mode for notepad++ (`proof-checker-mode.xml`) and emacs (`proof-checker-mode.el`).
 
-To use the notepad++ mode, import the `.xml` file into notepad++, or place the file in the home path.
+To use the notepad++ mode, import the `.xml` file into notepad++, or place the file in the home path used by notepad++.
 
 To use the emacs mode, add the following into you `.emacs` file:
 

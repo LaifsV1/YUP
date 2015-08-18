@@ -50,6 +50,9 @@ type hvar = var * (prop option)
 type spine_arg = SpineT of term | SpineH of hvar
 type spine = spine_arg list
 
+(* Prop Instantiation *)
+type prop_instance = (var * prop) list
+
 (* Proofs *)
 type pf' = TruthR                                  (*Truth-R,  T : A*) (***SPF***)
          | FalsityL of hvar                        (*Falsity-L, Absurd [H] : A*)
@@ -72,6 +75,8 @@ type pf' = TruthR                                  (*Truth-R,  T : A*) (***SPF**
          | ByEq of hvar list                       (*By Equality [H_i]*)
          | HypLabel of var * prop * pf * pf        (*We know [H] : A because spf , p*)
          | SpineApp of hvar * spine                (*[H] with s*) (***SPF***)
+         | Instantiate of var * prop * hvar
+                          * prop_instance * pf     (*We get [H'] : P' instantiating [H] : P with (A is a, B is b, ...)*)
 and pf = pos_range * pf'
 
 (* Monadic Errors *)

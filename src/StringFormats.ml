@@ -10,7 +10,7 @@ exception ParseError of string * pos_range
 (***********************************)
 
 let line_sprintf p1 p2 = sprintf "(line %d , col %d) to (line %d , col %d)"
-                            (p1.pos_lnum) (p1.pos_cnum - p1.pos_bol + 1) (p2.pos_lnum) (p2.pos_cnum - p2.pos_bol + 1)
+                            (p1.pos_lnum) (p1.pos_cnum - p1.pos_bol) (p2.pos_lnum) (p2.pos_cnum - p2.pos_bol)
 
 (*all proof sprintf formatted functions*)
 let proof_sf_TruthR    = "tt"
@@ -32,8 +32,9 @@ let proof_sf_ByIndNat  = sprintf "@[by induction on nat : @,case zero : %s @,cas
 let proof_sf_ByIndList = sprintf "@[by induction on list : @,case [] : %s @,case (%s :: %s) : %s .@, %s @]"
 let proof_sf_ByIndBool = sprintf "@[by induction on bool : @,case true : %s @,case false : %s @]"
 let proof_sf_ByEq      = sprintf "@[by equality on ( %s ) @]"
-let proof_sf_HypLabel  = sprintf "@[we know %s : %s because %s .@, %s"
+let proof_sf_HypLabel  = sprintf "@[we know %s : %s @,because %s .@, %s"
 let proof_sf_SpineApp  = sprintf "%s with ( %s )"
+let proof_sf_Instantiate  = sprintf "@[we get %s : %s @,instantiating %s with ( %s ) .@, %s @]"
 
 
 (***************************)
@@ -99,6 +100,11 @@ let rec to_string_spine (sp : spine) =
               | SpineT t -> sprintf "%s , %s" (to_string_term t) (to_string_spine sp)
               | SpineH h -> sprintf "%s , %s" (to_string_hvar h) (to_string_spine sp))
 
+let rec to_string_prop_instance (xs : prop_instance) :(string) =
+  match xs with
+  | []        -> ""
+  | (x,a)::xs ->  sprintf "%s is %s, %s" x (to_string_prop a) (to_string_prop_instance xs)
+
 (*highest number of inputs is 5 so I had to add empty arguments*)
 let rec to_string_pf ((_,p) : pf) :(string) =
   match p with
@@ -137,6 +143,10 @@ let rec to_string_pf ((_,p) : pf) :(string) =
                                                     (to_string_pf p)
                                                     (to_string_pf q)
   | SpineApp (h,sp)            -> proof_sf_SpineApp (to_string_hvar h) (to_string_spine sp)
+  | Instantiate (h',a,h,xs,p)  -> proof_sf_Instantiate (to_string_hvar h) (to_string_prop a)
+                                                       (to_string_hvar h)
+                                                       (to_string_prop_instance xs)
+                                                       (to_string_pf p)
 
 
 (**********************)

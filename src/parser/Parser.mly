@@ -48,6 +48,7 @@
 %token Equality_PROOF
 %token Because_PROOF
 %token WeKnow_PROOF
+%token WeGet_PROOF Instan_PROOF Is_PROOF
 
 (*** TOPLEVEL-TOKENS ***)
 %token SIGNATURES
@@ -192,9 +193,9 @@ term_errors:
 
 (*** PROPOSITIONS ***)
 simple_prop:
+| VAR                         { ($startpos , $endpos) , PropVar $1 }
 | Truth_PROP                  { ($startpos , $endpos) , Truth }
 | Falsity_PROP                { ($startpos , $endpos) , Falsity }
-| VAR                         { ($startpos , $endpos) , PropVar $1 }
 | OPEN_PAREN prop CLOSE_PAREN { ($startpos , $endpos) , snd $2 }
 
 prop:
@@ -269,6 +270,8 @@ proof:
   Case_PROOF True_TERM COLON proof 
   Case_PROOF False_TERM COLON proof                                       { ($startpos , $endpos) , ByIndBool ($8,$12) }
 | WeKnow_PROOF HVAR COLON prop Because_PROOF proof DOT proof              { ($startpos , $endpos) , HypLabel ($2,$4,$6,$8) }
+| WeGet_PROOF HVAR COLON prop Instan_PROOF h_var 
+  With_PROOF OPEN_PAREN propvar_tuple DOT proof                           { ($startpos , $endpos) , Instantiate ($2,$4,$6,$9,$11) }
 | proof_errors                                                            { $1 }
 
 proof_errors:
@@ -297,8 +300,9 @@ proof_errors:
   error { raise (parse_failure (pf_of_form "induction on bool" (proof_sf_ByIndBool "p" "q")) $startpos $endpos) }
 | WeKnow_PROOF       
   error { raise (parse_failure (pf_of_form "hypothesis labelling" (proof_sf_HypLabel "[A]" "A" "p" "q")) $startpos $endpos) } 
-| By_PROOF Induction_PROOF error { raise (parse_failure ("missing type for induction, e.g. 'by induction on nat'") $startpos $endpos) }
-| error { raise (parse_failure ("syntax error") $startpos $endpos) }
+| By_PROOF Induction_PROOF error { raise (parse_failure ("proof: missing type for induction, e.g. 'by induction on nat'") $startpos $endpos) }
+| WeGet_PROOF error { raise (parse_failure (" WE GET ") $startpos $endpos) }
+| error { raise (parse_failure ("proof: syntax error") $startpos $endpos) }
 
 h_pair:
 | h_var COMMA h_var              { ($1,$3) }
@@ -318,3 +322,7 @@ spine:
 | term              { SpineT $1 :: [] }
 | h_var COMMA spine { SpineH $1 :: $3 }
 | term COMMA spine  { SpineT $1 :: $3 }
+
+propvar_tuple:
+| VAR Is_PROOF prop CLOSE_PAREN         { ($1,$3) :: [] }
+| VAR Is_PROOF prop COMMA propvar_tuple { ($1,$3) :: $5 }

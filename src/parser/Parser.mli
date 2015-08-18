@@ -3,6 +3,7 @@ type token =
   | Zero_TERM
   | With_PROOF
   | WeKnow_PROOF
+  | WeGet_PROOF
   | VAR of (AbstractSyntax.var)
   | Truth_PROP
   | True_TERM
@@ -26,6 +27,8 @@ type token =
   | List_TYPE_OP
   | Let_PROOF
   | Left_PROOF
+  | Is_PROOF
+  | Instan_PROOF
   | Induction_PROOF
   | In_PROOF
   | Implies_PROP_OP

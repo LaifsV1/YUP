@@ -60,14 +60,14 @@ let rec check_prop (psi : ctx) ((p,prop) : prop) :(unit result) =
 
 (******************** APPLY SPINE FUNCTION ********************)
 (* [notes: section 9.2] *)
-let rec apply_spine (psi : ctx) (gamma : hyps) (s : spine) ((p,a) : prop) (p : pos_range) :(prop result) =
+let rec apply_spine (psi : ctx) (gamma : hyps) (s : spine) ((p,a) : prop) :(prop result) =
   match s , a with
   | []             , a                -> Ok (p,a)                                        (*id-spine-app*)
   | SpineH h :: s' , Implies (a,b)    -> (lookup_hyps_result gamma h p) >>=              (*implies-spine-app*)
                                            (fun a' -> (alpha_equiv_prop_result a a') >>
-                                                        (apply_spine psi gamma s' b p))
+                                                        (apply_spine psi gamma s' b))
   | SpineT t :: s' , Forall (x,tau,a) -> (check_term psi t tau) >>                       (*forall-spine-app*)
-                                           (apply_spine psi gamma s' (subs_prop x t a) p)
+                                           (apply_spine psi gamma s' (subs_prop x t a))
   | sarg     :: s' , c                ->  Wrong (apply_spine_error sarg (p,a),p)
 
 
@@ -83,6 +83,13 @@ let rec check_spf ((pos,p) : pf) :(unit result) =
   | By h           -> return ()
   | SpineApp (h,s) -> return ()
   | _              -> (Wrong (not_simple_proof (pos,p),pos))
+
+
+(******************** INSTANTIATE PROP VARS ********************)
+let rec instantiate_prop_var (xs : prop_instance) ((p,a) : prop) :(prop) =
+  match xs with
+  | []        -> (p,a)
+  | (x,b)::xs -> instantiate_prop_var xs (subs_prop_var x b (p,a))
 
 
 (******************** CHECK PROOF FUNCTION ********************)
@@ -221,5 +228,11 @@ let rec check_pf (psi : ctx) (gamma : hyps) ((pf_pos,proof) : pf) ((prop_pos,pro
   | SpineApp (h,s)       , c -> (encountered_while "evaluating 'with' clause")           (*SpineApp*)
                                   ((lookup_hyps_result gamma h pf_pos) >>=
                                      (fun a ->
-                                      (apply_spine psi gamma s a pf_pos) >>=
+                                      (apply_spine psi gamma s a) >>=
                                         (fun b -> alpha_equiv_prop_result b (prop_pos,c))))
+  | Instantiate (h',a,(h,d),xs,p) , c -> (encountered_while ("evaluating 'we get "^h'^" instantiating "^h^"' clause"))
+                                           ((lookup_hyps_result gamma (h,d) pf_pos) >>=  (*Instantiate*)
+                                              (fun a' ->
+                                               let new_prop = (instantiate_prop_var xs a') in
+                                               (alpha_equiv_prop_result a new_prop) >>
+                                                 (check_pf psi ((h',new_prop)::gamma) p (prop_pos,c))))
