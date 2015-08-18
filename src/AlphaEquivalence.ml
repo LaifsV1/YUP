@@ -118,7 +118,7 @@ let rec alpha_equiv_term ((_,t) : term) ((_,e) : term) :(unit option) =
 
 (* prop alpha-equivalence - note: this function doesn't check well-formedness *)
 (* [notes: section 6.2] *)
-let rec alpha_equiv_prop ((p1,a_prop) : prop) ((p2,b_prop) : prop) :(unit option) =
+let rec alpha_equiv_prop ((_,a_prop) : prop) ((_,b_prop) : prop) :(unit option) =
   match a_prop , b_prop with
   | Truth   , Truth   -> Some ()                                                         (*Truth-equiv*)
   | Truth   , _       -> None
@@ -132,7 +132,7 @@ let rec alpha_equiv_prop ((p1,a_prop) : prop) ((p2,b_prop) : prop) :(unit option
   | Or _     , _          -> None
   | Implies (a,b) , Implies (a',b') -> and_also (alpha_equiv_prop a a')                       (*Implies-equiv*)
                                            (alpha_equiv_prop b b')
-  | Implies _     , _          -> print_endline ((to_string_prop (p1,a_prop))^" IS NOT "^(to_string_prop (p1,b_prop)));None
+  | Implies _     , _          -> None
   | Eq (t1,t2,tau) , Eq (t1',t2',tau') -> if tau <> tau' then None                       (*Eq-equiv*)
                                           else and_also (alpha_equiv_term t1 t1')
                                                         (alpha_equiv_term t2 t2')
