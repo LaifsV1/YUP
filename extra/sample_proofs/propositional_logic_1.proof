@@ -1,0 +1,30 @@
+(*author: Yu-Yang Lin*)
+(*this file contains a few proofs on classical propositional logic*)
+Signatures:
+    A : prop;
+    B : prop;
+    C : prop;
+
+Definitions:
+    [A to B] : A => B;
+    [B to C] : B => C;
+
+Theorem [transitivity A to C]:
+    Statement: A => C
+    Proof:
+        assume [A] : A .
+        we know [B] : B because [A to B] with ([A]).
+        we know [C] : C because [B to C] with ([B]).
+        by [C]
+    QED.
+
+(*double negation elimination testing*)
+Definitions:
+    [DNE]  : ((A => Falsity) => Falsity) => A;
+
+Theorem [DNE of C]:
+    Statement: ((C => Falsity) => Falsity) => C
+    Proof:
+        we get [C] : ((C => Falsity) => Falsity) => C instantiating [DNE] with (A is C).
+        by [C]
+    QED.
