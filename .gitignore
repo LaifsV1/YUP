@@ -6,9 +6,8 @@
 *.cmi
 *.aux
 *.log
-*.el
 *.bbl
 *.blg
 *.dsc
-_region_.pdf
-_region_.tex
+notes.el
+*_region_*
