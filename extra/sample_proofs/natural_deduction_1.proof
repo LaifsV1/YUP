@@ -1,0 +1,155 @@
+(*author: Yu-Yang Lin*)
+(*this file contains proofs for classical propositional logic in natural deduction style*)
+(*taken from Language and Logic week 5 classwork (2014/15) taught by Dr Mark Lee*)
+
+Signatures:
+    A : prop ;
+    B : prop ;
+    C : prop ;
+    D : prop ;
+    P : prop ;
+    Q : prop ;
+    R : prop ;
+
+(* QUESTION 1 *)
+(*******************************************)
+(* P, P => Q ; prove P and (Q or R)        *)
+(*   1. P              ; premise {1}       *)
+(*   2. P=>Q           ; premise {2}       *)
+(*   3. Q              ; => elim 1,2 {1,2} *)
+(*   4. Q or R         ; or intro 3 {1,2}  *)
+(*   5. P and (Q or R) ; and intro {1,2}   *)
+(*******************************************)
+Definitions:
+    [P]      : P ;
+    [P to Q] : P => Q ;
+
+Theorem [P and Q_or_R]:
+    Statement: P and (Q or R)
+    Proof:
+        we know [step 1] : Q              because [P to Q] with ([P]) .
+        we know [step 2] : Q or R         because left by [step 1] .
+        we know [step 3] : P and (Q or R) because (by [P] , by [step 2]) .
+        by [step 3]
+    QED.
+
+(* QUESTION 2 *)
+(**************************************************************)
+(* not P => Q , not Q ; prove P                               *)
+(*     1. assume not P     H {1}                              *)
+(*     2. | not P => Q     Premise {1,2}                      *)
+(*     3. | Q              => elim 1,2 {1,2}                  *)
+(*     4. | not Q          Premise {4}                        *)
+(*     5. not not P        by contradiction (RAA) 1,3,4 {2,4} *)
+(*     6. P                by DNE 5 {2,4}                     *)
+(**************************************************************)
+Definitions:
+    [not P to Q] : (P => Falsity) => Q ;
+    [not Q]      : (Q => Falsity) ;
+    [DNE] : ((P => Falsity) => Falsity) => P ;
+
+Theorem [not not P]:
+    Statement: ((P => Falsity) => Falsity)
+    Proof:
+        assume [not P] : (P => Falsity) .
+        we know [Q]   : Q       because [not P to Q] with ([not P]) .
+        we know [RAA] : Falsity because [not Q]      with ([Q]) .
+        by [RAA]
+    QED.
+
+Theorem [P]:
+    Statement: P
+    Proof:
+        we know [DNE nnP] : P because [DNE] with ([not not P]) .
+        by [DNE nnP]
+    QED.
+
+(* QUESTION 3 *)
+(****************************************************)
+(* prove not(P and not P)                           *)
+(*     1. assume (P and not P) H {1}                *)
+(*     2. | P                  or-elim 1 {1}        *)
+(*     3. | not P              or-elim 1 {1}        *)
+(*     4. not (P and not P)    by negation 1,2,3 {} *)
+(****************************************************)
+Theorem [not (P and not P)]:
+    Statement: (P and (P => Falsity)) => Falsity
+    Proof:
+        assume [P and not P] : (P and (P => Falsity)) .
+        let ([P],[not P]) = [P and not P] in
+        we know [negation] : Falsity because [not P] with ([P]) .
+        by [negation]
+    QED.
+
+(* QUESTION 4 *)
+(*********************************************)
+(* P=>(Q=>R) ; prove Q=>(P => R)             *)
+(*     1. assume Q        H {1}              *)
+(*     2. | assume P      H {1,2}            *)
+(*     3. | | P=>(Q=>R)   Premise {1,2,3}    *)
+(*     4. | | Q=>R        =>elim 2,3 {1,2,3} *)
+(*     5. | | R           =>elim 1,4 {1,2,3} *)
+(*     6. | P=>R          =>intro 2,5 {1,3}  *)
+(*     7. Q=>(P=>R)       =>intro 1,6 {3}    *)
+(*********************************************)
+Definitions:
+    [P to (Q to R)] : P => (Q => R) ;
+
+Theorem [Q to (P to R)]:
+    Statement: Q => (P => R)
+    Proof:
+        assume [Q] : Q .
+        assume [P] : P .
+        we know [Q to R] : Q => R because [P to (Q to R)] with ([P]) .
+        we know [R]      : R      because [Q to R] with ([Q]) .
+        by [R]
+    QED.
+
+(* QUESTION 5 *)
+(***********************************************************)
+(* A or B , A => C , not D => not B ; prove C or D         *)
+(*     1.  A or B               Premise {1}                *)
+(*     2.  assume A             H {2}                      *)
+(*     3.  | A => C             Premise {2,3}              *)
+(*     4.  | C                  =>elim 2,3 {2,3}           *)
+(*     5.  | C or D             or-intro 4 {2,3}           *)
+(*     6.  assume B             H {6}                      *)
+(*     7.  | assume not D       H {6,7}                    *)
+(*     8.  | | not D => not B   Premise {6,7,8}            *)
+(*     9.  | | not B            =>elim 7,8 {6,7,8}         *)
+(*     10. | | B                i 6 {6}                    *)
+(*     11. | not not D          RAA 7,9,10 {6,8}           *)
+(*     12. | D                  DNE 11 {6,8}               *)
+(*     13. | C or D             or-intro 12 {6,8}          *)
+(*     14. C or D               or-elim 1,2,5,6,13 {1,3,8} *)
+(***********************************************************)
+Definitions:
+    [A or B]   : A or B ;
+    [A to C]   : A => C ;
+    [nD to nB] : (D => Falsity) => (B => Falsity);
+    [DNE]      : ((D => Falsity) => Falsity) => D ;
+
+Theorem [B to nnD] :
+    Statement: B => (D => Falsity) => Falsity
+    Proof:
+        assume [B] : B .
+        assume [nD] : D => Falsity .
+        we know [nB]       : B => Falsity because [nD to nB] with ([nD]) .
+        we know [negation] : Falsity      because [nB] with ([B]) .
+        by [negation]
+    QED.
+
+Theorem [C or D]:
+    Statement: C or D
+    Proof:
+        match [A or B] : A or B with
+        | [A] : A .
+            we know [C]      : C      because [A to C] with ([A]) .
+            we know [C or D] : C or D because left by [C] .
+            by [C or D]
+        | [B] : B .
+            we know [nnD]    : (D => Falsity) => Falsity because [B to nnD] with ([B]) .
+            we know [D]      : D                         because [DNE] with ([nnD]) .
+            we know [C or D] : C or D                    because right by [D] .
+            by [C or D]
+    QED.

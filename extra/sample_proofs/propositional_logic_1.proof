@@ -1,5 +1,5 @@
 (*author: Yu-Yang Lin*)
-(*this file contains a few proofs on classical propositional logic*)
+(*this file contains a few proofs on propositional logic*)
 Signatures:
     A : prop;
     B : prop;

@@ -1,0 +1,43 @@
+(*this file contains a few proofs on propositional logic*)
+(***************************************************)
+(* double negation introduction: A => not not A    *)
+(* --------------------------------------------    *)
+(* 1. assume A              hypothesis             *)
+(* 2. | assume not A        hypothesis             *)
+(* 3. | | not A , A         contradiction          *)
+(* 4. | not (not A)         by negation of (not A) *)
+(* 5. A => not not A        => intro               *)
+(***************************************************)
+(*credit for proof to Dr. Dan R. Ghica*)
+Signatures:
+    A : prop ;
+
+Theorem [double negation introduction] :
+    Statement: A => ((A => Falsity) => Falsity)
+    Proof:
+        assume [A] : A .
+        assume [not A] : A => Falsity .
+        we know [contradiction] : Falsity because [not A] with ([A]) .
+        by [contradiction]
+    QED.
+
+(***********************************************************)
+(* triple negation elimination: (not not not A) => (not A) *)
+(* ------------------------------------------------------- *)
+(* 1. assume nnnA      hypothesis                          *)
+(* 2. | assume A       hypothesis                          *)
+(* 3. | | nnA          double negation introduction with A *)
+(* 4. | | nnnA , nnA   contradiction                       *)
+(* 5. | nA             by negation of (A)                  *)
+(* 6. nnnA => nA       => intro                            *)
+(***********************************************************)
+(*credit for proof to Dr. Dan R. Ghica*)
+Theorem [triple negation elimination] :
+    Statement: (((A => Falsity) => Falsity) => Falsity) => (A => Falsity)
+    Proof:
+        assume  [nnnA] : ((A => Falsity) => Falsity) => Falsity .
+        assume  [A] : A .
+        we know [nnA] : ((A => Falsity) => Falsity) because [double negation introduction] with ([A]) .
+        we know [contradiction] : Falsity because [nnnA] with ([nnA]) .
+        by [contradiction]
+    QED.
