@@ -25,10 +25,12 @@
 ;; each category of keyword is given a particular face
 (setq proof-font-lock-keywords
       `(
-        ("(\\*.*\\*)"  . font-lock-comment-face)
-        ("\\[\\]"               . font-lock-constant-face)
-        ("\\:\\:"               . font-lock-constant-face)
-        ("\\[[A-Za-z][^]]*\\]"  . font-lock-function-name-face)
+        ;; adding regexp strings here.
+        ("(\\*[\0-\377[:nonascii:]]*?\\*)" . font-lock-comment-face)
+        ("\\[\\]"                          . font-lock-constant-face)
+        ("\\:\\:"                          . font-lock-constant-face)
+        ("\\[[A-Za-z][^]]*\\]"             . font-lock-function-name-face)
+        ;; adding auto-generated regexp categories.
         (,proof-toplevel-regexp . font-lock-keyword-face)
         (,proof-types-regexp    . font-lock-type-face)
         (,proof-terms-regexp    . font-lock-constant-face)
@@ -43,16 +45,22 @@
   "proof-checker-mode"
   "Major mode for editing proofs for my Proof Checker"
 
+  ;; add comment variables
   (set (make-local-variable 'comment-start) "(* ")
   (set (make-local-variable 'comment-end) " *)")
   (set (make-local-variable 'comment-start-skip) "(\\*+[ \t]*")
 
+  ;; set tab width and indent mode
   (setq tab-width 4)
   (setq indent-tabs-mode nil)
-
   (define-key proof-checker-mode-map (kbd "TAB") 'tab-to-tab-stop)
 
-  ;; code for syntax highlighting
+  ;; set font-lock to multiline.
+  ;; this is useful for comments, however, it's slower.
+  ;; won't work fast on large files.
+  (setq font-lock-multiline t)
+
+  ;; code for syntax highlighting. sets all the font locks
   (setq font-lock-defaults '((proof-font-lock-keywords))))
 
 ;; clear memory. no longer needed
