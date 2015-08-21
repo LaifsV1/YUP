@@ -1111,42 +1111,6 @@ HVAR COLON prop
                                   term_errors 
                                   . error 
 
-** Conflict (reduce/reduce) in state 138.
-** Tokens involved: Eq_OP CLOSE_PAREN
-** The following explanations concentrate on token CLOSE_PAREN.
-** This state is reached from proof_toplevel after reading:
-
-HVAR COLON OPEN_PAREN VAR 
-
-** The derivations that appear below have the following common factor:
-** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
-
-proof_toplevel 
-proof EOF 
-simple_proof 
-h_var With_PROOF OPEN_PAREN spine CLOSE_PAREN 
-HVAR COLON prop 
-           (?)
-
-** In state 138, looking ahead at CLOSE_PAREN, reducing production
-** simple_prop -> VAR 
-** is permitted because of the following sub-derivation:
-
-simple_prop 
-OPEN_PAREN prop CLOSE_PAREN // lookahead token appears
-           simple_prop // lookahead token is inherited
-           VAR . 
-
-** In state 138, looking ahead at CLOSE_PAREN, reducing production
-** simple_term -> VAR 
-** is permitted because of the following sub-derivation:
-
-term Eq_OP term COLON complex_type 
-simple_term 
-OPEN_PAREN term CLOSE_PAREN // lookahead token appears
-           simple_term // lookahead token is inherited
-           VAR . 
-
 ** Conflict (reduce/reduce) in state 137.
 ** Tokens involved: Eq_OP CLOSE_PAREN
 ** The following explanations concentrate on token CLOSE_PAREN.
@@ -1434,7 +1398,7 @@ complex_type Arrow_TYPE_OP complex_type
                            type_errors 
                            . List_TYPE_OP 
 
-** Conflict (shift/reduce) in state 30.
+** Conflict (shift/reduce) in state 29.
 ** Tokens involved: Zero_TERM VAR True_TERM OPEN_PAREN Nil_TERM False_TERM Cons_TERM_OP
 ** The following explanations concentrate on token Zero_TERM.
 ** This state is reached from prop_toplevel after reading:
@@ -1449,21 +1413,21 @@ prop EOF
 term Eq_OP term COLON complex_type 
 (?)
 
-** In state 30, looking ahead at Zero_TERM, shifting is permitted
+** In state 29, looking ahead at Zero_TERM, shifting is permitted
 ** because of the following sub-derivation:
 
 Suc_TERM_OP term 
             term simple_term 
                  . Zero_TERM 
 
-** In state 30, looking ahead at Zero_TERM, reducing production
+** In state 29, looking ahead at Zero_TERM, reducing production
 ** term -> Suc_TERM_OP term 
 ** is permitted because of the following sub-derivation:
 
 term simple_term // lookahead token appears because simple_term can begin with Zero_TERM
 Suc_TERM_OP term . 
 
-** Conflict (shift/reduce) in state 29.
+** Conflict (shift/reduce) in state 28.
 ** Tokens involved: Zero_TERM VAR True_TERM OPEN_PAREN Nil_TERM False_TERM Cons_TERM_OP CLOSE_PAREN
 ** The following explanations concentrate on token Zero_TERM.
 ** This state is reached from term_toplevel after reading:
@@ -1477,7 +1441,7 @@ term_toplevel
 term EOF 
 (?)
 
-** In state 29, looking ahead at Zero_TERM, shifting is permitted
+** In state 28, looking ahead at Zero_TERM, shifting is permitted
 ** because of the following sub-derivation:
 
 simple_term 
@@ -1485,7 +1449,7 @@ OPEN_PAREN term CLOSE_PAREN
            term simple_term 
                 . Zero_TERM 
 
-** In state 29, looking ahead at Zero_TERM, reducing production
+** In state 28, looking ahead at Zero_TERM, reducing production
 ** term_errors -> OPEN_PAREN term 
 ** is permitted because of the following sub-derivation:
 
@@ -1493,7 +1457,7 @@ term simple_term // lookahead token appears because simple_term can begin with Z
 term_errors // lookahead token is inherited
 OPEN_PAREN term . 
 
-** Conflict (shift/reduce) in state 25.
+** Conflict (shift/reduce) in state 24.
 ** Tokens involved: Zero_TERM VAR True_TERM OPEN_PAREN Nil_TERM False_TERM
 ** The following explanations concentrate on token Zero_TERM.
 ** This state is reached from prop_toplevel after reading:
@@ -1508,21 +1472,21 @@ prop EOF
 term Eq_OP term COLON complex_type 
 (?)
 
-** In state 25, looking ahead at Zero_TERM, shifting is permitted
+** In state 24, looking ahead at Zero_TERM, shifting is permitted
 ** because of the following sub-derivation:
 
 term Cons_TERM_OP term 
                   term simple_term 
                        . Zero_TERM 
 
-** In state 25, looking ahead at Zero_TERM, reducing production
+** In state 24, looking ahead at Zero_TERM, reducing production
 ** term -> term Cons_TERM_OP term 
 ** is permitted because of the following sub-derivation:
 
 term simple_term // lookahead token appears because simple_term can begin with Zero_TERM
 term Cons_TERM_OP term . 
 
-** Conflict (shift/reduce) in state 24.
+** Conflict (shift/reduce) in state 23.
 ** Tokens involved: Zero_TERM VAR True_TERM OPEN_PAREN Nil_TERM False_TERM
 ** The following explanations concentrate on token Zero_TERM.
 ** This state is reached from prop_toplevel after reading:
@@ -1537,14 +1501,14 @@ prop EOF
 term Eq_OP term COLON complex_type 
 (?)
 
-** In state 24, looking ahead at Zero_TERM, shifting is permitted
+** In state 23, looking ahead at Zero_TERM, shifting is permitted
 ** because of the following sub-derivation:
 
 term Cons_TERM_OP term 
                   simple_term 
                   . Zero_TERM 
 
-** In state 24, looking ahead at Zero_TERM, reducing production
+** In state 23, looking ahead at Zero_TERM, reducing production
 ** term_errors -> term Cons_TERM_OP 
 ** is permitted because of the following sub-derivation:
 
@@ -1552,7 +1516,7 @@ term simple_term // lookahead token appears because simple_term can begin with Z
 term_errors // lookahead token is inherited
 term Cons_TERM_OP . 
 
-** Conflict (shift/reduce) in state 21.
+** Conflict (shift/reduce) in state 20.
 ** Tokens involved: Zero_TERM VAR True_TERM OPEN_PAREN Nil_TERM False_TERM
 ** The following explanations concentrate on token Zero_TERM.
 ** This state is reached from prop_toplevel after reading:
@@ -1567,7 +1531,7 @@ prop EOF
 term Eq_OP term COLON complex_type 
 (?)
 
-** In state 21, looking ahead at Zero_TERM, shifting is permitted
+** In state 20, looking ahead at Zero_TERM, shifting is permitted
 ** because of the following sub-derivation:
 
 term_errors 
@@ -1575,7 +1539,7 @@ Cons_TERM_OP term
              term simple_term 
                   . Zero_TERM 
 
-** In state 21, looking ahead at Zero_TERM, reducing production
+** In state 20, looking ahead at Zero_TERM, reducing production
 ** term_errors -> Cons_TERM_OP term 
 ** is permitted because of the following sub-derivation:
 
@@ -1612,39 +1576,6 @@ Suc_TERM_OP term
 term simple_term // lookahead token appears because simple_term can begin with Zero_TERM
 term_errors // lookahead token is inherited
 Suc_TERM_OP . 
-
-** Conflict (reduce/reduce) in state 10.
-** Tokens involved: Eq_OP CLOSE_PAREN
-** The following explanations concentrate on token CLOSE_PAREN.
-** This state is reached from prop_toplevel after reading:
-
-OPEN_PAREN VAR 
-
-** The derivations that appear below have the following common factor:
-** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
-
-prop_toplevel 
-prop EOF 
-(?)
-
-** In state 10, looking ahead at CLOSE_PAREN, reducing production
-** simple_prop -> VAR 
-** is permitted because of the following sub-derivation:
-
-simple_prop 
-OPEN_PAREN prop CLOSE_PAREN // lookahead token appears
-           simple_prop // lookahead token is inherited
-           VAR . 
-
-** In state 10, looking ahead at CLOSE_PAREN, reducing production
-** simple_term -> VAR 
-** is permitted because of the following sub-derivation:
-
-term Eq_OP term COLON complex_type 
-simple_term 
-OPEN_PAREN term CLOSE_PAREN // lookahead token appears
-           simple_term // lookahead token is inherited
-           VAR . 
 
 ** Conflict (reduce/reduce) in state 8.
 ** Tokens involved: Eq_OP CLOSE_PAREN

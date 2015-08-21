@@ -9,6 +9,7 @@ type token =
   | True_TERM
   | Therefore_PROOF
   | TT_PROOF
+  | TPVAR of (AbstractSyntax.var)
   | THEOREM
   | Suc_TERM_OP
   | STATEMENT
@@ -17,6 +18,7 @@ type token =
   | Right_PROOF
   | QED
   | Prop_TYPE
+  | PVAR of (AbstractSyntax.var)
   | PROOF
   | PIPE
   | Or_PROP_OP

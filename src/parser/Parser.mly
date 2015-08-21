@@ -58,6 +58,8 @@
 (*** OTHER-TOKENS ***)
 %token <AbstractSyntax.var> VAR
 %token <AbstractSyntax.var> HVAR
+%token <AbstractSyntax.var> PVAR
+%token <AbstractSyntax.var> TPVAR
 /*%token OPEN_BRACKET CLOSE_BRACKET*/
 %token OPEN_PAREN CLOSE_PAREN
 %token COLON COMMA SEMICOLON DOT PIPE
@@ -131,9 +133,12 @@ syntax_toplevel_errors:
 | THEOREM error  { raise (parse_failure "theorem: incorrect syntax, must be in form 'Theorem [label] : Statement : a Proof: p QED.'" $startpos $endpos) }
 
 signatures:
-| VAR COLON complex_type SEMICOLON signatures { ($1,$3)::$5 }
-| VAR COLON complex_type SEMICOLON            { ($1,$3)::[] }
-| VAR COLON complex_type                      { raise (parse_failure "signatures: missing ';'" $startpos $endpos) }
+| VAR  COLON complex_type SEMICOLON signatures { ($1,$3)::$5 }
+| VAR  COLON complex_type SEMICOLON            { ($1,$3)::[] }
+| PVAR COLON complex_type SEMICOLON signatures { ($1,$3)::$5 }
+| PVAR COLON complex_type SEMICOLON            { ($1,$3)::[] }
+| VAR  COLON complex_type                      { raise (parse_failure "signatures: missing ';'" $startpos $endpos) }
+| PVAR COLON complex_type                      { raise (parse_failure "signatures: missing ';'" $startpos $endpos) }
 
 definitions:
 | HVAR COLON prop SEMICOLON definitions { ($1,$3)::$5 }
@@ -175,7 +180,7 @@ simple_term:
 | False_TERM                  { ($startpos , $endpos) , Boolean false }
 | Nil_TERM                    { ($startpos , $endpos) , Nil }
 | Zero_TERM                   { ($startpos , $endpos) , Zero }
-| OPEN_PAREN term CLOSE_PAREN { ($startpos , $endpos) , snd $2 }
+| OPEN_PAREN term CLOSE_PAREN { $2 }
 
 term:
 | simple_term            { $1 }
@@ -193,10 +198,10 @@ term_errors:
 
 (*** PROPOSITIONS ***)
 simple_prop:
-| VAR                         { ($startpos , $endpos) , PropVar $1 }
+| PVAR                        { ($startpos , $endpos) , PropVar $1 }
 | Truth_PROP                  { ($startpos , $endpos) , Truth }
 | Falsity_PROP                { ($startpos , $endpos) , Falsity }
-| OPEN_PAREN prop CLOSE_PAREN { ($startpos , $endpos) , snd $2 }
+| OPEN_PAREN prop CLOSE_PAREN { $2 }
 
 prop:
 | simple_prop                                 { $1 }
@@ -269,7 +274,7 @@ proof:
 | By_PROOF Induction_PROOF Bool_TYPE COLON 
   Case_PROOF True_TERM COLON proof 
   Case_PROOF False_TERM COLON proof                                       { ($startpos , $endpos) , ByIndBool ($8,$12) }
-| WeKnow_PROOF HVAR COLON prop Because_PROOF proof DOT proof              { ($startpos , $endpos) , HypLabel ($2,$4,$6,$8) }
+| WeKnow_PROOF HVAR COLON prop Because_PROOF proof DOT proof              { print_endline ("we know"^($2)^" : "^(to_string_prop $4)) ; ($startpos , $endpos) , HypLabel ($2,$4,$6,$8) }
 | WeGet_PROOF HVAR COLON prop Instan_PROOF h_var 
   With_PROOF OPEN_PAREN propvar_tuple DOT proof                           { ($startpos , $endpos) , Instantiate ($2,$4,$6,$9,$11) }
 | proof_errors                                                            { $1 }
@@ -324,5 +329,5 @@ spine:
 | term COMMA spine  { SpineT $1 :: $3 }
 
 propvar_tuple:
-| VAR Is_PROOF prop CLOSE_PAREN         { ($1,$3) :: [] }
-| VAR Is_PROOF prop COMMA propvar_tuple { ($1,$3) :: $5 }
+| PVAR Is_PROOF prop CLOSE_PAREN         { ($1,$3) :: [] }
+| PVAR Is_PROOF prop COMMA propvar_tuple { ($1,$3) :: $5 }

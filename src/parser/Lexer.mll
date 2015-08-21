@@ -16,8 +16,10 @@
 
 }
 
-let var = ['a'-'z''A'-'Z']['_''a'-'z''A'-'Z''0'-'9']*
-let hvar = '['['a'-'z''A'-'Z']['_'' ''a'-'z''A'-'Z''0'-'9']*']'
+let var = ['a'-'z']['A'-'Z' 'a'-'z' '0'-'9' '_']*
+let hvar = '['['A'-'Z' 'a'-'z' '0'-'9' '_' ' ' '(' ')']*']'
+let pvar = ['A'-'Z']['A'-'Z' 'a'-'z' '0'-'9' '_']*
+let tpvar = '\''['a'-'z' '0'-'9' '_']*
 let open_comment = "(*"
 let close_comment = "*)"
 let white = [' ' '\t']+
@@ -82,6 +84,8 @@ rule read = parse
   | "QED"           { QED }
   | "Qed"           { QED }
   | hvar as x       { HVAR x }
+  | tpvar as x      { TPVAR x }
+  | pvar as x       { PVAR x }
   | var as x        { VAR x }
   | eof             { EOF }
   | open_comment    { comment lexbuf }
