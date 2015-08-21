@@ -68,6 +68,7 @@ rule read = parse
   | "because"       { Because_PROOF }
   | "assume"        { Assume_PROOF }
   | "by"            { By_PROOF }
+  | "therefore"     { Therefore_PROOF }
   | "choose"        { Choose_PROOF }
   | "induction on"  { Induction_PROOF }
   | "case"          { Case_PROOF }

@@ -1,6 +1,5 @@
 (* Checker Top Level *)
 (* author: Yu-Yang Lin *)
-
 open AbstractSyntax
 open StringFormats
 open Format

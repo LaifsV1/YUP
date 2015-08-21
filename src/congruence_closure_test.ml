@@ -6,8 +6,6 @@
 #use "Helper.ml";;
 #use "Checker.ml";;
 
-
-
 (*** GLOBAL HELPER FUNCTIONS ***)
 let time f x =
   let t = Sys.time() in

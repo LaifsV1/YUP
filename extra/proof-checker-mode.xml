@@ -5,7 +5,7 @@
             <Prefix Keywords1="no" Keywords2="no" Keywords3="no" Keywords4="no" Keywords5="no" Keywords6="no" Keywords7="no" Keywords8="no" />
         </Settings>
         <KeywordLists>
-            <Keywords name="Comments"></Keywords>
+            <Keywords name="Comments">00(* 01 02*) 03 04</Keywords>
             <Keywords name="Numbers, prefix1"></Keywords>
             <Keywords name="Numbers, prefix2"></Keywords>
             <Keywords name="Numbers, extras1"></Keywords>
@@ -25,11 +25,11 @@
             <Keywords name="Folders in comment, middle"></Keywords>
             <Keywords name="Folders in comment, close"></Keywords>
             <Keywords name="Keywords1">Signatures&#x000D;&#x000A;Definitions&#x000D;&#x000A;Theorem</Keywords>
-            <Keywords name="Keywords2">nat list -&gt; bool</Keywords>
+            <Keywords name="Keywords2">nat list -&gt; bool prop</Keywords>
             <Keywords name="Keywords3">Statement&#x000D;&#x000A;Proof&#x000D;&#x000A;Qed&#x000D;&#x000A;QED</Keywords>
             <Keywords name="Keywords4">&quot;[]&quot; nil true false :: suc</Keywords>
             <Keywords name="Keywords5">= Truth Falsity and or =&gt; forall exists</Keywords>
-            <Keywords name="Keywords6">&quot;tt&quot;&#x000D;&#x000A;&quot;absurd&quot;&#x000D;&#x000A;&quot;let&quot; &#x000D;&#x000A;&quot;in&quot; &#x000D;&#x000A;&quot;match&quot; &#x000D;&#x000A;&quot;with&quot;&#x000D;&#x000A;&quot;left&quot; &#x000D;&#x000A;&quot;right&quot;&#x000D;&#x000A;&quot;because&quot; &#x000D;&#x000A;&quot;we know&quot;&#x000D;&#x000A; &quot;assume&quot;&#x000D;&#x000A; &quot;by&quot;&#x000D;&#x000A; &quot;choose&quot;&#x000D;&#x000A; &quot;induction on&quot;&#x000D;&#x000A; &quot;case&quot;&#x000D;&#x000A; &quot;equality on&quot;&#x000D;&#x000A;&quot;we get&quot;&#x000D;&#x000A;&quot;instantiating&quot;&#x000D;&#x000A;&quot;is&quot;</Keywords>
+            <Keywords name="Keywords6">&quot;tt&quot;&#x000D;&#x000A;&quot;absurd&quot;&#x000D;&#x000A;&quot;let&quot; &#x000D;&#x000A;&quot;in&quot; &#x000D;&#x000A;&quot;match&quot; &#x000D;&#x000A;&quot;with&quot;&#x000D;&#x000A;&quot;left&quot; &#x000D;&#x000A;&quot;right&quot;&#x000D;&#x000A;&quot;because&quot; &#x000D;&#x000A;&quot;we know&quot;&#x000D;&#x000A; &quot;assume&quot;&#x000D;&#x000A; &quot;by&quot;&#x000D;&#x000A; &quot;choose&quot;&#x000D;&#x000A; &quot;induction on&quot;&#x000D;&#x000A; &quot;case&quot;&#x000D;&#x000A; &quot;equality on&quot;&#x000D;&#x000A;&quot;we get&quot;&#x000D;&#x000A;&quot;instantiating&quot;&#x000D;&#x000A;&quot;is&quot;&#x000D;&#x000A;&quot;therefore&quot;</Keywords>
             <Keywords name="Keywords7"></Keywords>
             <Keywords name="Keywords8"></Keywords>
             <Keywords name="Delimiters">00[ 01 02] 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23</Keywords>
@@ -37,7 +37,7 @@
         <Styles>
             <WordsStyle name="DEFAULT" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
             <WordsStyle name="COMMENTS" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
-            <WordsStyle name="LINE COMMENTS" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
+            <WordsStyle name="LINE COMMENTS" fgColor="808080" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
             <WordsStyle name="NUMBERS" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
             <WordsStyle name="KEYWORDS1" fgColor="8000FF" bgColor="FFFFFF" fontName="" fontStyle="1" nesting="0" />
             <WordsStyle name="KEYWORDS2" fgColor="D96C00" bgColor="FFFFFF" fontName="" fontStyle="1" nesting="0" />

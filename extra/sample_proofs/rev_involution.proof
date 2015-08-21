@@ -1,6 +1,7 @@
 (*author: Yu-Yang Lin*)
 (*this is a proof for the involution of reversing a list*)
 (*in this file, two theorems are proven, involution, and a lemma to prove involution*)
+
 Signatures:
     append : nat list -> nat list -> nat list ;
     rev    : nat list -> nat list ;
@@ -11,6 +12,25 @@ Definitions:
     [rev nil]    : rev [] = [] : nat list ;
     [rev xs]     : forall xs : nat list . forall x : nat . rev (x :: xs) = append (rev xs) (x :: []) : nat list ;
 
+(****************************************************************************************************************************)
+(* rev-lemma : rev (append xs [x]) = x :: (rev xs)                                                                          *)
+(* ------------------------------------------                                                                               *)
+(* Induction on list:                                                                                                       *)
+(* Base:                                                                                                                    *)
+(*     rev (append [] [x])                                                                                                  *)
+(*     = rev [x]               -- by definition of append on nil and [x]                                                    *)
+(*     = append (rev []) [x]   -- by definition of rev on (x::[])                                                           *)
+(*     = append [] [x]         -- by definition of rev on nil                                                               *)
+(*     = [x]                   -- by definition of append on nil and [x]                                                    *)
+(*     = x::(rev [])           -- by definition of rev nil                                                                  *)
+(* Step:                                                                                                                    *)
+(*     rev (append (hd::tl) [x]) = x::(rev (hd::tl))                                                                        *)
+(*     = rev (hd::(append tl [x]))           -- by definition of append on (hd::tl) and [x]                                 *)
+(*     = append (rev (append tl [x])) [hd]   -- by definition of rev on (hd::(append tl [x]))                               *)
+(*     = append (x::(rev tl)) [hd]           -- by Inductive Hypothesis on tl and [x] , rev (append tl [x]) = x :: (rev tl) *)
+(*     = x :: (append (rev tl) [hd])         -- by definition of append on (append (x::(rev tl))) and [hd]                  *)
+(*     = x :: (rev (hd::tl))                 -- by definition of rev on (hd::tl) , (rev (hd::tl) = (append (rev tl) [hd]))  *)
+(****************************************************************************************************************************)
 Theorem [rev lemma] :
     Statement: forall xs : nat list . forall x : nat . rev (append xs (x::[])) = x :: (rev xs) : nat list
     Proof:
@@ -63,7 +83,19 @@ Theorem [rev lemma] :
             by [step 5]
     QED.
 
-Theorem [involution rev] :
+(***************************************************************************************************)
+(* involution of rev : rev (rev xs) = xs                                                           *)
+(* -------------------------------------                                                           *)
+(* Induction on list:                                                                              *)
+(* Base:                                                                                           *)
+(*     rev (rev []) = []  --by equality                                                            *)
+(* Step:                                                                                           *)
+(*     rev (rev (hd :: tl))           --step 1 : by definition of rev on (hd::tl)                  *)
+(*     = rev (append (rev tl) [hd])   --step 2 : by rev-lemma, rev (append xs [x]) = x :: (rev xs) *)
+(*     = hd :: (rev (rev tl))         --step 3 : by Inductive Hypothesis                           *)
+(*     = hd :: tl                     --QED.                                                       *)
+(***************************************************************************************************)
+Theorem [involution of rev] :
     Statement: forall xs : nat list . rev (rev xs) = xs : nat list
     Proof:
 

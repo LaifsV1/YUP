@@ -131,6 +131,7 @@ syntax_toplevel_errors:
 | SIGNATURES error              { raise (parse_failure "signatures: incorrect syntax, must be in form 'Signatures: name : type ;'" $startpos $endpos) }
 | DEFINITIONS error             { raise (parse_failure "definitions: incorrect syntax, must be in form 'Definitions: name : type ;'" $startpos $endpos) }
 | THEOREM error  { raise (parse_failure "theorem: incorrect syntax, must be in form 'Theorem [label] : Statement : a Proof: p QED.'" $startpos $endpos) }
+| THEOREM HVAR COLON STATEMENT COLON prop PROOF COLON proof error { raise (parse_failure "theorem: missing QED.?" $startpos $endpos) }
 
 signatures:
 | VAR  COLON complex_type SEMICOLON signatures { ($1,$3)::$5 }
@@ -251,12 +252,12 @@ proof:
 | Let_PROOF h_pair Eq_OP h_var In_PROOF proof                             { ($startpos , $endpos) , AndL ($2,$4,$6) }
 | OPEN_PAREN proof COMMA proof CLOSE_PAREN                                { ($startpos , $endpos) , AndR ($2,$4) }
 | Match_PROOF h_var With_PROOF PIPE h_var DOT proof PIPE h_var DOT proof  { ($startpos , $endpos) , OrL ($2,($5,$7),($9,$11)) }
-| Match_PROOF h_var With_PROOF h_var DOT proof PIPE h_var DOT proof       { ($startpos , $endpos) , OrL ($2,($4,$6),($8,$10)) }
+(*| Match_PROOF h_var With_PROOF h_var DOT proof PIPE h_var DOT proof       { ($startpos , $endpos) , OrL ($2,($4,$6),($8,$10)) }*)
 | Left_PROOF proof                                                        { ($startpos , $endpos) , OrR1 $2 }
 | Right_PROOF proof                                                       { ($startpos , $endpos) , OrR2 $2 }
-| proof DOT h_var Because_PROOF h_var DOT proof                           { ($startpos , $endpos) , ImpliesL ($1,($3,$5),$7) }
+(*| proof DOT h_var Because_PROOF h_var DOT proof                     { ($startpos , $endpos) , ImpliesL ($1,($3,$5),$7) }*) (*removed because of conflicts*)
 | Assume_PROOF h_var DOT proof                                            { ($startpos , $endpos) , ImpliesR ($2,$4) }        
-| proof DOT Therefore_PROOF prop                                          { ($startpos , $endpos) , Therefore ($1,$4) }
+| proof Therefore_PROOF prop                                              { ($startpos , $endpos) , Therefore ($1,$3) }
 | Choose_PROOF term DOT proof                                             { ($startpos , $endpos) , ExistsR ($2,$4) }
 | Let_PROOF VAR COMMA h_var Eq_OP h_var In_PROOF proof                    { ($startpos , $endpos) , ExistsL (($2,$4),$6,$8) }
 | Assume_PROOF VAR COLON complex_type DOT proof                           { ($startpos , $endpos) , ForallR (($2,$4),$6) }
@@ -274,7 +275,7 @@ proof:
 | By_PROOF Induction_PROOF Bool_TYPE COLON 
   Case_PROOF True_TERM COLON proof 
   Case_PROOF False_TERM COLON proof                                       { ($startpos , $endpos) , ByIndBool ($8,$12) }
-| WeKnow_PROOF HVAR COLON prop Because_PROOF proof DOT proof              { print_endline ("we know"^($2)^" : "^(to_string_prop $4)) ; ($startpos , $endpos) , HypLabel ($2,$4,$6,$8) }
+| WeKnow_PROOF HVAR COLON prop Because_PROOF proof DOT proof              { ($startpos , $endpos) , HypLabel ($2,$4,$6,$8) }
 | WeGet_PROOF HVAR COLON prop Instan_PROOF h_var 
   With_PROOF OPEN_PAREN propvar_tuple DOT proof                           { ($startpos , $endpos) , Instantiate ($2,$4,$6,$9,$11) }
 | proof_errors                                                            { $1 }

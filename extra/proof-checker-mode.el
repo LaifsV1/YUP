@@ -9,10 +9,10 @@
 (setq proof-toplevel '("Signatures" "Definitions" "Theorem" "Statement" "Proof" "QED" "Qed"))
 (setq proof-types    '("bool" "nat" "list" "prop"))
 (setq proof-terms    '("nil" "true" "false" "zero" "suc"))
-(setq proof-props    '("Truth" "Falsity" "and" "or" "=>" "=" "forall" "exists"))
+(setq proof-props    '("Truth" "Falsity" "and" "or" "forall" "exists"))
 (setq proof-proofs   '("tt" "absurd" "let" "in" "match" "with" "left" "right" "because"
-                       "assume" "by" "choose" "induction on" "case" "equality on" "we know"
-                       "we get" "instantiating" "is"))
+                       "assume" "by" "therefore" "choose" "induction on" "case" "equality on"
+                       "we know" "we get" "instantiating" "is"))
 
 ;; generate regex string for each category of keywords
 (setq proof-toplevel-regexp (regexp-opt proof-toplevel 'words))

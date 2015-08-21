@@ -1,3 +1,5 @@
+(* String formats for printing proofs and errors *)
+(* author: Yu-Yang Lin *)
 open AbstractSyntax
 open Format
 open Lexing
