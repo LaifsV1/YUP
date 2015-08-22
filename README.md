@@ -1,5 +1,5 @@
 # Proof Checker
-
+##### `version: 0.9.0.0` #####
 This tool performs automatic checking of simple program-correctness proofs of functional programs through inductive and equational reasoning.
 
 Proofs are written in a language designed to look more like hand-written proofs.
@@ -27,7 +27,9 @@ e.g.
 
 This should output a success message if the proof is valid, or output an error message with position data for where the checker failed.
 
-Syntax for proof files can be seen in the sample proofs provided, check [extra/sample_proofs] (/extra/sample_proofs).
+Syntax for proof files can be seen in the sample proofs provided, check [extra/sample_proofs](/extra/sample_proofs).
+
+For more information, check the [reference manual](/reference_manual.md).
 
 ### Syntax Highlighting
 
