@@ -87,10 +87,10 @@ let rec check_spf ((pos,p) : pf) :(unit result) =
 
 
 (******************** INSTANTIATE PROP VARS ********************)
-let rec instantiate_prop_var (xs : prop_instance) ((p,a) : prop) :(prop) =
+let rec instantiate_var (xs : prop_instance) ((p,a) : prop) :(prop) =
   match xs with
-  | []        -> (p,a)
-  | (x,b)::xs -> instantiate_prop_var xs (subs_prop_var x b (p,a))
+  | []          -> (p,a)
+  | (x,b) :: xs -> instantiate_var xs (subs_prop_var x b (p,a))
 
 
 (******************** CHECK PROOF FUNCTION ********************)
@@ -234,6 +234,6 @@ let rec check_pf (psi : ctx) (gamma : hyps) ((pf_pos,proof) : pf) ((prop_pos,pro
   | Instantiate (h',a,(h,d),xs,p) , c -> (encountered_while ("evaluating 'we get "^h'^" instantiating "^h^"' clause"))
                                            ((lookup_hyps_result gamma (h,d) pf_pos) >>=  (*Instantiate*)
                                               (fun a' ->
-                                               let new_prop = (instantiate_prop_var xs a') in
+                                               let new_prop = (instantiate_var xs a') in
                                                (alpha_equiv_prop_result a new_prop) >>
                                                  (check_pf psi ((h',new_prop)::gamma) p (prop_pos,c))))

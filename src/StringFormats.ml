@@ -50,6 +50,7 @@ let rec to_string_tp (tau : tp) :(string) =
   | List  x -> sprintf "(%s) list" (to_string_tp x)
   | Prop -> "prop"
   | Arrow (a,b)->  sprintf "%s -> %s" (to_string_tp a) (to_string_tp b)
+  | TypeVar x  -> x
 
 let rec to_string_term ((_,t) : term) :(string) =
   match t with

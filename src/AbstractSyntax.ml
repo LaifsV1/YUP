@@ -8,7 +8,7 @@ type pos_range = (Lexing.position * Lexing.position)
 type var = string
 
 (* Types *)
-type tp = Bool | Nat | List of tp | Arrow of tp * tp | Prop
+type tp = Bool | Nat | List of tp | Arrow of tp * tp | Prop | TypeVar of var
 
 (* Terms *)
 (* f ( c_0 , ... , c_k ) where c_i : term *)
@@ -51,6 +51,7 @@ type spine_arg = SpineT of term | SpineH of hvar
 type spine = spine_arg list
 
 (* Prop Instantiation *)
+(*type instance_arg = IProp of var * prop | IType of var * tp*)
 type prop_instance = (var * prop) list
 
 (* Proofs *)

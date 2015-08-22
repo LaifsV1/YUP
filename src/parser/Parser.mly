@@ -138,6 +138,7 @@ definitions:
 
 (*** TYPES ***)
 simple_type:
+| TPVAR                               { TypeVar $1 }
 | Bool_TYPE                           { Bool }
 | Nat_TYPE                            { Nat }
 | Prop_TYPE                           { Prop }
