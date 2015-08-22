@@ -29,7 +29,7 @@
         ("(\\*[\0-\377[:nonascii:]]*?\\*)" . font-lock-comment-face)
         ("\\[\\]"                          . font-lock-constant-face)
         ("\\:\\:"                          . font-lock-constant-face)
-        ("\\[[A-Za-z][^]]*\\]"             . font-lock-function-name-face)
+        ("\\[[[:alnum:]_ ()]*?\\]"         . font-lock-function-name-face)
         ("=>"                              . font-lock-function-name-face)
         ("="                               . font-lock-function-name-face)
         ;; adding auto-generated regexp categories.

@@ -1,0 +1,37 @@
+(* author: Yu-Yang Lin *)
+(* this file contains more examples of proofs from natural deduction problems *)
+(* adapted from Tomassi (1999) p. 108 *)
+
+Signatures:
+    P : prop ;
+    Q : prop ;
+    R : prop ;
+    S : prop ;
+
+(*************************************************************************)
+(* P => Q ; prove ((R and Q) => S) => ((R and P) => S)                   *)
+(*     1.  assume ((R and Q) => S)                  H {1}                *)
+(*     2.  | assume R and P                         H {1,2}              *)
+(*     3.  | | P                                    and-elim 2 {1,2}     *)
+(*     4.  | | P => Q                               Premise {1,2,4}      *)
+(*     5.  | | Q                                    =>elim 3,4 {1,2,4}   *)
+(*     6.  | | R                                    or-elim 2 {1,2}      *)
+(*     7.  | | R and Q                              or-intro 6,5 {1,2,4} *)
+(*     8.  | | S                                    =>elim 7,1 {1,2,4}   *)
+(*     9.  | (R and P) => S                         =>intro 2,8 {1,4}    *)
+(*     10. ((R and Q) => S) => ((R and S) => S)     =>intro 1,9 {4}      *)
+(*************************************************************************)
+Definitions:
+    [P to Q] : P => Q ;
+
+Theorem [((R and Q) to S) to ((R and P) to S)]:
+    Statement: ((R and Q) => S) => ((R and P) => S)
+    Proof:
+        assume [(R and Q) to S)] : (R and Q) => S .
+        assume [R and P]         : R and P .
+        we know [R]       : R , [P] : P because [R and P] .
+        we know [Q]       : Q           because [P to Q] with ([P]) .
+        we know [R and Q] : R and Q     because (by [R] , by [Q]) .
+        we know [S]       : S           because [(R and Q) to S)] with ([R and Q]) .
+        by [S]
+    QED.

@@ -2,6 +2,8 @@
 
 This tool performs automatic checking of simple program-correctness proofs of functional programs through inductive and equational reasoning.
 
+Proofs are written in a language designed to look more like hand-written proofs.
+
 For details on how the Checker works, read the [notes](/notes.pdf).
 
 ## Compiling
@@ -12,7 +14,7 @@ You will require GNU make, Menhir, `ocamllex`, and the OCaml batch compiler `oca
 
 ### Windows
 
-Windows users can find the Menhir package `godi-menhir` in [WODI](http://wodi.forge.ocamlcore.org/), the Windows version of the package manager GODI. I recommed this over OPAM since I couldn't get OPAM working. 
+Windows users can find the Menhir package `godi-menhir` in [WODI](http://wodi.forge.ocamlcore.org/), the Windows version of the package manager GODI. I recommed this over OPAM since I couldn't get OPAM working.
 
 You can compile the tool from Cygwin. I used [make for Windows](http://gnuwin32.sourceforge.net/packages/make.htm) found in the GnuWin32 files page.
 
@@ -22,7 +24,7 @@ To use the tool, run `proof_checker.exe` from the command-line on a target proof
 e.g.
 
     .\proof_checker.exe "testing\test_proof.proof"
-	
+
 This should output a success message if the proof is valid, or output an error message with position data for where the checker failed.
 
 Syntax for proof files can be seen in the sample proofs provided, check [extra/sample_proofs] (/extra/sample_proofs).
