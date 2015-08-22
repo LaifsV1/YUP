@@ -1,0 +1,143 @@
+(*author: Yu-Yang Lin*)
+(*this file contains proofs for classical propositional logic in natural deduction style*)
+(*taken from Language and Logic week 6 classwork (2014/15) taught by Dr Mark Lee*)
+
+Signatures:
+    P : prop ;
+    Q : prop ;
+    R : prop ;
+    Z : prop ;
+
+Definitions:
+    [DNE] : ((P => Falsity) => Falsity) => P ;
+
+(* QUESTION 1 *)
+(*******************************************)
+(* P=>Q , Q => Z ; prove P => Z            *)
+(*     1. assume P      H {1}              *)
+(*     2. | P => Q      Premise {1,2}      *)
+(*     3. | Q           =>elim 1,2 {1,2}   *)
+(*     4. | Q => Z      Premise {1,4}      *)
+(*     5. | Z           =>elim 3,4 {1,2,4} *)
+(*     6. P => Z        =>intro 1,5 {2,4}  *)
+(*******************************************)
+Definitions:
+    [P to Q] : P => Q ;
+    [Q to Z] : Q => Z ;
+
+Theorem [P to Z]:
+    Statement: P => Z
+    Proof:
+        assume [P] : P .
+        we know [Q] : Q because [P to Q] with ([P]) .
+        we know [Z] : Z because [Q to Z] with ([Q]) .
+        by [Z]
+    QED.
+
+(* QUESTION 2 *)
+(**************************************************************)
+(* Law of excluded middle                                     *)
+(* ----------------------                                     *)
+(* prove P or not P                                           *)
+(*     1.  assume not (P or not P)      H {1}                 *)
+(*     2.  | assume P                   H {1,2}               *)
+(*     3.  | | P or not P               or-intro 2 {1,2}      *)
+(*     4.  | | not (P or not P)         i {1}                 *)
+(*     5.  | not P                      by negation 2,3,4 {1} *)
+(*     6.  | assume not P               H {1,6}               *)
+(*     7.  | | P or not P               or-intro 6 {1,6}      *)
+(*     8.  | | not (P or not P)         i {1}                 *)
+(*     9.  | not not P                  by negation 6,7,8 {1} *)
+(*     10. | P                          DNE 9 {1}             *)
+(*     11. not not (P or not P)         by negation 1,5,10 {} *)
+(*     12. P or not P                   DNE 11 {}             *)
+(**************************************************************)
+Theorem [step 1 (not P)]:
+    Statement: ((P or (P => Falsity)) => Falsity) => (P => Falsity)
+    Proof:
+        assume [not (P or not P)] : (P or (P => Falsity)) => Falsity .
+        assume [P] : P .
+        we know [P or not P] : P or (P => Falsity) because by [P] on left .
+        we know [negation]   : Falsity             because [not (P or not P)] with ([P or not P]) .
+        by [negation]
+    QED.
+
+Theorem [step 2 (not not P)]:
+    Statement: ((P or (P => Falsity)) => Falsity) => ((P => Falsity) => Falsity)
+    Proof:
+        assume [not (P or not P)] : (P or (P => Falsity)) => Falsity .
+        assume [not P] : P => Falsity .
+        we know [P or not P] : P or (P => Falsity) because by [not P] on right .
+        we know [negation]   : Falsity             because [not (P or not P)] with ([P or not P]) .
+        by [negation]
+    QED.
+
+Theorem [step 3 (not not (P or not P))]:
+    Statement: ((P or (P => Falsity)) => Falsity ) => Falsity
+    Proof:
+        assume [not (P or not P)] : (P or (P => Falsity)) => Falsity .
+        we know [not P]       : P => Falsity              because [step 1 (not P)]     with ([not (P or not P)]) .
+        we know [not not P]   : (P => Falsity) => Falsity because [step 2 (not not P)] with ([not (P or not P)]) .
+        we know [P]           : P                         because [DNE]                with ([not not P]) .
+        we know [negation]    : Falsity                   because [not P] with ([P]) .
+        by [negation]
+    QED.
+
+Theorem [excluded middle]:
+    Statement: P or (P => Falsity)
+    Proof:
+        we get [DNE 2] : (((P or (P => Falsity)) => Falsity) => Falsity) => (P or (P => Falsity))
+        instantiating [DNE] with (P is (P or (P => Falsity))) .
+        we know [P or not P] : P or (P => Falsity) because [DNE 2] with ([step 3 (not not (P or not P))]) .
+        by [P or not P]
+    QED.
+
+(* QUESTION 3 *)
+(***********************************************)
+(* Theorem introduction                        *)
+(* --------------------                        *)
+(* P => Q , not P => Q ; prove Q               *)
+(*     1. P => Q       Premise {1}             *)
+(*     2. not P => Q   Premise {2}             *)
+(*     3. P or not P   Excluded middle {2}     *)
+(*     4. assume P     H {4}                   *)
+(*     5. | Q          =>elim 1,4 {1,4}        *)
+(*     6. assume not P H {5}                   *)
+(*     7. | Q          =>elim 2,6 {2,6}        *)
+(*     8. Q            or-elim 3,4,5,6,7 {1,2} *)
+(***********************************************)
+Definitions:
+    [P to Q]     : P => Q ;
+    [not P to Q] : (P => Falsity) => Q ;
+
+Theorem [Q]:
+    Statement: Q
+    Proof:
+        we know [P or not P] : P or (P => Falsity) because by [excluded middle] .
+        since [P or not P] : P or (P => Falsity) then either:
+        case on left :
+            [P] : P .
+            we know [Q] : Q because [P to Q] with ([P]) .
+            by [Q]
+        case on right :
+            [not P] : P => Falsity .
+            we know [Q] : Q because [not P to Q] with ([not P]) .
+            by [Q]
+    QED.
+
+(* QUESTION 4 *)
+(********************************************************)
+(* prove not (P and not P)                              *)
+(*     1. assume P and not P       H {1}                *)
+(*     2. | P                      and-elim {1}         *)
+(*     3. | not P                  and-elim {1}         *)
+(*     4. not (P and not P)        by negation 1,2,3 {} *)
+(********************************************************)
+Theorem [not (P and not P)]:
+    Statement: (P and (P => Falsity)) => Falsity
+    Proof:
+        assume [P and not P] : P and (P => Falsity) .
+        we know [P] : P , [not P] : P => Falsity because [P and not P] .
+        we know [negation] : Falsity because [not P] with ([P]) .
+        by [negation]
+    QED.
