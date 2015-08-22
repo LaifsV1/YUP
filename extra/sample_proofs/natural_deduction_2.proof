@@ -88,8 +88,7 @@ Theorem [excluded middle]:
     Proof:
         we get [DNE 2] : (((P or (P => Falsity)) => Falsity) => Falsity) => (P or (P => Falsity))
         instantiating [DNE] with (P is (P or (P => Falsity))) .
-        we know [P or not P] : P or (P => Falsity) because [DNE 2] with ([step 3 (not not (P or not P))]) .
-        by [P or not P]
+        [DNE 2] with ([step 3 (not not (P or not P))]) therefore P or (P => Falsity)
     QED.
 
 (* QUESTION 3 *)

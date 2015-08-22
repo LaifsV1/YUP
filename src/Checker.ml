@@ -80,6 +80,7 @@ let rec check_spf ((pos,p) : pf) :(unit result) =
   | OrR1 p         -> check_spf p
   | OrR2 q         -> check_spf q
   | ByEq hs        -> return ()
+  | Therefore (p,a)-> (check_spf p)
   | By h           -> return ()
   | SpineApp (h,s) -> return ()
   | _              -> (Wrong (not_simple_proof (pos,p),pos))

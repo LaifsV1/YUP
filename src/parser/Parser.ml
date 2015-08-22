@@ -340,10 +340,10 @@ and _menhir_state =
   open StringFormats
   open Format
   open Lexing
-  
+
   let pf_of_form msg msg2 = sprintf "proof: %s must be of form @,'%s'" msg msg2
-    
-  let parse_failure (msg : string) (pos1 : position) (pos2 : position) = 
+
+  let parse_failure (msg : string) (pos1 : position) (pos2 : position) =
     ParseError ((sprintf "error parsing %s" msg),(pos1,pos2))
 let _eRR =
   Error

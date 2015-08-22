@@ -48,7 +48,7 @@
 (types)& $\tau$ ::= bool
 | $\tau$ $\rightarrow$ $\tau $ | nat | list $\tau$
 \\
-(hypotheses)& A , B ::= $\top$ | $\bot$
+(propositions)& A , B ::= $\top$ | $\bot$
 | A $\wedge$ B | A $\vee$ B | A $\supset$ B
 | $\forall$ $x$ : $\tau$ . A | $\exists$ $x$ : $\tau$ . A
 | t = t : $\tau$
@@ -1089,6 +1089,50 @@ Function signatures:
 
 \end{tabular}
 \end{center}
+
+\section{Adding Proposition Variables}
+\begin{center}
+\begin{tabular}{rll}
+(types)& $\tau$ ::= ... | prop
+\\
+(propositions)& A ::= ... | P : prop
+\end{tabular}
+\end{center}
+
+\subsection{$\alpha$-equivalence}
+
+\[
+\AxiomC{}
+\RightLabel{\quad (prop-var$\overset{\alpha}=$)}
+\UnaryInfC{P $\overset{\alpha}=$ P}
+\DisplayProof
+\]
+
+\subsection{type checking}
+
+\[
+\AxiomC{P : prop $\in \psi$}
+\RightLabel{\quad (prop-var)}
+\UnaryInfC{$\psi ; \Gamma  \vdash$ P : prop}
+\DisplayProof
+\]
+
+\subsection{Instantiation}
+
+\begin{center}
+\begin{tabular}{rll}
+(instantiations)& ins ::= . | (X , A) , ins
+\end{tabular}
+\end{center}
+
+\[
+\AxiomC{$\psi \vdash$ Y prop}
+\AxiomC{$\psi ; \Gamma $ $\vdash$ ins : [Y $\mapsto$ X] A}
+\RightLabel{\quad ($\forall$-spine-app)}
+\BinaryInfC{$\psi ; \Gamma $ $\vdash$ (X,Y) , ins : A}
+\DisplayProof
+\]
+
 
 \bibliography{notes}
 \bibliographystyle{plain}
