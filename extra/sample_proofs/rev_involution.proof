@@ -42,15 +42,15 @@ Theorem [rev lemma] :
             assume x : nat .
 
             we know [prop a] : append [] (x :: []) = (x :: [])                 : nat list because [append nil] with (x::[]).
-            we know [prop b] : rev (x::[]) = append (rev []) (x :: [])         : nat list because [rev xs] with ([],x).
-            we know [prop c] : append (rev []) (x :: []) = append [] (x :: []) : nat list because by equality on ([rev nil]).
-            we know [prop d] : (x :: []) = (x :: (rev []))                     : nat list because by equality on ([rev nil]).
+            we know [prop b] : rev (x::[]) = append (rev []) (x :: [])         : nat list because [rev xs]     with ([],x).
+            we know [prop c] : append (rev []) (x :: []) = append [] (x :: []) : nat list because equality on ([rev nil]).
+            we know [prop d] : (x :: []) = (x :: (rev []))                     : nat list because equality on ([rev nil]).
 
-            we know [step 1] : rev (append [] (x::[])) = rev (x::[])               : nat list because by equality on ([prop a]).
-            we know [step 2] : rev (append [] (x::[])) = append (rev []) (x :: []) : nat list because by equality on ([step 1],[prop b]).
-            we know [step 3] : rev (append [] (x::[])) = append [] (x :: [])       : nat list because by equality on ([step 2],[prop c]).
-            we know [step 4] : rev (append [] (x::[])) = (x :: [])                 : nat list because by equality on ([step 3],[prop a]).
-            we know [step 5] : rev (append [] (x::[])) = (x :: (rev []))           : nat list because by equality on ([step 4],[prop d]).
+            we know [step 1] : rev (append [] (x::[])) = rev (x::[])               : nat list because equality on ([prop a]).
+            we know [step 2] : rev (append [] (x::[])) = append (rev []) (x :: []) : nat list because equality on ([step 1],[prop b]).
+            we know [step 3] : rev (append [] (x::[])) = append [] (x :: [])       : nat list because equality on ([step 2],[prop c]).
+            we know [step 4] : rev (append [] (x::[])) = (x :: [])                 : nat list because equality on ([step 3],[prop a]).
+            we know [step 5] : rev (append [] (x::[])) = (x :: (rev []))           : nat list because equality on ([step 4],[prop d]).
 
             by [step 5]
 
@@ -70,15 +70,15 @@ Theorem [rev lemma] :
             because [IH] with (x).
 
             we know [step 1] : rev (append (hd::tl) (x::[])) = rev (hd :: (append tl (x::[]))) : nat list
-            because by equality on ([prop a]).
+            because equality on ([prop a]).
             we know [step 2] : rev (append (hd::tl) (x::[])) = append (rev (append tl (x::[]))) (hd :: []) : nat list
-            because by equality on ([step 1],[prop b]).
+            because equality on ([step 1],[prop b]).
             we know [step 3] : rev (append (hd::tl) (x::[])) = append (x :: (rev tl)) (hd :: []) : nat list
-            because by equality on ([step 2],[prop e]).
+            because equality on ([step 2],[prop e]).
             we know [step 4] : rev (append (hd::tl) (x::[])) = x :: append (rev tl) (hd :: []) : nat list
-            because by equality on ([step 3],[prop c]).
+            because equality on ([step 3],[prop c]).
             we know [step 5] : rev (append (hd::tl) (x::[])) = x :: rev (hd::tl) : nat list
-            because by equality on ([step 4],[prop d]).
+            because equality on ([step 4],[prop d]).
 
             by [step 5]
     QED.
@@ -103,12 +103,12 @@ Theorem [involution of rev] :
 
         case [] :
 
-            by equality on ([rev nil])
+            equality on ([rev nil])
 
         case (hd :: tl) : [inductive hypothesis] .
 
             we know [step 1] : rev (hd :: tl) = append (rev tl) (hd::[])               : nat list because [rev xs] with (tl,hd).
             we know [step 2] : rev (append (rev tl) (hd::[])) = hd :: (rev (rev tl)) : nat list because [rev lemma] with (rev tl,hd) .
 
-            by equality on ([step 1], [step 2], [inductive hypothesis])
+            equality on ([step 1], [step 2], [inductive hypothesis])
     QED.

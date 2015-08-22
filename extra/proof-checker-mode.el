@@ -10,8 +10,8 @@
 (setq proof-types    '("bool" "nat" "list" "prop"))
 (setq proof-terms    '("nil" "true" "false" "zero" "suc"))
 (setq proof-props    '("Truth" "Falsity" "and" "or" "forall" "exists"))
-(setq proof-proofs   '("tt" "absurd" "let" "in" "match" "with" "left" "right" "because"
-                       "assume" "by" "therefore" "choose" "induction on" "case" "equality on"
+(setq proof-proofs   '("tt" "absurd" "since" "then either" "with" "on left" "on right"
+                       "because" "assume" "by" "therefore" "choose" "induction on" "case" "equality on"
                        "we know" "we get" "instantiating" "is"))
 
 ;; generate regex string for each category of keywords
@@ -30,6 +30,8 @@
         ("\\[\\]"                          . font-lock-constant-face)
         ("\\:\\:"                          . font-lock-constant-face)
         ("\\[[A-Za-z][^]]*\\]"             . font-lock-function-name-face)
+        ("=>"                              . font-lock-function-name-face)
+        ("="                               . font-lock-function-name-face)
         ;; adding auto-generated regexp categories.
         (,proof-toplevel-regexp . font-lock-keyword-face)
         (,proof-types-regexp    . font-lock-type-face)

@@ -30,15 +30,12 @@ rule read = parse
   | newline         { next_line lexbuf; read lexbuf }
   | '('             { OPEN_PAREN }
   | ')'             { CLOSE_PAREN }
-(*| '['             { OPEN_BRACKET } *)
-(*| ']'             { CLOSE_BRACKET } *)
   | "[]"            { Nil_TERM }
   | "nil"           { Nil_TERM }
   | ':'             { COLON }
   | ','             { COMMA }
   | ';'             { SEMICOLON }
   | '.'             { DOT }
-  | '|'             { PIPE }
   | "bool"          { Bool_TYPE }
   | "nat"           { Nat_TYPE }
   | "list"          { List_TYPE_OP }
@@ -59,12 +56,11 @@ rule read = parse
   | "exists"        { Exists_PROP }
   | "tt"            { TT_PROOF }
   | "absurd"        { Absurd_PROOF }
-  | "let"           { Let_PROOF }
-  | "in"            { In_PROOF }
-  | "match"         { Match_PROOF }
+  | "since"         { Since_PROOF }    (*changed syntax*)
+  | "then either"   { Then_PROOF }     (*changed syntax*)
   | "with"          { With_PROOF }
-  | "left"          { Left_PROOF }
-  | "right"         { Right_PROOF }
+  | "on left"       { Left_PROOF }     (*changed syntax*)
+  | "on right"      { Right_PROOF }    (*changed syntax*)
   | "because"       { Because_PROOF }
   | "assume"        { Assume_PROOF }
   | "by"            { By_PROOF }

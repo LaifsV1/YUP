@@ -8,10 +8,12 @@ type token =
   | Truth_PROP
   | True_TERM
   | Therefore_PROOF
+  | Then_PROOF
   | TT_PROOF
   | TPVAR of (AbstractSyntax.var)
   | THEOREM
   | Suc_TERM_OP
+  | Since_PROOF
   | STATEMENT
   | SIGNATURES
   | SEMICOLON
@@ -20,19 +22,15 @@ type token =
   | Prop_TYPE
   | PVAR of (AbstractSyntax.var)
   | PROOF
-  | PIPE
   | Or_PROP_OP
   | OPEN_PAREN
   | Nil_TERM
   | Nat_TYPE
-  | Match_PROOF
   | List_TYPE_OP
-  | Let_PROOF
   | Left_PROOF
   | Is_PROOF
   | Instan_PROOF
   | Induction_PROOF
-  | In_PROOF
   | Implies_PROP_OP
   | HVAR of (AbstractSyntax.var)
   | Forall_PROP
@@ -62,13 +60,5 @@ type token =
 exception Error
 
 (* The monolithic API. *)
-val type_toplevel: (Lexing.lexbuf -> token) -> Lexing.lexbuf -> (AbstractSyntax.tp)
-
-val term_toplevel: (Lexing.lexbuf -> token) -> Lexing.lexbuf -> (AbstractSyntax.term)
-
-val prop_toplevel: (Lexing.lexbuf -> token) -> Lexing.lexbuf -> (AbstractSyntax.prop)
-
-val proof_toplevel: (Lexing.lexbuf -> token) -> Lexing.lexbuf -> (AbstractSyntax.pf)
-
 val file_toplevel: (Lexing.lexbuf -> token) -> Lexing.lexbuf -> (AbstractSyntax.proof_file)
 

@@ -15,28 +15,28 @@ let line_sprintf p1 p2 = sprintf "(line %d , col %d) to (line %d , col %d)"
                             (p1.pos_lnum) (p1.pos_cnum - p1.pos_bol) (p2.pos_lnum) (p2.pos_cnum - p2.pos_bol)
 
 (*all proof sprintf formatted functions*)
-let proof_sf_TruthR    = "tt"
-let proof_sf_FalsityL  = sprintf "absurd %s"
-let proof_sf_AndL      = sprintf "@[let ( %s , %s ) = %s in @,%s @]"
-let proof_sf_AndR      = sprintf "( %s , %s )"
-let proof_sf_OrL       = sprintf "@[match %s with @,| @[%s .@, %s @] @,| @[ %s .@, %s @] @]"
-let proof_sf_OrR1      = sprintf "left %s"
-let proof_sf_OrR2      = sprintf "right %s"
-let proof_sf_ImpliesL  = sprintf "@[%s .@, %s because %s .@, %s @]"
-let proof_sf_ImpliesR  = sprintf "@[assume %s .@, %s @]"
-let proof_sf_By        = sprintf "@[by %s @]"
-let proof_sf_Therefore = sprintf "@[%s .@, therefore %s @]"
-let proof_sf_ExistsR   = sprintf "@[choose %s .@, %s @]"
-let proof_sf_ExistsL   = sprintf "@[let %s , %s = %s in @,%s @]"
-let proof_sf_ForallR   = sprintf "@[assume %s : %s .@, %s @]"
-let proof_sf_ForallL   = sprintf "@[let %s = %s with %s in @,%s @]"
-let proof_sf_ByIndNat  = sprintf "@[by induction on nat : @,case zero : %s @,case (suc %s) : %s .@, %s @]"
-let proof_sf_ByIndList = sprintf "@[by induction on list : @,case [] : %s @,case (%s :: %s) : %s .@, %s @]"
-let proof_sf_ByIndBool = sprintf "@[by induction on bool : @,case true : %s @,case false : %s @]"
-let proof_sf_ByEq      = sprintf "@[by equality on ( %s ) @]"
-let proof_sf_HypLabel  = sprintf "@[we know %s : %s @,because %s .@, %s"
-let proof_sf_SpineApp  = sprintf "%s with ( %s )"
-let proof_sf_Instantiate  = sprintf "@[we get %s : %s @,instantiating %s with ( %s ) .@, %s @]"
+let proof_sf_TruthR      = "tt"
+let proof_sf_FalsityL    = sprintf "@[absurd %s @]"
+let proof_sf_AndL        = sprintf "@[we know ( %s , %s ) because %s . @,%s @]"
+let proof_sf_AndR        = sprintf "@[( %s , @,%s )@]"
+let proof_sf_OrL         = sprintf "@[since %s then either : @, case on left : @[%s .@, %s @] @, case on right : @[ %s .@, %s @] @]"
+let proof_sf_OrR1        = sprintf "@[%s @,on left @]"
+let proof_sf_OrR2        = sprintf "@[%s @,on right @]"
+let proof_sf_ImpliesL    = sprintf "@[%s .@, %s because %s .@, %s @]"
+let proof_sf_ImpliesR    = sprintf "@[assume %s .@, %s @]"
+let proof_sf_By          = sprintf "@[by %s @]"
+let proof_sf_Therefore   = sprintf "@[%s @, therefore %s @]"
+let proof_sf_ExistsR     = sprintf "@[choose %s .@, %s @]"
+let proof_sf_ExistsL     = sprintf "@[we know %s with %s because %s . @,%s @]"
+let proof_sf_ForallR     = sprintf "@[assume %s : %s .@, %s @]"
+let proof_sf_ForallL     = sprintf "@[let %s = %s with %s in @,%s @]"
+let proof_sf_ByIndNat    = sprintf "@[by induction on nat : @,case zero : %s @,case (suc %s) : %s .@, %s @]"
+let proof_sf_ByIndList   = sprintf "@[by induction on list : @,case [] : %s @,case (%s :: %s) : %s .@, %s @]"
+let proof_sf_ByIndBool   = sprintf "@[by induction on bool : @,case true : %s @,case false : %s @]"
+let proof_sf_ByEq        = sprintf "@[by equality on ( %s ) @]"
+let proof_sf_HypLabel    = sprintf "@[we know %s : %s @,because %s .@, %s@]"
+let proof_sf_SpineApp    = sprintf "@[%s with ( %s )@]"
+let proof_sf_Instantiate = sprintf "@[we get %s : %s @,instantiating %s with ( %s ) .@, %s @]"
 
 
 (***************************)
@@ -127,7 +127,7 @@ let rec to_string_pf ((_,p) : pf) :(string) =
   | By h                   -> proof_sf_By (to_string_hvar h)
   | Therefore (p,a)        -> proof_sf_Therefore (to_string_pf p) (to_string_prop a)
   | ExistsR (t,p)          -> proof_sf_ExistsR (to_string_term t) (to_string_pf p)
-  | ExistsL ((x,h'),h,p)   -> proof_sf_ExistsL x (to_string_hvar h')
+  | ExistsL ((x,h'),h,p)   -> proof_sf_ExistsL (to_string_hvar h') x
                                                (to_string_hvar h)
                                                (to_string_pf p)
   | ForallR ((x,tau),p)    -> proof_sf_ForallR x (to_string_tp tau) (to_string_pf p)
