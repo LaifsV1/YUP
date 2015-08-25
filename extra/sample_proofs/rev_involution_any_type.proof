@@ -1,3 +1,8 @@
+(* author: Yu-Yang Lin *)
+(* date: 22/08/2015 *)
+(* this is a proof for the involution of reversing a list of some arbitrary type 'a *)
+(* in this file, two theorems are proven, involution, and a lemma to prove involution *)
+
 Signatures:
     append : 'a list -> 'a list -> 'a list ;
     rev    : 'a list -> 'a list ;

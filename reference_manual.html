@@ -1,7 +1,6 @@
 <!DOCTYPE html>
-<!-- saved from url=(0066)file:///C:/Users/YuYang/AppData/Local/Temp/MarkdownPadPreview.html -->
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>reference_manual</title>
+<title>Reference Manual</title>
 
 <style type="text/css">
 /* GitHub stylesheet for MarkdownPad (http://markdownpad.com) */
@@ -289,7 +288,6 @@ img {
   max-width: 100%
 }
 </style>
-<!--<base href="file:\\\D:\Bham\Y4\Final_Year_Project\ProofChecker\">--><base href=".">
 </head>
 <body>
 <p>Title:  Proof Checker Reference Manual<br>
@@ -297,7 +295,7 @@ Author: Yu-Yang Lin<br>
 Date:   22 August, 2015  
 </p>
 <h1>Proof Checker Reference Manual</h1>
-<h5><code>version: 0.9.0.0</code></h5>
+<h5><code>version: 0.9.0.1</code></h5>
 <h2>Table of Contents</h2>
 <ul>
 <li><a href="reference_manual.html#section1">Introduction</a></li>
@@ -482,8 +480,8 @@ Encountered while evaluating 'by induction on list'.
 <h4>Proofs</h4>
 <p>The proof data type is made up of a set of rules that allow us to prove propositions. Proofs allow us to manipulate propositions, terms, and types in order to show a theorem holds. </p>
 <ul>
-<li><strong>Truth Introduction</strong>: <code>tt</code></li>
-<li><strong>Falsity Elimination</strong>: <code>absurd [H]</code> where <code>[H]</code> is a hypothesis</li>
+<li><strong>Truth Introduction</strong>: <code>tt</code> is the proof for a <code>Truth</code> proposition</li>
+<li><strong>Falsity Elimination</strong>: <code>by absurdity of [H]</code> where <code>[H]</code> is a hypothesis</li>
 <li><strong>Conjunction Introduction</strong>: <code>(p , q)</code> where <code>p</code> and <code>q</code> are proofs.</li>
 <li>
 <p><strong>Conjunction Elimination</strong>: </p>
@@ -495,18 +493,19 @@ Encountered while evaluating 'by induction on list'.
 <li>
 <strong>Disjunction Introduction</strong>:
 <ul>
-<li><code>p on left</code> is a proof for <code>P or Q</code> where <code>p</code> is of type <code>P</code> and <code>Q</code> is any other proposition.</li>
-<li><code>q on right</code> is a proof for <code>P or Q</code> where <code>q</code> is of type <code>Q</code> and <code>P</code> is any other proposition.</li>
+<li><code>p on the left</code> is a proof for <code>P or Q</code> where <code>p</code> is of type <code>P</code> and <code>Q</code> is any other proposition.</li>
+<li><code>q on the right</code> is a proof for <code>P or Q</code> where <code>q</code> is of type <code>Q</code> and <code>P</code> is any other proposition.</li>
 </ul>
 </li>
 <li>
 <p><strong>Disjunction Elimination</strong>:</p>
 <pre><code>since [A or B] : A or B then either : 
-case on left : [A] : A . p
-case on right : [B] : B . q
+case on the left : [A] : A . p
+case on the right : [B] : B . q
 </code></pre>
 
 <p>where <code>[A or B]</code> is a hypothesis of type <code>A or B</code>, <code>[A]</code> is an hypothesis expected to be of type <code>A</code>, <code>[B]</code> is a hypothesis expected to be of type <code>B</code>, <code>p</code> is a proof where <code>[A]</code> is in scope, and <code>q</code> is a proof where <code>[B]</code> is in scope.</p>
+<p>When using this proof rule, <code>left</code> and <code>right</code> must be eliminated in that order. Thus, <code>case on the left</code> must be written before <code>case on the right</code>.</p>
 </li>
 <li>
 <strong>Implication Introduction</strong>:
@@ -525,7 +524,7 @@ case on right : [B] : B . q
 <li>
 <strong>Existential Introduction</strong>:
 <ul>
-<li><code>choose t . rest</code> where <code>t</code> is a term and <code>rest</code> is a proof where <code>t</code> is now in scope.</li>
+<li><code>choose t . rest</code> where <code>t</code> is a term and <code>rest</code> is a proof where <code>t</code> is now replacing the variable.</li>
 </ul>
 </li>
 <li>
@@ -688,7 +687,7 @@ Given <code>[negation] : Falsity</code> we can do: <code>by [negation] therefore
 
 <p>where the word <code>Theorem</code> is followed by a hypothesis to call the theorem - in this case <code>[P to Z]</code>. The keyword <code>Statement</code> is followed by the proposition that we are trying to prove in this theorem labelled <code>[P to Z]</code>, which is <code>P =&gt; Z</code>. The keyword <code>Proof</code> is followed by the proof for the <code>Statement</code> of this <code>Theorem</code>.</p>
 <p><code>Theorems</code> are like <code>Definitions</code> in the sense that they add <code>hypotheses</code> into the <code>hypothesis context</code> of a proof file. Every proven <code>Theorem</code> will be available globablly (in scope) to any top-level constructs underneath it.</p>
-<p><code>Theorems</code> allow us to to prove propositions. This is where the <code>Proof Checker</code> does it's main job, which is to validate the correctness of a given proof. <code>propositions</code>, <code>terms</code> and <code>types</code> will also be checked for well-formedness when fed into the file as a <code>Signature</code> or <code>Definition</code>, but proofs can only be checked within a <code>Theorem</code>.</p>
+<p><code>Theorems</code> allow us to to prove propositions. This is where the <code>Proof Checker</code> does its main job, which is to validate the correctness of a given proof. <code>propositions</code>, <code>terms</code> and <code>types</code> will also be checked for well-formedness when fed into the file as a <code>Signature</code> or <code>Definition</code>, but proofs can only be checked within a <code>Theorem</code>.</p>
 <p>All Theorem proofs must end with the keyword <code>QED.</code>.
 <a name="section3.2"></a></p>
 </li>
@@ -744,7 +743,7 @@ Given <code>[negation] : Falsity</code> we can do: <code>by [negation] therefore
 <p><strong>Theorems</strong>: </p>
 <ul>
 <li>
-<p>These add to the hypothesis context the <code>Theorem</code> label, and it's corresponding <code>Statement</code> only if the <code>Statement</code> is a well-formed proposition and the proof provided under <code>Proof</code> is valid. For instance:</p>
+<p>These add to the hypothesis context the <code>Theorem</code> label, and its corresponding <code>Statement</code> only if the <code>Statement</code> is a well-formed proposition and the proof provided under <code>Proof</code> is valid. For instance:</p>
 <pre><code>Theorem [not (P and not P)]:
     Statement: (P and (P =&gt; Falsity)) =&gt; Falsity
     Proof:
@@ -870,7 +869,7 @@ Theorem [involution of rev] :
     QED.
 </code></pre>
 
-<p>Like the previous example, here we too have optional annotations. the inductive hypothesis, <code>[inductive hypothesis]</code> doesn't need a proposition annotation. It is just there to make things clearer. </p>
+<p>Like the previous example, here we too have optional annotations; the inductive hypothesis <code>[inductive hypothesis]</code> doesn't need a proposition annotation. It is just there to make things clearer. </p>
 <p>Note that even though it's redundant, if you do decide to give it an annotation, it must match against the expected proposition. If it doesn't, then the proof will fail on the incorrect annotation and give you the corresponding error message.</p>
 
 

@@ -10,7 +10,7 @@
 (setq proof-types    '("bool" "nat" "list" "prop"))
 (setq proof-terms    '("nil" "true" "false" "zero" "suc"))
 (setq proof-props    '("Truth" "Falsity" "and" "or" "forall" "exists"))
-(setq proof-proofs   '("tt" "absurd" "since" "then either" "with" "on left" "on right"
+(setq proof-proofs   '("tt" "by absurdity of" "since" "then either" "with" "on the left" "on the right"
                        "because" "assume" "by" "therefore" "choose" "induction on" "case" "equality on"
                        "we know" "we get" "instantiating" "is"))
 

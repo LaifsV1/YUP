@@ -55,12 +55,12 @@ rule read = parse
   | "forall"        { Forall_PROP }
   | "exists"        { Exists_PROP }
   | "tt"            { TT_PROOF }
-  | "absurd"        { Absurd_PROOF }
+  | "by absurdity of"{ Absurd_PROOF }
   | "since"         { Since_PROOF }    (*changed syntax*)
   | "then either"   { Then_PROOF }     (*changed syntax*)
   | "with"          { With_PROOF }
-  | "on left"       { Left_PROOF }     (*changed syntax*)
-  | "on right"      { Right_PROOF }    (*changed syntax*)
+  | "on the left"   { Left_PROOF }     (*changed syntax*)
+  | "on the right"  { Right_PROOF }    (*changed syntax*)
   | "because"       { Because_PROOF }
   | "assume"        { Assume_PROOF }
   | "by"            { By_PROOF }

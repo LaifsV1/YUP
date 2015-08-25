@@ -1,3 +1,4 @@
+(* date: 22/08/2015 *)
 (*this file contains a few proofs on propositional logic*)
 (***************************************************)
 (* double negation introduction: A => not not A    *)

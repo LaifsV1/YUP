@@ -2,7 +2,7 @@ Title:  Proof Checker Reference Manual
 Author: Yu-Yang Lin  
 Date:   22 August, 2015  
 # Proof Checker Reference Manual #
-##### `version: 0.9.0.0` #####
+##### `version: 0.9.0.1` #####
 
 ## Table of Contents ##
 
@@ -143,8 +143,8 @@ This data type category contains propositions, which are the type for proofs and
 
 The proof data type is made up of a set of rules that allow us to prove propositions. Proofs allow us to manipulate propositions, terms, and types in order to show a theorem holds. 
 
-- **Truth Introduction**: `tt`
-- **Falsity Elimination**: `absurd [H]` where `[H]` is a hypothesis
+- **Truth Introduction**: `tt` is the proof for a `Truth` proposition
+- **Falsity Elimination**: `by absurdity of [H]` where `[H]` is a hypothesis
 - **Conjunction Introduction**: `(p , q)` where `p` and `q` are proofs.
 - **Conjunction Elimination**: 
 
@@ -152,15 +152,17 @@ The proof data type is made up of a set of rules that allow us to prove proposit
 
 	where `[P]` and `[Q]` are hypotheses of type `P` and `Q`, which are propositions, and `rest` is a proof where `[P]` and `[Q]` are in scope.
 - **Disjunction Introduction**:
-	- `p on left` is a proof for `P or Q` where `p` is of type `P` and `Q` is any other proposition.
-	- `q on right` is a proof for `P or Q` where `q` is of type `Q` and `P` is any other proposition.
+	- `p on the left` is a proof for `P or Q` where `p` is of type `P` and `Q` is any other proposition.
+	- `q on the right` is a proof for `P or Q` where `q` is of type `Q` and `P` is any other proposition.
 - **Disjunction Elimination**:
 	
 		since [A or B] : A or B then either : 
-		case on left : [A] : A . p
-		case on right : [B] : B . q
+		case on the left : [A] : A . p
+		case on the right : [B] : B . q
 
 	where `[A or B]` is a hypothesis of type `A or B`, `[A]` is an hypothesis expected to be of type `A`, `[B]` is a hypothesis expected to be of type `B`, `p` is a proof where `[A]` is in scope, and `q` is a proof where `[B]` is in scope.
+
+	When using this proof rule, `left` and `right` must be eliminated in that order. Thus, `case on the left` must be written before `case on the right`.
 - **Implication Introduction**:
 	- `assume [A] : A . p` where `[A]` is a hypothesis of type `A`, `A` is a proposition, and `p` is a proof where `[A] : A` is in scope. 
 - **Implication Elimination**:
@@ -171,7 +173,7 @@ The proof data type is made up of a set of rules that allow us to prove proposit
 
 	Note that this rule is actually the combination of two rules, a hypothesis labelling clause (`we know [H] because p`), and a `with` clause (`[H] with (a,b,c)`). This will be mentioned in more detail in their own sections.
 - **Existential Introduction**:
-	- `choose t . rest` where `t` is a term and `rest` is a proof where `t` is now in scope.
+	- `choose t . rest` where `t` is a term and `rest` is a proof where `t` is now replacing the variable.
 - **Existential Elimination**:
 
 		we know [new A] : A with x because [A] : exists x : type . A . rest
@@ -307,7 +309,7 @@ The top-level data type category contains the outermost hierarchical layer of th
 
 	`Theorems` are like `Definitions` in the sense that they add `hypotheses` into the `hypothesis context` of a proof file. Every proven `Theorem` will be available globablly (in scope) to any top-level constructs underneath it.
 
-	`Theorems` allow us to to prove propositions. This is where the `Proof Checker` does it's main job, which is to validate the correctness of a given proof. `propositions`, `terms` and `types` will also be checked for well-formedness when fed into the file as a `Signature` or `Definition`, but proofs can only be checked within a `Theorem`.
+	`Theorems` allow us to to prove propositions. This is where the `Proof Checker` does its main job, which is to validate the correctness of a given proof. `propositions`, `terms` and `types` will also be checked for well-formedness when fed into the file as a `Signature` or `Definition`, but proofs can only be checked within a `Theorem`.
 
 	All Theorem proofs must end with the keyword `QED.`.
 <a name="section3.2"></a>
@@ -340,7 +342,7 @@ The `top-level` constructs simply feed into either of these contexts if they pas
 
 		will only add `[A to B]`, `[not A]` and `[plus 1]` into the hypothesis context if `A => B`, `(A => Falsity)`, and `forall n : nat . suc n` are respectively well-formed `propositions`.
 - **Theorems**: 
-	- These add to the hypothesis context the `Theorem` label, and it's corresponding `Statement` only if the `Statement` is a well-formed proposition and the proof provided under `Proof` is valid. For instance:
+	- These add to the hypothesis context the `Theorem` label, and its corresponding `Statement` only if the `Statement` is a well-formed proposition and the proof provided under `Proof` is valid. For instance:
 
 			Theorem [not (P and not P)]:
     			Statement: (P and (P => Falsity)) => Falsity
@@ -464,6 +466,6 @@ with the optional annotation.
 				equality on ([step 1], [step 2], [inductive hypothesis])
 	    QED.
 
-Like the previous example, here we too have optional annotations. the inductive hypothesis, `[inductive hypothesis]` doesn't need a proposition annotation. It is just there to make things clearer. 
+Like the previous example, here we too have optional annotations; the inductive hypothesis `[inductive hypothesis]` doesn't need a proposition annotation. It is just there to make things clearer. 
 
 Note that even though it's redundant, if you do decide to give it an annotation, it must match against the expected proposition. If it doesn't, then the proof will fail on the incorrect annotation and give you the corresponding error message.

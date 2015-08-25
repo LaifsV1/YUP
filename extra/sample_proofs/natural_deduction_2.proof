@@ -1,6 +1,7 @@
-(*author: Yu-Yang Lin*)
-(*this file contains proofs for classical propositional logic in natural deduction style*)
-(*taken from Language and Logic week 6 classwork (2014/15) taught by Dr Mark Lee*)
+(* author: Yu-Yang Lin *)
+(* date: 22/08/2015 *)
+(* this file contains proofs for classical propositional logic in natural deduction style *)
+(* taken from Language and Logic week 6 classwork (2014/15) taught by Dr Mark Lee *)
 
 Signatures:
     P : prop ;
@@ -57,7 +58,7 @@ Theorem [step 1 (not P)]:
     Proof:
         assume [not (P or not P)] : (P or (P => Falsity)) => Falsity .
         assume [P] : P .
-        we know [P or not P] : P or (P => Falsity) because by [P] on left .
+        we know [P or not P] : P or (P => Falsity) because by [P] on the left .
         we know [negation]   : Falsity             because [not (P or not P)] with ([P or not P]) .
         by [negation]
     QED.
@@ -67,7 +68,7 @@ Theorem [step 2 (not not P)]:
     Proof:
         assume [not (P or not P)] : (P or (P => Falsity)) => Falsity .
         assume [not P] : P => Falsity .
-        we know [P or not P] : P or (P => Falsity) because by [not P] on right .
+        we know [P or not P] : P or (P => Falsity) because by [not P] on the right .
         we know [negation]   : Falsity             because [not (P or not P)] with ([P or not P]) .
         by [negation]
     QED.
@@ -114,11 +115,11 @@ Theorem [Q]:
     Proof:
         we know [P or not P] : P or (P => Falsity) because by [excluded middle] .
         since [P or not P] : P or (P => Falsity) then either:
-        case on left :
+        case on the left :
             [P] : P .
             we know [Q] : Q because [P to Q] with ([P]) .
             by [Q]
-        case on right :
+        case on the right :
             [not P] : P => Falsity .
             we know [Q] : Q because [not P to Q] with ([not P]) .
             by [Q]
@@ -139,4 +140,23 @@ Theorem [not (P and not P)]:
         we know [P] : P , [not P] : P => Falsity because [P and not P] .
         we know [negation] : Falsity because [not P] with ([P]) .
         by [negation]
+    QED.
+
+
+(*============*)
+(*** EXTRAS ***)
+(*============*)
+
+(* Extra 1 *)
+(***********************************)
+(* Another take on excluded middle *)
+(***********************************)
+Theorem [excluded middle]:
+    Statement: ((P or (P => Falsity)) => Falsity) => (P => Falsity)
+    Proof:
+        assume [not (P or not P)] : (P or (P => Falsity)) => Falsity .
+        assume [P] : P .
+        we know [P or not P] : P or (P => Falsity) because by [P] on the left .
+        we know [absurd] : Falsity because [not (P or not P)] with ([P or not P]) .
+        by absurdity of [absurd]
     QED.

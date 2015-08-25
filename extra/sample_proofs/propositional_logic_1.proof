@@ -1,5 +1,6 @@
-(*author: Yu-Yang Lin*)
-(*this file contains a few proofs on propositional logic*)
+(* author: Yu-Yang Lin *)
+(* date: 20/08/2015 *)
+(* this file contains a few proofs on propositional logic *)
 Signatures:
     A : prop;
     B : prop;
@@ -18,7 +19,6 @@ Theorem [transitivity A to C]:
         by [C]
     QED.
 
-(*double negation elimination testing*)
 Definitions:
     [DNE]  : ((A => Falsity) => Falsity) => A;
 

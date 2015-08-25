@@ -1,5 +1,5 @@
 # Proof Checker
-##### `version: 0.9.0.0` #####
+##### `version: 0.9.0.1` #####
 This tool performs automatic checking of simple program-correctness proofs of functional programs through inductive and equational reasoning.
 
 Proofs are written in a language designed to look more like hand-written proofs.

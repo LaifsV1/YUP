@@ -1,6 +1,7 @@
-(*author: Yu-Yang Lin*)
-(*this file contains proofs for classical propositional logic in natural deduction style*)
-(*taken from Language and Logic week 5 classwork (2014/15) taught by Dr Mark Lee*)
+(* author: Yu-Yang Lin *)
+(* date: 21/08/2015 *)
+(* this file contains proofs for classical propositional logic in natural deduction style *)
+(* taken from Language and Logic week 5 classwork (2014/15) taught by Dr Mark Lee *)
 
 Signatures:
     A : prop ;
@@ -28,7 +29,7 @@ Theorem [P and Q_or_R]:
     Statement: P and (Q or R)
     Proof:
         we know [step 1] : Q              because [P to Q] with ([P]) .
-        we know [step 2] : Q or R         because by [step 1] on left .
+        we know [step 2] : Q or R         because by [step 1] on the left .
         we know [step 3] : P and (Q or R) because (by [P] , by [step 2]) .
         by [step 3]
     QED.
@@ -145,17 +146,17 @@ Theorem [C or D]:
 
         since [A or B] : A or B then either:
 
-        case on left : [A] : A .
+        case on the left : [A] : A .
 
             we know [C]      : C      because [A to C] with ([A]) .
-            we know [C or D] : C or D because by [C] on left .
+            we know [C or D] : C or D because by [C] on the left .
             by [C or D]
 
-        case on right : [B] : B .
+        case on the right : [B] : B .
 
             we know [nnD]    : (D => Falsity) => Falsity because [B to nnD] with ([B]) .
             we know [D]      : D                         because [DNE] with ([nnD]) .
-            we know [C or D] : C or D                    because by [D] on right .
+            we know [C or D] : C or D                    because by [D] on the right .
             by [C or D]
 
     QED.
