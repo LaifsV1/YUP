@@ -292,7 +292,7 @@ img {
 <body>
 <p>Title:  Proof Checker Reference Manual<br>
 Author: Yu-Yang Lin<br>
-Date:   22 August, 2015  
+Date:   25 August, 2015  
 </p>
 <h1>Proof Checker Reference Manual</h1>
 <h5><code>version: 0.9.0.1</code></h5>
@@ -318,6 +318,7 @@ Date:   22 August, 2015
 <li><a href="reference_manual.html#section3.1.3">Propositions</a></li>
 <li><a href="reference_manual.html#section3.1.4">Proofs</a></li>
 <li><a href="reference_manual.html#section3.1.5">Top-Level</a></li>
+<li><a href="reference_manual.html#section3.1.6">Identifiers</a></li>
 </ul>
 </li>
 <li><a href="reference_manual.html#section3.2">Organisation of Proof Files</a></li>
@@ -391,9 +392,9 @@ Encountered while evaluating 'by induction on list'.
 <h4>Types</h4>
 <p>This data type contains the type of terms.</p>
 <ul>
+<li><strong>Type Variables</strong>: see <code>Identifiers</code> section.</li>
 <li><strong>Booleans</strong>: <code>bool</code></li>
 <li><strong>Natural Numbers</strong>: <code>nat</code></li>
-<li><strong>Type Variables</strong>: string starting with apostrophe (<code>'</code>) . e.g.<code>'a</code></li>
 <li><strong>Lists</strong>: <code>a list</code> where <code>a</code> is a type. e.g. <code>nat list</code></li>
 <li><strong>Functions</strong>: <code>a -&gt; b</code> where <code>a</code> and <code>b</code> are types. e.g. <code>nat -&gt; nat</code></li>
 <li><strong>Proposition Type</strong>: <code>prop</code></li>
@@ -402,72 +403,22 @@ Encountered while evaluating 'by induction on list'.
 <h4>Terms</h4>
 <p>This data type category contains terms which give values to the different existing types.</p>
 <ul>
-<li>
-<strong>Term Variables</strong>:
-<ul>
-<li>strings starting with lower-case letter, allowing <code>0-9</code> and <code>_</code>. e.g. <code>term_var_x</code></li>
-</ul>
-</li>
-<li>
-<strong>Function Application</strong>:
-<ul>
-<li>term applied to another term. e.g. <code>reverse xs</code>, where <code>reverse</code> is a term variable of type <code>nat list-&gt; nat list</code> and <code>xs</code> is a term variable of type <code>nat list</code>.</li>
-</ul>
-</li>
-<li>
-<strong>Boolean Terms</strong>:
-<ul>
-<li><code>true</code> and <code>false</code> of type <code>bool</code></li>
-</ul>
-</li>
-<li>
-<strong>Natural Numbers</strong>:
-<ul>
-<li><code>zero</code> and <code>suc n</code> where <code>n</code> is a term of type <code>nat</code>. e.g. <code>suc (suc zero)</code>.</li>
-</ul>
-</li>
-<li>
-<strong>Lists</strong>:
-<ul>
-<li><code>nil</code> or <code>[]</code> and <code>x :: xs</code> where <code>x</code> is a term of some type <code>a</code>, and <code>xs</code> is a list of the same type (<code>a list</code>).</li>
-</ul>
-</li>
+<li><strong>Term Variables</strong>: see <code>Identifiers</code> section.</li>
+<li><strong>Function Application</strong>: term applied to another term. e.g. <code>reverse xs</code>, where <code>reverse</code> is a term variable of type <code>nat list-&gt; nat list</code> and <code>xs</code> is a term variable of type <code>nat list</code>.</li>
+<li><strong>Boolean Terms</strong>: <code>true</code> and <code>false</code> of type <code>bool</code></li>
+<li><strong>Natural Numbers</strong>: <code>zero</code> and <code>suc n</code> where <code>n</code> is a term of type <code>nat</code>. e.g. <code>suc (suc zero)</code>.</li>
+<li><strong>Lists</strong>: <code>nil</code> or <code>[]</code> and <code>x :: xs</code> where <code>x</code> is a term of some type <code>a</code>, and <code>xs</code> is a list of the same type (<code>a list</code>).</li>
 </ul>
 <p><a name="section3.1.3"></a></p>
 <h4>Propositions</h4>
 <p>This data type category contains propositions, which are the type for proofs and labelled by hypotheses. Propositions can contain terms in them, which is how terms are checked in the hierarchy.</p>
 <ul>
-<li><strong>Truth</strong> and <strong>Falsity</strong>: <code>Truth</code> and <code>Falsity</code> respectively</li>
-<li>
-<strong>Propositional Variables</strong>:
-<ul>
-<li>strings starting with upper-case letter, allowing <code>0-9</code> and <code>_</code>. e.g. <code>PROP_VAR_A</code>.</li>
-</ul>
-</li>
-<li>
-<strong>Conjunction</strong>:
-<ul>
-<li><code>A and B</code> where <code>A</code> and <code>B</code> are propositions.</li>
-</ul>
-</li>
-<li>
-<strong>Disjunction</strong>:
-<ul>
-<li><code>A or B</code> where <code>A</code> and <code>B</code> are propositions.</li>
-</ul>
-</li>
-<li>
-<strong>Implication</strong>:
-<ul>
-<li><code>A =&gt; B</code> where <code>A</code> and <code>B</code> are propositions.</li>
-</ul>
-</li>
-<li>
-<strong>Equality</strong>:
-<ul>
-<li><code>t_1 = t_2 : type</code> where <code>t_1</code> and <code>t_2</code> are terms and <code>type</code> is a type shared by both <code>t_1</code> and <code>t_2</code>. e.g. <code>suc n = suc n : nat</code>. </li>
-</ul>
-</li>
+<li><strong>Propositional Variables</strong>: see <code>Identifiers</code> section.</li>
+<li><strong>Truth and Falsity</strong>: <code>Truth</code> and <code>Falsity</code> respectively</li>
+<li><strong>Conjunction</strong>: <code>A and B</code> where <code>A</code> and <code>B</code> are propositions.</li>
+<li><strong>Disjunction</strong>: <code>A or B</code> where <code>A</code> and <code>B</code> are propositions.</li>
+<li><strong>Implication</strong>: <code>A =&gt; B</code> where <code>A</code> and <code>B</code> are propositions.</li>
+<li><strong>Equality</strong>: <code>t_1 = t_2 : type</code> where <code>t_1</code> and <code>t_2</code> are terms and <code>type</code> is a type shared by both <code>t_1</code> and <code>t_2</code>. e.g. <code>suc n = suc n : nat</code>. </li>
 <li>
 <strong>Universal and Existential Quantifiers</strong>:
 <ul>
@@ -480,9 +431,18 @@ Encountered while evaluating 'by induction on list'.
 <h4>Proofs</h4>
 <p>The proof data type is made up of a set of rules that allow us to prove propositions. Proofs allow us to manipulate propositions, terms, and types in order to show a theorem holds. </p>
 <ul>
-<li><strong>Truth Introduction</strong>: <code>tt</code> is the proof for a <code>Truth</code> proposition</li>
-<li><strong>Falsity Elimination</strong>: <code>by absurdity of [H]</code> where <code>[H]</code> is a hypothesis</li>
-<li><strong>Conjunction Introduction</strong>: <code>(p , q)</code> where <code>p</code> and <code>q</code> are proofs.</li>
+<li>
+<p><strong>Truth Introduction</strong>: </p>
+<p><code>tt</code> is the proof for a <code>Truth</code> proposition</p>
+</li>
+<li>
+<p><strong>Falsity Elimination</strong>: </p>
+<p><code>by absurdity of [H]</code> where <code>[H]</code> is a hypothesis</p>
+</li>
+<li>
+<p><strong>Conjunction Introduction</strong>: </p>
+<p><code>(p , q)</code> where <code>p</code> and <code>q</code> are proofs.</p>
+</li>
 <li>
 <p><strong>Conjunction Elimination</strong>: </p>
 <pre><code>we know ([P] : P , [Q] : Q) because [P and Q] : P and Q . rest 
@@ -508,10 +468,8 @@ case on the right : [B] : B . q
 <p>When using this proof rule, <code>left</code> and <code>right</code> must be eliminated in that order. Thus, <code>case on the left</code> must be written before <code>case on the right</code>.</p>
 </li>
 <li>
-<strong>Implication Introduction</strong>:
-<ul>
-<li><code>assume [A] : A . p</code> where <code>[A]</code> is a hypothesis of type <code>A</code>, <code>A</code> is a proposition, and <code>p</code> is a proof where <code>[A] : A</code> is in scope. </li>
-</ul>
+<p><strong>Implication Introduction</strong>:</p>
+<p><code>assume [A] : A . p</code> where <code>[A]</code> is a hypothesis of type <code>A</code>, <code>A</code> is a proposition, and <code>p</code> is a proof where <code>[A] : A</code> is in scope. </p>
 </li>
 <li>
 <p><strong>Implication Elimination</strong>:</p>
@@ -522,10 +480,8 @@ case on the right : [B] : B . q
 <p>Note that this rule is actually the combination of two rules, a hypothesis labelling clause (<code>we know [H] because p</code>), and a <code>with</code> clause (<code>[H] with (a,b,c)</code>). This will be mentioned in more detail in their own sections.</p>
 </li>
 <li>
-<strong>Existential Introduction</strong>:
-<ul>
-<li><code>choose t . rest</code> where <code>t</code> is a term and <code>rest</code> is a proof where <code>t</code> is now replacing the variable.</li>
-</ul>
+<p><strong>Existential Introduction</strong>:</p>
+<p><code>choose t . rest</code> where <code>t</code> is a term and <code>rest</code> is a proof where <code>t</code> is now replacing the variable.</p>
 </li>
 <li>
 <p><strong>Existential Elimination</strong>:</p>
@@ -535,10 +491,8 @@ case on the right : [B] : B . q
 <p>where <code>[new A]</code> is a new hypothesis where the existential surrounding <code>A</code> has been eliminated, <code>x</code> is term variable of type <code>type</code>, <code>[A]</code> is an old hypothesis of type <code>A</code>, <code>A</code> is a proposition, and <code>rest</code> is a proof where <code>[new A]</code> and <code>x</code> are in scope.</p>
 </li>
 <li>
-<strong>Universal Introduction</strong>:
-<ul>
-<li><code>assume x : type . rest</code> where <code>x</code> is a term variable of type <code>type</code>, and <code>rest</code> is a proof where <code>x</code> is now in scope.</li>
-</ul>
+<p><strong>Universal Introduction</strong>:</p>
+<p><code>assume x : type . rest</code> where <code>x</code> is a term variable of type <code>type</code>, and <code>rest</code> is a proof where <code>x</code> is now in scope.</p>
 </li>
 <li>
 <p><strong>Universal Elimination</strong>:</p>
@@ -576,10 +530,8 @@ case false : q
 <p>where <code>p</code> is a proof for the proposition with the inductive variable replaced with <code>true</code>, and <code>q</code> is a proof for the proposition with the inductive variable replced with <code>false</code>.</p>
 </li>
 <li>
-<strong>Equality</strong>:
-<ul>
-<li><code>equality on ([H_1],[H_2],...,[H_n])</code> where <code>[H_1]</code> to <code>[H_n]</code> are the hypotheses used to prove equality of the desired terms, which would be stated by the proof's goal or statement.</li>
-</ul>
+<p><strong>Equality</strong>:</p>
+<p><code>equality on ([H_1],[H_2],...,[H_n])</code> where <code>[H_1]</code> to <code>[H_n]</code> are the hypotheses used to prove equality of the desired terms, which would be stated by the proof's goal or statement.</p>
 </li>
 <li>
 <p><strong>Hypothesis Labelling Clause</strong>:</p>
@@ -610,24 +562,15 @@ case false : q
 </li>
 <li>
 <p><strong>Using Hypotheses</strong>:</p>
-<ul>
-<li>
 <p><code>by [H]</code>where <code>[H]</code> is the hypothesis we want to use. Note that you must also include the <code>by</code> when combining this with a labelling clause. e.g.</p>
 <pre><code>we know [A] : A because by [H] . p
 </code></pre>
 
 </li>
-</ul>
-</li>
 <li>
 <p><strong>Therefore Clause</strong>:</p>
-<ul>
-<li>
 <p><code>p therefore A</code> where <code>p</code> is a proof of type <code>A</code>. This is mainly to label your proof with the proposition if it's confusing. </p>
-<p>e.g. 
-Given <code>[negation] : Falsity</code> we can do: <code>by [negation] therefore Falsity</code></p>
-</li>
-</ul>
+<p>e.g. Given <code>[negation] : Falsity</code> we can do: <code>by [negation] therefore Falsity</code></p>
 </li>
 </ul>
 <p><a name="section3.1.5"></a></p>
@@ -688,24 +631,41 @@ Given <code>[negation] : Falsity</code> we can do: <code>by [negation] therefore
 <p>where the word <code>Theorem</code> is followed by a hypothesis to call the theorem - in this case <code>[P to Z]</code>. The keyword <code>Statement</code> is followed by the proposition that we are trying to prove in this theorem labelled <code>[P to Z]</code>, which is <code>P =&gt; Z</code>. The keyword <code>Proof</code> is followed by the proof for the <code>Statement</code> of this <code>Theorem</code>.</p>
 <p><code>Theorems</code> are like <code>Definitions</code> in the sense that they add <code>hypotheses</code> into the <code>hypothesis context</code> of a proof file. Every proven <code>Theorem</code> will be available globablly (in scope) to any top-level constructs underneath it.</p>
 <p><code>Theorems</code> allow us to to prove propositions. This is where the <code>Proof Checker</code> does its main job, which is to validate the correctness of a given proof. <code>propositions</code>, <code>terms</code> and <code>types</code> will also be checked for well-formedness when fed into the file as a <code>Signature</code> or <code>Definition</code>, but proofs can only be checked within a <code>Theorem</code>.</p>
-<p>All Theorem proofs must end with the keyword <code>QED.</code>.
-<a name="section3.2"></a></p>
+<p>All Theorem proofs must end with the keyword <code>QED.</code>.</p>
 </li>
 </ul>
+<p><a name="section3.1.6"></a></p>
+<h4>Identifiers</h4>
+<p>There are four kinds of identifiers in the proof language:</p>
+<ul>
+<li>
+<p><strong>Type Variables</strong> : </p>
+<p>apostrophe (<code>'</code>) followed by any number of alpha-numeric characters and underscores (<code>_</code>). e.g. <code>'a</code></p>
+</li>
+<li>
+<p><strong>Term Variables</strong> : </p>
+<p>lower case letter (<code>a-z</code>) followed by any number of alpha-numeric characters and underscores (<code>_</code>). e.g. <code>append_list</code></p>
+</li>
+<li>
+<p><strong>Proposition Variables</strong> : </p>
+<p>upper case letter (<code>A-Z</code>) followed by any number of alpha-numeric characters and underscores (<code>_</code>). e.g. <code>A</code></p>
+</li>
+<li>
+<p><strong>Hypotheses</strong> : </p>
+<p>any number of alpha-numeric characters <code>A-Z a-z 0-9</code> and parentheses <code>(</code> and <code>)</code> inside square brackets <code>[</code> and <code>]</code>. e.g. <code>[double negation elimination]</code></p>
+</li>
+</ul>
+<p><a name="section3.2"></a></p>
 <h3>Organisation of Proof Files</h3>
 <p>Under the hood, a proof file contains two data-structures which the proof checker has to keep track of:</p>
 <ul>
 <li>
-<strong>Variable context</strong>:
-<ul>
-<li>This is the set where all <code>term</code> and <code>proposition</code> variables are held. This is a set of pairs <code>variable , type</code>, so the checker can tell what type any given variable has.</li>
-</ul>
+<p><strong>Variable context</strong>:</p>
+<p>This is the set where all <code>term</code> and <code>proposition</code> variables are held. This is a set of pairs <code>variable , type</code>, so the checker can tell what type any given variable has.</p>
 </li>
 <li>
-<strong>Hypothesis context</strong>:
-<ul>
-<li>This is the set where all <code>hypotheses</code> are held. This is a set of pairs <code>hypothesis , proposition</code>, so the checker can tell what proposition any given hypothesis is labelling.</li>
-</ul>
+<p><strong>Hypothesis context</strong>:</p>
+<p>This is the set where all <code>hypotheses</code> are held. This is a set of pairs <code>hypothesis , proposition</code>, so the checker can tell what proposition any given hypothesis is labelling.</p>
 </li>
 </ul>
 <p>The <code>top-level</code> constructs simply feed into either of these contexts if they pass their corresponding check:</p>
@@ -761,7 +721,7 @@ Given <code>[negation] : Falsity</code> we can do: <code>by [negation] therefore
 </ul>
 </li>
 <li>
-<p><strong>Comments</strong>: comments are in <code>ML</code> style. Everything between <code>(*</code> and <code>*)</code> is a comment.</p>
+<p><strong>Comments</strong>: comments are in <code>ML</code> style. Everything inside <code>(*</code> and <code>*)</code> is a comment.</p>
 </li>
 </ul>
 <p><a name="section4"></a></p>

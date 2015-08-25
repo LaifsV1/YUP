@@ -1,6 +1,6 @@
 Title:  Proof Checker Reference Manual  
 Author: Yu-Yang Lin  
-Date:   22 August, 2015  
+Date:   25 August, 2015  
 # Proof Checker Reference Manual #
 ##### `version: 0.9.0.1` #####
 
@@ -18,6 +18,7 @@ Date:   22 August, 2015
 		- [Propositions](#section3.1.3)
 		- [Proofs](#section3.1.4)
 		- [Top-Level](#section3.1.5)
+		- [Identifiers](#section3.1.6)
 	- [Organisation of Proof Files](#section3.2)
 - [Examples](#section4)
 	- [Law of Excluded Middle](#section4.1)
@@ -95,9 +96,9 @@ Proofs contain several data type categories which separate the proof files into 
 
 This data type contains the type of terms.
 
+- **Type Variables**: see `Identifiers` section.
 - **Booleans**: `bool`
 - **Natural Numbers**: `nat`
-- **Type Variables**: string starting with apostrophe (`'`) . e.g.`'a`
 - **Lists**: `a list` where `a ` is a type. e.g. `nat list`
 - **Functions**: `a -> b` where `a` and `b` are types. e.g. `nat -> nat`
 - **Proposition Type**: `prop`
@@ -107,33 +108,23 @@ This data type contains the type of terms.
 
 This data type category contains terms which give values to the different existing types.
 
-- **Term Variables**:
-	- strings starting with lower-case letter, allowing `0-9` and `_`. e.g. `term_var_x`
-- **Function Application**:
-	- term applied to another term. e.g. `reverse xs`, where `reverse` is a term variable of type `nat list-> nat list` and `xs` is a term variable of type `nat list`.
-- **Boolean Terms**:
-	- `true` and `false` of type `bool`
-- **Natural Numbers**:
-	- `zero` and `suc n` where `n` is a term of type `nat`. e.g. `suc (suc zero)`.
-- **Lists**:
-	- `nil` or `[]` and `x :: xs` where `x` is a term of some type `a`, and `xs` is a list of the same type (`a list`).
+- **Term Variables**: see `Identifiers` section.
+- **Function Application**: term applied to another term. e.g. `reverse xs`, where `reverse` is a term variable of type `nat list-> nat list` and `xs` is a term variable of type `nat list`.
+- **Boolean Terms**: `true` and `false` of type `bool`
+- **Natural Numbers**: `zero` and `suc n` where `n` is a term of type `nat`. e.g. `suc (suc zero)`.
+- **Lists**: `nil` or `[]` and `x :: xs` where `x` is a term of some type `a`, and `xs` is a list of the same type (`a list`).
 
 <a name="section3.1.3"></a>
 #### Propositions ####
 
 This data type category contains propositions, which are the type for proofs and labelled by hypotheses. Propositions can contain terms in them, which is how terms are checked in the hierarchy.
 
-- **Truth** and **Falsity**: `Truth` and `Falsity` respectively
-- **Propositional Variables**:
-	- strings starting with upper-case letter, allowing `0-9` and `_`. e.g. `PROP_VAR_A`.
-- **Conjunction**:
-	- `A and B` where `A` and `B` are propositions.
-- **Disjunction**:
-	- `A or B` where `A` and `B` are propositions.
-- **Implication**:
-	- `A => B` where `A` and `B` are propositions.
-- **Equality**:
-	- `t_1 = t_2 : type` where `t_1` and `t_2` are terms and `type` is a type shared by both `t_1` and `t_2`. e.g. `suc n = suc n : nat`. 
+- **Propositional Variables**: see `Identifiers` section.
+- **Truth and Falsity**: `Truth` and `Falsity` respectively
+- **Conjunction**: `A and B` where `A` and `B` are propositions.
+- **Disjunction**: `A or B` where `A` and `B` are propositions.
+- **Implication**: `A => B` where `A` and `B` are propositions.
+- **Equality**: `t_1 = t_2 : type` where `t_1` and `t_2` are terms and `type` is a type shared by both `t_1` and `t_2`. e.g. `suc n = suc n : nat`. 
 - **Universal and Existential Quantifiers**:
 	- `forall x : type . A` where `x` is a term variable, `type` is a type, and `A` is a proposition. e.g. `forall n : nat . suc n = suc n : nat`. 
 	- `exists x : type . A` where `x` is a term variable, `type` is a type, and `A` is a proposition. e.g. `exists x : bool . x = true : bool`.
@@ -143,9 +134,15 @@ This data type category contains propositions, which are the type for proofs and
 
 The proof data type is made up of a set of rules that allow us to prove propositions. Proofs allow us to manipulate propositions, terms, and types in order to show a theorem holds. 
 
-- **Truth Introduction**: `tt` is the proof for a `Truth` proposition
-- **Falsity Elimination**: `by absurdity of [H]` where `[H]` is a hypothesis
-- **Conjunction Introduction**: `(p , q)` where `p` and `q` are proofs.
+- **Truth Introduction**: 
+
+	`tt` is the proof for a `Truth` proposition
+- **Falsity Elimination**: 
+
+	`by absurdity of [H]` where `[H]` is a hypothesis
+- **Conjunction Introduction**: 
+
+	`(p , q)` where `p` and `q` are proofs.
 - **Conjunction Elimination**: 
 
 		we know ([P] : P , [Q] : Q) because [P and Q] : P and Q . rest 
@@ -164,7 +161,8 @@ The proof data type is made up of a set of rules that allow us to prove proposit
 
 	When using this proof rule, `left` and `right` must be eliminated in that order. Thus, `case on the left` must be written before `case on the right`.
 - **Implication Introduction**:
-	- `assume [A] : A . p` where `[A]` is a hypothesis of type `A`, `A` is a proposition, and `p` is a proof where `[A] : A` is in scope. 
+
+	`assume [A] : A . p` where `[A]` is a hypothesis of type `A`, `A` is a proposition, and `p` is a proof where `[A] : A` is in scope. 
 - **Implication Elimination**:
 
 		we know [B] : B because [A to B] : A => B with ([A]) . rest
@@ -173,14 +171,16 @@ The proof data type is made up of a set of rules that allow us to prove proposit
 
 	Note that this rule is actually the combination of two rules, a hypothesis labelling clause (`we know [H] because p`), and a `with` clause (`[H] with (a,b,c)`). This will be mentioned in more detail in their own sections.
 - **Existential Introduction**:
-	- `choose t . rest` where `t` is a term and `rest` is a proof where `t` is now replacing the variable.
+
+	`choose t . rest` where `t` is a term and `rest` is a proof where `t` is now replacing the variable.
 - **Existential Elimination**:
 
 		we know [new A] : A with x because [A] : exists x : type . A . rest
 
 	where `[new A]` is a new hypothesis where the existential surrounding `A` has been eliminated, `x` is term variable of type `type`, `[A]` is an old hypothesis of type `A`, `A` is a proposition, and `rest` is a proof where `[new A]` and `x` are in scope.
 - **Universal Introduction**:
-	-	`assume x : type . rest` where `x` is a term variable of type `type`, and `rest` is a proof where `x` is now in scope.
+
+	`assume x : type . rest` where `x` is a term variable of type `type`, and `rest` is a proof where `x` is now in scope.
 - **Universal Elimination**:
 
 		we know [y A] : A because [A] : forall x : type . A with (y) . rest
@@ -210,7 +210,8 @@ The proof data type is made up of a set of rules that allow us to prove proposit
 
 	where `p` is a proof for the proposition with the inductive variable replaced with `true`, and `q` is a proof for the proposition with the inductive variable replced with `false`.
 - **Equality**:
-	- `equality on ([H_1],[H_2],...,[H_n])` where `[H_1]` to `[H_n]` are the hypotheses used to prove equality of the desired terms, which would be stated by the proof's goal or statement.
+
+	`equality on ([H_1],[H_2],...,[H_n])` where `[H_1]` to `[H_n]` are the hypotheses used to prove equality of the desired terms, which would be stated by the proof's goal or statement.
 - **Hypothesis Labelling Clause**:
 
 		we know [A] : A because p . rest
@@ -240,14 +241,15 @@ The proof data type is made up of a set of rules that allow us to prove proposit
 
 		[Some Hypothesis] with ([A],y)	
 - **Using Hypotheses**:
-	- `by [H]`where `[H]` is the hypothesis we want to use. Note that you must also include the `by` when combining this with a labelling clause. e.g.
 
-			we know [A] : A because by [H] . p
+	`by [H]`where `[H]` is the hypothesis we want to use. Note that you must also include the `by` when combining this with a labelling clause. e.g.
+
+		we know [A] : A because by [H] . p
 - **Therefore Clause**:
-	- `p therefore A` where `p` is a proof of type `A`. This is mainly to label your proof with the proposition if it's confusing. 
+
+	`p therefore A` where `p` is a proof of type `A`. This is mainly to label your proof with the proposition if it's confusing. 
 		
-		e.g. 
-		Given `[negation] : Falsity` we can do: `by [negation] therefore Falsity`
+	e.g. Given `[negation] : Falsity` we can do: `by [negation] therefore Falsity`
 
 <a name="section3.1.5"></a>
 #### Top-Level ####
@@ -312,15 +314,35 @@ The top-level data type category contains the outermost hierarchical layer of th
 	`Theorems` allow us to to prove propositions. This is where the `Proof Checker` does its main job, which is to validate the correctness of a given proof. `propositions`, `terms` and `types` will also be checked for well-formedness when fed into the file as a `Signature` or `Definition`, but proofs can only be checked within a `Theorem`.
 
 	All Theorem proofs must end with the keyword `QED.`.
+
+<a name="section3.1.6"></a>
+#### Identifiers ####
+There are four kinds of identifiers in the proof language:
+
+- **Type Variables** : 
+
+	apostrophe (`'`) followed by any number of alpha-numeric characters and underscores (`_`). e.g. `'a`
+- **Term Variables** : 
+
+	lower case letter (`a-z`) followed by any number of alpha-numeric characters and underscores (`_`). e.g. `append_list`
+- **Proposition Variables** : 
+
+	upper case letter (`A-Z`) followed by any number of alpha-numeric characters and underscores (`_`). e.g. `A`
+- **Hypotheses** : 
+
+	any number of alpha-numeric characters `A-Z a-z 0-9` and parentheses `(` and `)` inside square brackets `[` and `]`. e.g. `[double negation elimination]`
+
 <a name="section3.2"></a>
 ### Organisation of Proof Files ###
 
 Under the hood, a proof file contains two data-structures which the proof checker has to keep track of:
 
 - **Variable context**:
-	- This is the set where all `term` and `proposition` variables are held. This is a set of pairs `variable , type`, so the checker can tell what type any given variable has.
+
+	This is the set where all `term` and `proposition` variables are held. This is a set of pairs `variable , type`, so the checker can tell what type any given variable has.
 - **Hypothesis context**:
-	- This is the set where all `hypotheses` are held. This is a set of pairs `hypothesis , proposition`, so the checker can tell what proposition any given hypothesis is labelling.
+
+	This is the set where all `hypotheses` are held. This is a set of pairs `hypothesis , proposition`, so the checker can tell what proposition any given hypothesis is labelling.
 
 The `top-level` constructs simply feed into either of these contexts if they pass their corresponding check:
 
@@ -357,7 +379,7 @@ The `top-level` constructs simply feed into either of these contexts if they pas
 
 		will only be added to the hypothesis context if the `Statement`, `(P and (P => Falsity)) => Falsity` is valid and the `Proof` is indeed a proof for `(P and (P => Falsity)) => Falsity`.
 
-- **Comments**: comments are in `ML` style. Everything between `(*` and `*)` is a comment.
+- **Comments**: comments are in `ML` style. Everything inside `(*` and `*)` is a comment.
 
 <a name="section4"></a>
 ## Examples ##
