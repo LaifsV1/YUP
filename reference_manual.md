@@ -240,9 +240,9 @@ The proof data type is made up of a set of rules that allow us to prove proposit
 	Given: `[A] : A` and `y : nat`, we can do:
 
 		[Some Hypothesis] with ([A],y)	
-- **Using Hypotheses**:
+- **Using Hypotheses - By Clause**:
 
-	`by [H]`where `[H]` is the hypothesis we want to use. Note that you must also include the `by` when combining this with a labelling clause. e.g.
+	`by [H]` where `[H]` is the hypothesis we want to use. Note that you must also include the `by` when combining this with a labelling clause. e.g.
 
 		we know [A] : A because by [H] . p
 - **Therefore Clause**:
@@ -250,6 +250,17 @@ The proof data type is made up of a set of rules that allow us to prove proposit
 	`p therefore A` where `p` is a proof of type `A`. This is mainly to label your proof with the proposition if it's confusing. 
 		
 	e.g. Given `[negation] : Falsity` we can do: `by [negation] therefore Falsity`
+- **Instantiation Clause**:
+
+		we get [new prop] : P instantiating [some prop] with (A is NewA,...) . rest
+
+	where `[new prop]` is a hyposthesis pointing at a proposition `P`, which is the result of instantiating proposition variables in `[some prop]` to some other given proposition variables. 
+
+	`rest` is a proof where `[new prop]` is in scope.
+
+	The values to instantiate are given in the tuple that follows the `with` keyword. The tuple must be in the form `A is NewA`, where `A` is an existing proposition variable in `[some prop]`, and `NewA` is the new proposition variable to replace `A`.
+
+	All propositions are replaced order; from the left of the tuple to the right.
 
 <a name="section3.1.5"></a>
 #### Top-Level ####
