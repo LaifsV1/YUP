@@ -73,6 +73,7 @@ rule read = parse
   | "we get"        { WeGet_PROOF }
   | "instantiating" { Instan_PROOF }
   | "is"            { Is_PROOF }
+  | "TODO"          { TODO_PROOF }
   | "Signatures"    { SIGNATURES }
   | "Definitions"   { DEFINITIONS }
   | "Theorem"       { THEOREM }

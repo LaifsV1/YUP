@@ -108,7 +108,7 @@ Theorem [involution of rev] :
 
         case (hd :: tl) : [inductive hypothesis] .
 
-            we know [step 1] : rev (hd :: tl) = append (rev tl) (hd::[])             : nat list because [rev xs] with (tl,hd).
+            we know [step 1] : rev (hd :: tl) = append (rev tl) (hd::[])             : nat list because [rev xs]    with (tl,hd).
             we know [step 2] : rev (append (rev tl) (hd::[])) = hd :: (rev (rev tl)) : nat list because [rev lemma] with (rev tl,hd) .
 
             equality on ([step 1], [step 2], [inductive hypothesis])

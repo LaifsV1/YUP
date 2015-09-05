@@ -78,18 +78,21 @@ type pf' = TruthR                                  (*Truth-R,  T : A*) (***SPF**
          | SpineApp of hvar * spine                (*[H] with s*) (***SPF***)
          | Instantiate of var * prop * hvar
                           * prop_instance * pf     (*We get [H'] : P' instantiating [H] : P with (A is a, B is b, ...)*)
+         | Todo                                    (*TODO*)
 and pf = pos_range * pf'
 
 (* Monadic Errors *)
 type 'a result = Ok of 'a | Wrong of string * pos_range
 
 (* Monadic Operations *)
-let return x = Ok x
+let return     x = Ok x
 let (>>=) x f =
   match x with
   | Ok v    -> f v
   | Wrong (s,e) -> Wrong (s,e)
 let (>>) x y = x >>= (fun _ -> y)
+
+let success = ref 1
 
 (* TopLevel Syntax *)
 type toplevel = Sig of ctx | Def of hyps | Theorem of var * pf * prop

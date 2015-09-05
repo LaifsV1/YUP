@@ -9,7 +9,7 @@ open Checker
 (* TopLevel Functions *)
 let rec check_file (((types,axioms),proof) : proof_pair) :(unit result) =
   match proof with
-  | []        -> Ok ()
+  | []        -> return ()
   | (x :: xs) -> (match x with
                   | Sig [] -> check_file ((types,axioms),xs)
                   | Def [] -> check_file ((types,axioms),xs)
@@ -36,32 +36,42 @@ let _ =
     print_newline ();
     printf "    @[***Checking file...............";
     (match check_file (([],[]),new_proof) with
-     | Ok ()         -> printf ".....[done]***@]";
-                        print_newline ();
-                        printf "    @[***VALIDATION SUCCESSFUL****@]";
-                        print_newline ();
-                        print_newline ();
+     | Ok () -> let i = !success in
+                if i=1
+                then printf ".....[done]***@]"
+                else printf "    ***[done]***";
+                print_newline ();
+                if i=1
+                then printf "    @[***VALIDATION SUCCESSFUL****@]"
+                else printf "    @[***VALIDATION SUCCESSFUL---INCOMPLETE PROOF(S) FOUND****@]" ;
+                print_newline ();
+                print_newline ();
+                i
      | Wrong (msg,(p1,p2)) -> printf ".....[error]***@]";
-                        print_newline ();
-                        printf "    @[[VALIDATION FAILURE]:@] @.";
-                        printf "@[%s @] @." msg;
-                        printf "    @[%s @] @." (line_sprintf p1 p2);
-                        print_newline ())
+                              print_newline ();
+                              printf "    @[[VALIDATION FAILURE]:@] @.";
+                              printf "@[%s @] @." msg;
+                              printf "    @[%s @] @." (line_sprintf p1 p2);
+                              print_newline ();
+                              0)
   with
   | Failure msg -> printf ".....[error]!***@]";
                    print_newline ();
                    printf "    @[[UNDEFINED-FAILURE ERROR]:@] @.";
                    printf "    @[%s @] @." msg;
-                   print_newline ()
+                   print_newline ();
+                   0
   | ParseError (msg,(p1,p2)) -> printf ".....[error]***@]";
-                              print_newline ();
-                              printf "    @[[PARSE ERROR]:@] @.";
-                              printf "@[%s @] @." msg;
-                              printf "    @[%s @] @." (line_sprintf p1 p2);
-                              print_newline ()
+                                print_newline ();
+                                printf "    @[[PARSE ERROR]:@] @.";
+                                printf "@[%s @] @." msg;
+                                printf "    @[%s @] @." (line_sprintf p1 p2);
+                                print_newline ();
+                                0
   | SyntaxError (msg,(p1,p2)) -> printf ".....[error]***@]";
-                               print_newline ();
-                               printf "    @[[SYNTAX ERROR]:@] @. ";
-                               printf "@[%s @] @." msg;
-                               printf "    @[%s @] @." (line_sprintf p1 p2);
-                               print_newline ()
+                                 print_newline ();
+                                 printf "    @[[SYNTAX ERROR]:@] @. ";
+                                 printf "@[%s @] @." msg;
+                                 printf "    @[%s @] @." (line_sprintf p1 p2);
+                                 print_newline ();
+                                 0

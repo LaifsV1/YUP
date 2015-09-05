@@ -49,6 +49,7 @@
 %token Because_PROOF
 %token WeKnow_PROOF
 %token WeGet_PROOF Instan_PROOF Is_PROOF
+%token TODO_PROOF
 
 (*** TOPLEVEL-TOKENS ***)
 %token SIGNATURES
@@ -260,6 +261,7 @@ proof:
 | WeKnow_PROOF HVAR COLON prop Because_PROOF proof DOT proof  { ($startpos , $endpos) , HypLabel ($2,$4,$6,$8) }
 | WeGet_PROOF HVAR COLON prop Instan_PROOF h_var
   With_PROOF OPEN_PAREN propvar_tuple DOT proof               { ($startpos , $endpos) , Instantiate ($2,$4,$6,$9,$11) }
+| TODO_PROOF                                                  { ($startpos , $endpos) , Todo }
 | proof_errors                                                { $1 }
 
 proof_errors:

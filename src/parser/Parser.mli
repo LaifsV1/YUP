@@ -11,6 +11,7 @@ type token =
   | Then_PROOF
   | TT_PROOF
   | TPVAR of (AbstractSyntax.var)
+  | TODO_PROOF
   | THEOREM
   | Suc_TERM_OP
   | Since_PROOF

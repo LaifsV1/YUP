@@ -11,7 +11,7 @@
 (setq proof-terms    '("nil" "true" "false" "zero" "suc"))
 (setq proof-props    '("Truth" "Falsity" "and" "or" "forall" "exists"))
 (setq proof-proofs   '("tt" "by absurdity of" "since" "then either" "with" "on the left" "on the right"
-                       "because" "assume" "by" "therefore" "choose" "induction on" "case" "equality on"
+                       "because" "assume" "by " "therefore" "choose" "induction on" "case" "equality on"
                        "we know" "we get" "instantiating" "is"))
 
 ;; generate regex string for each category of keywords
@@ -26,6 +26,7 @@
 (setq proof-font-lock-keywords
       `(
         ;; adding regexp strings here.
+        ("TODO"                            . font-lock-warning-face)
         ("(\\*[\0-\377[:nonascii:]]*?\\*)" . font-lock-comment-face)
         ("\\[\\]"                          . font-lock-constant-face)
         ("\\:\\:"                          . font-lock-constant-face)

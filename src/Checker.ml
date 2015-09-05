@@ -6,6 +6,7 @@ open StringFormats
 open Helper
 open AlphaEquivalence
 open CongruenceClosure
+open Format
 
 (******** MODULE-SPECIFIC HELPER FUNCTIONS ********)
 (* entails function for By rule, can become more powerful this way *)
@@ -62,7 +63,7 @@ let rec check_prop (psi : ctx) ((p,prop) : prop) :(unit result) =
 (* [notes: section 9.2] *)
 let rec apply_spine (psi : ctx) (gamma : hyps) (s : spine) ((p,a) : prop) :(prop result) =
   match s , a with
-  | []             , a                -> Ok (p,a)                                        (*id-spine-app*)
+  | []             , a                -> return (p,a)                                    (*id-spine-app*)
   | SpineH h :: s' , Implies (a,b)    -> (lookup_hyps_result gamma h p) >>=              (*implies-spine-app*)
                                            (fun a' -> (alpha_equiv_prop_result a a') >>
                                                         (apply_spine psi gamma s' b))
@@ -83,6 +84,7 @@ let rec check_spf ((pos,p) : pf) :(unit result) =
   | Therefore (p,a)-> (check_spf p)
   | By h           -> return ()
   | SpineApp (h,s) -> return ()
+  | Todo           -> return ()
   | _              -> (Wrong (not_simple_proof (pos,p),pos))
 
 
@@ -237,3 +239,8 @@ let rec check_pf (psi : ctx) (gamma : hyps) ((pf_pos,proof) : pf) ((prop_pos,pro
                                                let new_prop = (instantiate_var xs a') in
                                                (alpha_equiv_prop_result a new_prop) >>
                                                  (check_pf psi ((h',new_prop)::gamma) p (prop_pos,c))))
+  | Todo , c -> print_newline ();                                                        (*TODO*)
+                printf "%s @." (incomplete_proof (prop_pos,c));
+                printf "    @[%s @] @." (line_sprintf (fst pf_pos) (snd pf_pos));
+                success := 0;
+                return ()

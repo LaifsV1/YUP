@@ -37,6 +37,7 @@ let proof_sf_ByEq        = sprintf "@[equality on ( %s ) @]"
 let proof_sf_HypLabel    = sprintf "@[we know %s : %s @,because %s .@, %s@]"
 let proof_sf_SpineApp    = sprintf "@[%s with ( %s )@]"
 let proof_sf_Instantiate = sprintf "@[we get %s : %s @,instantiating %s with ( %s ) .@, %s @]"
+let proof_sf_Todo        = sprintf "@[TODO@]"
 
 
 (***************************)
@@ -150,6 +151,7 @@ let rec to_string_pf ((_,p) : pf) :(string) =
                                                        (to_string_hvar h)
                                                        (to_string_prop_instance xs)
                                                        (to_string_pf p)
+  | Todo -> proof_sf_Todo
 
 
 (**********************)
@@ -206,9 +208,16 @@ let equality_error = "@[Expected hypothesis in the equality tuple, found none.@]
 
 let encountered_while (caller : string) (res : 'a result) :('a result) =
   match res with
-  | Ok a          -> Ok a
+  | Ok a          -> return a
   | Wrong (msg,p) -> let new_msg = sprintf "%s @,Encountered while %s." msg caller
                      in Wrong (new_msg,p)
 
 let not_Prop (x : var) (t : tp) :(string) =
   sprintf "@[Expected type 'prop' but got variable @,'%s' of type '%s'.@]" x (to_string_tp t)
+
+
+(************************)
+(*** WARNING MESSAGES ***)
+(************************)
+let incomplete_proof (c : prop) :(string) =
+  sprintf "@[[warning]: incomplete proof for @,%s@]" (to_string_prop c)

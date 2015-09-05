@@ -159,17 +159,17 @@ let alpha_equiv_prop_result (a : prop) (b : prop) :(unit result) =
 (******************** LOOKUP FUNCTIONS ********************)
 (* lookup function for the context *)
 let lookup_ctx_result (psi : ctx) (x : var) (p : pos_range) :(tp result) =
-  (try Ok (List.assoc x psi) with Not_found -> Wrong (ctx_not_found x,p))
+  (try return (List.assoc x psi) with Not_found -> Wrong (ctx_not_found x,p))
 
 (* lookup function for hypotheses *)
 let lookup_hyps_result (gamma : hyps) ((h,a) : hvar) (p : pos_range) :(prop result) =
   (try let a' = (List.assoc h gamma) in
        (match a with
         | Some a  -> (alpha_equiv_prop_result a a') >> (return a)
-        | None    -> Ok a')
+        | None    -> return a')
    with Not_found -> Wrong (hyp_not_found (h,a),p))
 
 let some_alpha_equiv_result (a : prop option) (b : prop) :(unit result) =
   match a with
-  | None   -> Ok ()
+  | None   -> return ()
   | Some (p,a) -> alpha_equiv_prop_result (p,a) b

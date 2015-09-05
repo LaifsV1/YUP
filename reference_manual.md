@@ -2,7 +2,7 @@ Title:  Proof Checker Reference Manual
 Author: Yu-Yang Lin  
 Date:   25 August, 2015  
 # Proof Checker Reference Manual #
-##### `version: 0.9.0.1` #####
+##### `version: 0.9.1.0` #####
 
 ## Table of Contents ##
 
@@ -37,6 +37,8 @@ The aim of the Proof Checker is to provide a simple proof assistant for the purp
 - Emphasis is given to equational reasoning; congruence and equality is automated whilst propositional reasoning is purposely made explicit. Production-level proof assistants commonly automate propositional fragments, which decreases readability and is not helpful for students. Instead, congruence is automated in equality as students would not be familiar with explicit congruence reasoning.
 
 The tool source is written in **OCaml**, using OCamllex and [Menhir](http://gallium.inria.fr/~fpottier/menhir/) for the parser, and was developed on a Windows machine. Proofs are validated through sequent calculus rules. Specifications for the rules can be seen in the [notes](notes.pdf).
+
+The Proof Checker was written by me (Yu-Yang Lin) under the supervision of Dr. Dan R. Ghica and Neel R. Krishnaswami for the purpose of teaching  Computer Science students about program-correctness proofs. Funding for the project was provided by the College of Engineering and Physical Science, University of Birmingham.
 
 <a name="section2"></a>
 ## Usage ##
@@ -87,6 +89,8 @@ While a failed proof might output:
     Encountered while evaluating 'by equality' clause.
     Encountered while evaluating 'by induction on list'.
       (line 106 , col 12) to (line 106 , col 34)
+
+In addition to printing to the console, the Proof Checker does actually return a value. This value should be `1` or `0` following Unix conventions for success and failure respectively. This is especially helpful for writing scripts that check a batch of proof files. 
 
 Syntax for proof files can be seen in the sample proofs provided, you can find the proofs under [extra/sample_proofs](/extra/sample_proofs).
 
@@ -269,6 +273,15 @@ The proof data type is made up of a set of rules that allow us to prove proposit
 	The values to instantiate are given in the tuple that follows the `with` keyword. The tuple must be in the form `A is NewA`, where `A` is an existing proposition variable in `[some prop]`, and `NewA` is the new proposition variable to replace `A`.
 
 	All propositions are replaced order; from the left of the tuple to the right.
+- **Incomplete Proofs - TODO Keyword**:
+
+	To validate an incomplete proof, one can either put the missing part as a lemma/hypothesis in the preceding definition (similar to a postulate in Agda), or use the `TODO` keyword.
+
+	e.g.
+		
+		we know [prop a] : append [] (x :: []) = (x :: []) : nat list because TODO . rest
+
+	In addition to serving as a place-holder proof, the `TODO` keyword will trigger warnings where incomplete proofs are found. These warnings will contain the position in the file, and the expected proposition to be proven.
 
 <a name="section3.1.5"></a>
 #### Top-Level ####
@@ -465,6 +478,8 @@ becomes
 		by [negation] : Falsity
 
 with the optional annotation.
+
+Also note that this proof is not correct, and only serves as an example. For the actual proof, check the sample proofs. This one assume `[not not P]` to save space, which makes the proof redundant. Additionally, there is a much shorter proof in the sample files.
 
 <a name="section4.2"></a>
 ### Involution of Reversing a List ###

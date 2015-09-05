@@ -1,6 +1,7 @@
 (* author: Yu-Yang Lin *)
 (* date: 04/09/2015 *)
 (* this file contains more examples of proofs from predicate logic problems *)
+(* NOTE: This is just a hack only for testing *)
 
 Signatures:
     raven : 'a -> bool ;
