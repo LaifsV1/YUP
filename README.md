@@ -2,9 +2,13 @@
 ##### `version: 0.9.0.1` #####
 This tool performs automatic checking of simple program-correctness proofs of functional programs through inductive and equational reasoning.
 
-Proofs are written in a language designed to look more like hand-written proofs.
+The aim of the Proof Checker is to provide a simple proof assistant for the purpose of teaching. As such, it has the following design aspects:
 
-For details on how the Checker works, read the [notes](/notes.pdf).
+- Proofs are written in a language made to look more like informal mathematical pen-and-paper proofs.
+- The Proof Checker exchanges conciseness for readability.
+- Emphasis is given to equational reasoning; congruence and equality is automated whilst propositional reasoning is purposely made explicit.
+
+For details on how the Checker works internally, read the [notes](/notes.pdf).
 
 ## Compiling
 

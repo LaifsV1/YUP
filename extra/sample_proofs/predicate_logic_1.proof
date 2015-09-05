@@ -1,0 +1,21 @@
+(* author: Yu-Yang Lin *)
+(* date: 04/09/2015 *)
+(* this file contains more examples of proofs from predicate logic problems *)
+
+Signatures:
+    raven : 'a -> bool ;
+    black : 'a -> bool ;
+    a     : 'a ;
+
+Theorem [not all ravens are black]:
+    Statement: ((raven a = true : bool) and ((black a = true : bool) => Falsity))
+                    => (forall x : 'a . ((raven x = true : bool) => (black x = true : bool))) => Falsity
+    Proof:
+        assume [Ra and not Ba] : (raven a = true : bool) and ((black a = true : bool) => Falsity) .
+        assume [1] : forall x : 'a . (raven x = true : bool) => (black x = true : bool) .
+        we know [2] : (raven a = true : bool) => (black a = true : bool) because [1] with (a) .
+        we know ([Ra] , [not Ba]) because [Ra and not Ba] .
+        we know [Ba] : (black a = true : bool) because [2] with ([Ra]) .
+        we know [contradiction] : Falsity because [not Ba] with ([Ba]) .
+        by [contradiction]
+    QED.

@@ -28,6 +28,14 @@ Date:   25 August, 2015
 ## Introduction ##
 The Proof Checker is a command-line tool made to validate simple program-correctness proofs of functional programs using inductive and equational reasoning. By necessity, the checker was also made to deal with propositional logic.
 
+The aim of the Proof Checker is to provide a simple proof assistant for the purpose of teaching. As such, it has the following design aspects:
+
+- Proofs are written in a language made to look more like informal mathematical pen-and-paper proofs that students might be used to.
+
+- The Proof Checker exchanges conciseness for readability. In production-level -proof assistants, interaction and automation encourages trial-and-error approaches, hindering learning of proof techniques.
+
+- Emphasis is given to equational reasoning; congruence and equality is automated whilst propositional reasoning is purposely made explicit. Production-level proof assistants commonly automate propositional fragments, which decreases readability and is not helpful for students. Instead, congruence is automated in equality as students would not be familiar with explicit congruence reasoning.
+
 The tool source is written in **OCaml**, using OCamllex and [Menhir](http://gallium.inria.fr/~fpottier/menhir/) for the parser, and was developed on a Windows machine. Proofs are validated through sequent calculus rules. Specifications for the rules can be seen in the [notes](notes.pdf).
 
 <a name="section2"></a>
