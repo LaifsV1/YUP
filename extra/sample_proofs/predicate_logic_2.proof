@@ -1,7 +1,7 @@
 (* author: Yu-Yang Lin *)
 (* date: 06/09/2015 *)
 (* this file contains a proof for a more concrete predicate 'notzero', which has it's own definitions *)
-(* To use these, I treat predicates with definitions as any other function term, and build propositions using equality *)
+(* to use these, I treat predicates with definitions as any other function term, and build propositions using equality *)
 
 Signatures:
     notzero : nat -> bool ;

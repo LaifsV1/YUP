@@ -2,7 +2,7 @@ Title:  Proof Checker Reference Manual
 Author: Yu-Yang Lin  
 Date:   25 August, 2015  
 # Proof Checker Reference Manual #
-##### `version: 0.9.1.0` #####
+##### `version: 0.9.2.1` #####
 
 ## Table of Contents ##
 

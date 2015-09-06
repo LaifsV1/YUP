@@ -1,6 +1,10 @@
 # Change Log
 This file will document changes of the Proof Checker tool.
 
+## [0.9.2.1] - 2015-09-06
+### Fixes
+- Fixed sprintf of tuples, the last element no longer prints a comma. e.g. `(a,b,)` now prints `(a,b)`.
+
 ## [0.9.2.0] - 2015-09-06
 ### Features
 - Added `{` and `}` for Predicates--terms which evaluate to type `prop` and are used within propositions. 

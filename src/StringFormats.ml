@@ -96,11 +96,15 @@ let to_string_hvar ((h,a) : hvar) :(string) =
 let rec to_string_hs (hs : hvar list) :(string) =
   match hs with
   | []    -> ""
+  | h::[] -> sprintf "%s" (to_string_hvar h)
   | h::hs -> sprintf "%s , %s" (to_string_hvar h) (to_string_hs hs)
 
 let rec to_string_spine (sp : spine) =
   match sp with
   | []    -> ""
+  | s::[] -> (match s with
+              | SpineT t -> sprintf "%s" (to_string_term t)
+              | SpineH h -> sprintf "%s" (to_string_hvar h))
   | s::sp -> (match s with
               | SpineT t -> sprintf "%s , %s" (to_string_term t) (to_string_spine sp)
               | SpineH h -> sprintf "%s , %s" (to_string_hvar h) (to_string_spine sp))
