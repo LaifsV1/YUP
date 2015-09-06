@@ -37,6 +37,7 @@ let rec swap_prop (x : var) (z : var) ((pos,a) : prop) :(prop) =
                         else (pos , Forall (y,tau,swap_prop x z a))
   | Exists (y,tau,a) -> if y = x then (pos , Exists (z,tau,swap_prop x z a))
                         else (pos , Exists (y,tau,swap_prop x z a))
+  | TermProp t       -> pos , TermProp (swap_term x z t)
 
 (* free variables list functions - computes list of all free variables in prop/term *)
 let rec freevars_term ((pos,t_term) : term) :(var list) =
@@ -58,6 +59,7 @@ let rec freevars ((pos,a_prop) : prop) :(var list) =
   | Eq (t,t',tau) -> (freevars_term t) @ (freevars_term t')
   | Forall (y,tau,a)
   | Exists (y,tau,a) -> List.filter (fun x -> x=y) (freevars a)
+  | TermProp t       -> freevars_term t
 
 (* substitution functions - substitutes variables in prop/term for given term *)
 (* [x->t] t' *)
@@ -90,6 +92,7 @@ let rec subs_prop' (x : var) (t_term : term) ((pos,a) : prop) (fv : var list) :(
                           let z = fresh ()
                           in (pos , Exists (z,tau, subs_prop' x t_term (swap_prop y z a) fv))
                         else (pos , Exists (y,tau, subs_prop' x t_term a fv))
+  | TermProp t -> pos , TermProp (subs_term' x t_term t)
 
 (* [x->t] a *)
 let subs_prop (x : var) (t_term : term) (a : prop) :(prop) = subs_prop' x t_term a (freevars_term t_term)
@@ -149,6 +152,8 @@ let rec alpha_equiv_prop ((_,a_prop) : prop) ((_,b_prop) : prop) :(unit option) 
   | Exists _         , _                  -> None
   | PropVar x        , PropVar y          -> if x = y then Some () else None
   | PropVar _        , _                  -> None
+  | TermProp t1      , TermProp t2        -> (alpha_equiv_term t1 t2)
+  | TermProp t       , _                  -> None
 
 let alpha_equiv_prop_result (a : prop) (b : prop) :(unit result) =
   match alpha_equiv_prop a b with

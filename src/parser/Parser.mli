@@ -25,6 +25,7 @@ type token =
   | PROOF
   | Or_PROP_OP
   | OPEN_PAREN
+  | OPEN_CURLY
   | Nil_TERM
   | Nat_TYPE
   | List_TYPE_OP
@@ -49,6 +50,7 @@ type token =
   | COMMA
   | COLON
   | CLOSE_PAREN
+  | CLOSE_CURLY
   | By_PROOF
   | Bool_TYPE
   | Because_PROOF

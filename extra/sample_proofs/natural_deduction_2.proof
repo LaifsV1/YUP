@@ -1,7 +1,7 @@
 (* author: Yu-Yang Lin *)
 (* date: 22/08/2015 *)
 (* this file contains proofs for classical propositional logic in natural deduction style *)
-(* taken from Language and Logic week 6 classwork (2014/15) taught by Dr Mark Lee *)
+(* adapted from Language and Logic week 6 classwork (2014/15) taught by Dr Mark Lee *)
 
 Signatures:
     P : prop ;

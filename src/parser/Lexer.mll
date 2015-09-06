@@ -28,6 +28,8 @@ let newline = '\r' | '\n' | "\r\n"
 rule read = parse
   | white           { read lexbuf }
   | newline         { next_line lexbuf; read lexbuf }
+  | '{'             { OPEN_CURLY }
+  | '}'             { CLOSE_CURLY }
   | '('             { OPEN_PAREN }
   | ')'             { CLOSE_PAREN }
   | "[]"            { Nil_TERM }

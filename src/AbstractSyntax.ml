@@ -35,6 +35,7 @@ type prop' = Truth | Falsity            (*top and bot*)
            | Forall of var * tp * prop  (*forall*)
            | Exists of var * tp * prop  (*exists*)
            | PropVar of var
+           | TermProp of term
 and prop = pos_range * prop'
 
 (* Term Context *)

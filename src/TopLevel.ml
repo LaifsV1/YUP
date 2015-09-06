@@ -75,3 +75,8 @@ let _ =
                                  printf "    @[%s @] @." (line_sprintf p1 p2);
                                  print_newline ();
                                  0
+  | Parser.Error -> printf ".....[error]***@]";
+                    print_newline ();
+                    printf "    @[[SYNTAX ERROR]: couldn't parse file.@] @. ";
+                    print_newline ();
+                    0

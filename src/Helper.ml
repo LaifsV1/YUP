@@ -49,3 +49,4 @@ let rec subs_prop_var (c : var) (prop_C : prop) ((p,a) : prop) :(prop) =
   | Eq (t,t',tau) -> p , Eq (t,t',tau)
   | Forall (y,tau,a) -> p , Forall (y,tau,a)
   | Exists (y,tau,a) -> p , Exists (y,tau,a)
+  | TermProp t       -> p , TermProp t

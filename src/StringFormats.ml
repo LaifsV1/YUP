@@ -60,7 +60,7 @@ let rec to_string_term ((_,t) : term) :(string) =
   | Boolean true -> "true"
   | Boolean false -> "false"
   | Zero          -> "zero"
-  | Suc n         -> sprintf "suc (%s)" (to_string_term n)
+  | Suc n         -> sprintf "(suc %s)" (to_string_term n)
   | Nil           -> "nil"
   | Cons (x,xs)   -> sprintf "%s :: %s" (to_string_term x) (to_string_term xs)
 
@@ -71,11 +71,11 @@ let rec to_string_npterm (t : npTerm) :(string) =
   | Boolean true -> "true"
   | Boolean false -> "false"
   | Zero          -> "zero"
-  | Suc n         -> sprintf "suc (%s)" (to_string_npterm n)
+  | Suc n         -> sprintf "(suc %s)" (to_string_npterm n)
   | Nil           -> "nil"
   | Cons (x,xs)   -> sprintf "%s :: %s" (to_string_npterm x) (to_string_npterm xs)
 
-let rec to_string_prop ((_,a) : prop) :(string) =
+let rec to_string_prop ((p,a) : prop) :(string) =
   match a with
   |Truth -> "Truth"
   | Falsity -> "Falsity"
@@ -86,6 +86,7 @@ let rec to_string_prop ((_,a) : prop) :(string) =
   | Forall (x,tau,a) -> sprintf "(forall %s : %s . %s)" x (to_string_tp tau) (to_string_prop a)
   | Exists (x,tau,a) -> sprintf "(exists %s : %s . %s)" x (to_string_tp tau) (to_string_prop a)
   | PropVar x -> x
+  | TermProp t -> sprintf "{%s}" (to_string_term t)
 
 let to_string_hvar ((h,a) : hvar) :(string) =
   match a with

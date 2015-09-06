@@ -140,6 +140,21 @@ This data type category contains propositions, which are the type for proofs and
 - **Universal and Existential Quantifiers**:
 	- `forall x : type . A` where `x` is a term variable, `type` is a type, and `A` is a proposition. e.g. `forall n : nat . suc n = suc n : nat`. 
 	- `exists x : type . A` where `x` is a term variable, `type` is a type, and `A` is a proposition. e.g. `exists x : bool . x = true : bool`.
+- **Predicates - Terms in Propositions**: 
+
+	In order to use predicates, one must define terms with signature `type -> prop`, where `type` is some type. This is because predicates are effectively functions that go from some term to a proposition. This, however, introduces the problem of writing terms as if they were propositions.
+
+	To solve the problem, terms can be written as a proposition in the form `{ t }` where `t` is a term. `{ t }` means that the term `t` is to be type checked as a proposition, i.e. `t` must be of type `prop`.
+
+	e.g.
+		
+		assume [Ra and not Ba] : {r a} and ({b a} => Falsity) . rest
+
+	where `raven` and `black` are terms of type `'a -> prop` and `a` is a term of type `'a`.
+
+	Note that though a "proposition term" is different from a propositional variable, they are interchangeable in every aspect except instantiation. To perform instantiation, one must use the correct propositional variable indentifiers.
+
+	i.e. `{a}` and `A` are effectively the same in a proof, but `{a}` cannot be instantiated.
 
 <a name="section3.1.4"></a>
 #### Proofs ####

@@ -1,22 +1,135 @@
 (* author: Yu-Yang Lin *)
 (* date: 04/09/2015 *)
-(* this file contains more examples of proofs from predicate logic problems *)
-(* NOTE: This is just a hack only for testing *)
+(* this file contains examples of proofs from predicate logic problems *)
+(* adapted from Language and Logic week 8 classwork (2014/15) taught by Dr Mark Lee *)
 
+(*QUESTION 1*)
+(***************************************************************************)
+(* Arthur is a raven who is not black. Therefore not all ravens are black. *)
+(* Ra and not Ba therefore not (forall x . Rx => Bx)                       *)
+(***************************************************************************)
 Signatures:
-    raven : 'a -> bool ;
-    black : 'a -> bool ;
-    a     : 'a ;
+    raven  : 'bird -> prop ;
+    black  : 'bird -> prop ;
+    arthur : 'bird ;
+
+Definitions:
+    [arthur is a raven]   : {raven arthur} ;
+    [arthur is not black] : {black arthur} => Falsity ;
 
 Theorem [not all ravens are black]:
-    Statement: ((raven a = true : bool) and ((black a = true : bool) => Falsity))
-                    => (forall x : 'a . ((raven x = true : bool) => (black x = true : bool))) => Falsity
+    Statement: (forall x : 'bird . {raven x} => {black x}) => Falsity
     Proof:
-        assume [Ra and not Ba] : (raven a = true : bool) and ((black a = true : bool) => Falsity) .
-        assume [1] : forall x : 'a . (raven x = true : bool) => (black x = true : bool) .
-        we know [2] : (raven a = true : bool) => (black a = true : bool) because [1] with (a) .
-        we know ([Ra] , [not Ba]) because [Ra and not Ba] .
-        we know [Ba] : (black a = true : bool) because [2] with ([Ra]) .
-        we know [contradiction] : Falsity because [not Ba] with ([Ba]) .
-        by [contradiction]
+        assume [all ravens are black] : forall x : 'bird . {raven x} => {black x} .
+
+        we know [if arthur is a raven then he is black] : {raven arthur} => {black arthur}
+        because [all ravens are black] with (arthur) .
+
+        we know [arthur is black] : {black arthur}
+        because [if arthur is a raven then he is black] with ([arthur is a raven]) .
+
+        we know [a contradiction] : Falsity because [arthur is not black] with ([arthur is black]) .
+        by [a contradiction]
+    QED.
+
+
+(*QUESTION 2*)
+(************************************************************************************************)
+(* All Flemish are from Belgium. All Belgiums are European. Therefore All Flemish are European. *)
+(* forall x . Fx => Bx , forall x . Bx => Ex , therefore forall x . Fx => Ex                    *)
+(************************************************************************************************)
+Signatures:
+    flemish  : 'person -> prop ;
+    belgian  : 'person -> prop ;
+    european : 'person -> prop ;
+
+Definitions:
+    [all Flemish are from Belgium] : forall x : 'person . {flemish x} => {belgian x} ;
+    [all Belgians are European]    : forall x : 'person . {belgian x} => {european x} ;
+
+Theorem [all Flemish are European]:
+    Statement: forall x : 'person . {flemish x} => {european x}
+    Proof:
+        assume x : 'person .
+        assume [x is Flemish] : {flemish x} .
+
+        we know [if x is Flemish then x is from Belgium] : {flemish x} => {belgian x}
+        because [all Flemish are from Belgium] with (x) .
+
+        we know [x is from Belgium] : {belgian x}
+        because [if x is Flemish then x is from Belgium] with ([x is Flemish]) .
+
+        we know [if x from Belgium then x is European] : {belgian x} => {european x}
+        because [all Belgians are European] with (x) .
+
+        we know [x is European] : {european x}
+        because [if x from Belgium then x is European] with ([x is from Belgium]) .
+
+        by [x is European]
+    QED.
+
+
+(*QUESTION 3*)
+(*************************************************)
+(* forall x . Fx , therefore exists x . Fx or Gx *)
+(*************************************************)
+Signatures:
+    f : 'a -> prop ;
+    g : 'a -> prop ;
+    a : 'a ;
+
+Definitions:
+    [all x are F] : forall x : 'a . {f x} ;
+
+Theorem [a choice exists]:
+    Statement: exists x : 'a . {f x} or {g x}
+    Proof:
+        choose a .
+        we know [Fa]       : {f a}          because [all x are F] with (a) .
+        we know [Fa or Ga] : {f a} or {g a} because by [Fa] on the left .
+        by [Fa or Ga]
+    QED.
+
+
+(*QUESTION 4*)
+(*****************************************************************)
+(* exists x . Px => Qx , forall x . Px , therefore exists x . Qx *)
+(*       1. exists x . Px => Qx            premise     {1}       *)
+(*       2. assume Pa => Qa                H           {2}       *)
+(*       3. | forall x . Px                premise     {2,3}     *)
+(*       4. | Pa                           forall-elim {2,3}     *)
+(*       5. | Qa                           =>elim      {2,3}     *)
+(*       6. | exists x . Qx                exists-intro{2,3}     *)
+(*       7. (Pa => Qa) => (exists x . Qx)  =>intro     {3}       *)
+(*       8. (Pa => Qa)                     exists-elim {1}       *)
+(*       9. exists x . Qx                  =>elim      {1,3,7}   *)
+(*****************************************************************)
+Signatures:
+    p : 'a -> prop ;
+    q : 'a -> prop ;
+    a : 'a ;
+
+Definitions:
+    [there is an x such that Px implies Qx] : exists x : 'a . {p x} => {q x} ;
+    [all x are P]                           : forall x : 'a . {p x} ;
+
+Theorem [Pa implies Qa so exists x Qx]:
+    Statement: ({p a} => {q a}) => exists x : 'a . {q x}
+    Proof:
+        assume [Pa implies Qa] : {p a} => {q a} .
+        we know [Pa] : {p a} because [all x are P] with (a) .
+        we know [Qa] : {q a} because [Pa implies Qa] with ([Pa]) .
+        choose a . by [Qa]
+    QED.
+
+Theorem [there is an x such that Qx]:
+    Statement: exists x : 'a . {q x}
+    Proof:
+        we know [Pa implies Qa] with a
+        because [there is an x such that Px implies Qx] .
+
+        we know [exists x Qx] : exists x : 'a . {q x}
+        because [Pa implies Qa so exists x Qx] with ([Pa implies Qa]) .
+
+        by [exists x Qx]
     QED.

@@ -57,6 +57,7 @@ let rec check_prop (psi : ctx) ((p,prop) : prop) :(unit result) =
                        (fun t -> (match t with
                                   | Prop -> return ()
                                   | t    -> Wrong (not_Prop x t,p)))
+  | TermProp t    -> (check_term psi t Prop)
 
 
 (******************** APPLY SPINE FUNCTION ********************)
