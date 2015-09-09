@@ -48,9 +48,9 @@ let rec to_string_tp (tau : tp) :(string) =
   match tau with
   | Bool -> "bool"
   | Nat  -> "nat"
-  | List  x -> sprintf "(%s) list" (to_string_tp x)
+  | List  x -> sprintf "(%s list)" (to_string_tp x)
   | Prop -> "prop"
-  | Arrow (a,b)->  sprintf "%s -> %s" (to_string_tp a) (to_string_tp b)
+  | Arrow (a,b)->  sprintf "(%s -> %s)" (to_string_tp a) (to_string_tp b)
   | TypeVar x  -> x
 
 let rec to_string_term ((_,t) : term) :(string) =
@@ -62,7 +62,7 @@ let rec to_string_term ((_,t) : term) :(string) =
   | Zero          -> "zero"
   | Suc n         -> sprintf "(suc %s)" (to_string_term n)
   | Nil           -> "nil"
-  | Cons (x,xs)   -> sprintf "%s :: %s" (to_string_term x) (to_string_term xs)
+  | Cons (x,xs)   -> sprintf "(%s :: %s)" (to_string_term x) (to_string_term xs)
 
 let rec to_string_npterm (t : npTerm) :(string) =
   match t with
@@ -73,7 +73,7 @@ let rec to_string_npterm (t : npTerm) :(string) =
   | Zero          -> "zero"
   | Suc n         -> sprintf "(suc %s)" (to_string_npterm n)
   | Nil           -> "nil"
-  | Cons (x,xs)   -> sprintf "%s :: %s" (to_string_npterm x) (to_string_npterm xs)
+  | Cons (x,xs)   -> sprintf "(%s :: %s)" (to_string_npterm x) (to_string_npterm xs)
 
 let rec to_string_prop ((p,a) : prop) :(string) =
   match a with

@@ -1,6 +1,14 @@
 # Change Log
 This file will document changes of the Proof Checker tool.
 
+## [0.9.2.2] - 2015-09-09
+### Extra
+- Added sample proof `correctness_insert_sort.proof` for a correctness proof of insertion sort. I haven't checked the premises rigorously so the proof might not be entirely correct. In any case, the propositions are being correctly proven, even if the goals are wrong.
+### Fixes
+- Fixed sprintf of lists. i.e. (%s) list => (%s list)
+- Fixed sprintf of arrow. i.e. %s -> %s => (%s -> %s)
+- Fixed sprintf of cons. i.e. %s :: %s => (%s :: %s)
+
 ## [0.9.2.1] - 2015-09-06
 ### Fixes
 - Fixed sprintf of tuples, the last element no longer prints a comma. e.g. `(a,b,)` now prints `(a,b)`.

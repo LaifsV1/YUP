@@ -92,6 +92,7 @@ rule read = parse
   | _               { raise (lex_failure ("unknown symbol '"^(lexeme lexbuf)^"'") (lexeme_start_p lexbuf) (lexeme_end_p lexbuf)) }
 and comment = parse
   | close_comment   { read lexbuf }
+  | newline         { next_line lexbuf; comment lexbuf }
   | _               { comment lexbuf }
 {
 }

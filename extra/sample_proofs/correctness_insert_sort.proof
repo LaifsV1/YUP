@@ -1,0 +1,251 @@
+(* author: Yu-Yang Lin *)
+(* date: 09/09/2015 *)
+(* this file contains a proof of the correctness of insertion sort *)
+
+Signatures:
+    lt : nat -> nat -> bool ;
+    eq : nat -> nat -> bool ;
+
+    append : nat list -> nat list -> nat list ;
+    remove : nat -> nat list -> nat list ;
+    insert : nat -> nat list -> nat list ;
+    sort   : nat list -> nat list ;
+    mem    : nat -> nat list -> bool ;
+
+    sorted : nat list -> bool ;
+    permutation : nat list -> nat list -> bool ;
+
+Definitions:
+    (*element functions*)
+    [lt 0 0] : lt zero zero = false : bool ;
+    [lt m 0] : forall m : nat . lt (suc m) zero = false : bool ;
+    [lt 0 n] : forall n : nat . lt zero (suc n) = true : bool ;
+    [lt m n] : forall m : nat . forall n : nat . lt (suc m) (suc n) = lt m n : bool ;
+
+    [eq 0 0] : eq zero zero = true : bool ;
+    [eq m 0] : forall m : nat . eq (suc m) zero = false : bool ;
+    [eq 0 n] : forall n : nat . eq zero (suc n) = false : bool ;
+    [eq m n] : forall m : nat . forall n : nat . eq (suc m) (suc n) = eq m n : bool ;
+
+    (*list functions*)
+    [append nil] : forall xs : nat list . append [] xs = xs : nat list ;
+    [append xs]  : forall x : nat . forall xs : nat list . forall ys : nat list .
+                   append (x::xs) ys = x :: append xs ys : nat list ;
+
+    [remove nil] : forall n : nat . remove n [] = [] : nat list ;
+    [remove xs1] : forall n : nat . forall x : nat . forall xs : nat list .
+                   ((eq n x = true : bool) and (remove n (x::xs) = xs : nat list)) ;
+    [remove xs2] : forall n : nat . forall x : nat . forall xs : nat list .
+                   ((eq n x = false : bool) and (remove n (x::xs) = remove n xs : nat list)) ;
+
+    [insert nil] : forall n : nat . insert n [] = n :: [] : nat list ;
+    [insert xs1] : forall n : nat . forall x : nat . forall xs : nat list .
+                   ((lt n x = true  : bool) and insert n (x::xs) = (n::x::xs) : nat list) ;
+    [insert xs2] : forall n : nat . forall x : nat . forall xs : nat list .
+                   ((lt n x = false : bool) and insert n (x::xs) = x::(insert n xs) : nat list) ;
+
+    [sort nil] : sort [] = [] : nat list ;
+    [sort xs]  : forall x : nat . forall xs : nat list .
+                 sort (x::xs) = insert x (sort xs) : nat list ;
+
+    [mem nil] : forall n : nat . mem n [] = false : bool ;
+    [mem xs]  : forall n : nat . forall x : nat . forall xs : nat list .
+                ((eq n x = true : bool) and (mem n (x::xs) = true : bool)) or
+                ((eq n x = false : bool) and (mem n (x::xs) = mem n xs : bool)) ;
+
+    (*correctness functions*)
+    [sorted nil] : sorted [] = true : bool ;
+    [sorted x]   : forall x : nat . sorted (x::[]) = true : bool ;
+    [sorted xs]  : forall m : nat . forall n : nat . forall xs : nat list .
+                   (sorted (m::n::xs) = lt m n : bool) and
+                   (sorted (m::n::xs) = sorted (n::xs) : bool) ;
+
+    [permutation nil nil] : permutation [] [] = true : bool ;
+    [permutation xs ys]   : forall x : nat . forall xs : nat list . forall ys : nat list .
+                            (permutation (x::xs) ys = mem x ys : bool) and
+                            (permutation (x::xs) ys = permutation xs (remove x ys) : bool) ;
+
+(*********************)
+(* SORTEDNESS PROOFS *)
+(*********************)
+(**********************************)
+(* lemma for sortedness of insert *)
+(**********************************)
+Theorem [sorted of insert lemma]:
+    Statement: forall xs : nat list . forall e : nat . forall x : nat .
+               (sorted (x::(insert e xs)) = lt x e : bool) and
+               (sorted (x::(insert e xs)) = sorted (insert e xs) : bool)
+    Proof:
+        by induction on list:
+        case []:
+            assume e : nat .
+            assume x : nat .
+
+            (*first provide the premises*)
+            we know [0] : (sorted (x::e::[]) = lt x e : bool) and
+                          (sorted (x::e::[]) = sorted (e::[]) : bool)
+            because [sorted xs] with (x,e,[]) .
+            we know ([0A],[0B]) because [0] .
+
+            we know [1] : (insert e []) = (e::[]) : nat list
+            because [insert nil] with (e) .
+
+            (*bring them together*)
+            (equality on ([1],[0A]) , equality on ([1],[0B]))
+
+        case (x::xs):
+            [IH] : forall e : nat . forall a : nat .
+                   (sorted (a::(insert e xs)) = lt a e : bool) and
+                   (sorted (a::(insert e xs)) = sorted (insert e xs) : bool) .
+            assume e : nat .
+            assume a : nat .
+
+            we know [0] : (sorted (a::e::x::xs) = lt a e : bool) and
+                          (sorted (a::e::x::xs) = sorted (e::x::xs) : bool)
+            because [sorted xs] with (a,e,(x::xs)) .
+            we know ([0A],[0B]) because [0] .
+
+            we know [1] : (lt e x = true  : bool and insert e (x::xs) = (e::x::xs) : nat list)
+            because [insert xs1] with (e,x,xs) .
+            we know ([1A],[1B]) because [1] .
+
+            (equality on ([1B],[0A]), equality on ([1B],[0B]))
+    QED.
+
+(************************)
+(* sortedness of insert *)
+(************************)
+Theorem [sorted of insert]:
+    Statement: forall xs : nat list . forall e : nat .
+               (sorted xs = true : bool) => (sorted (insert e xs) = true : bool)
+    Proof:
+        by induction on list:
+        case []:
+            assume e : nat .
+            assume [H] : sorted [] = true : bool .
+
+            we know [0] : insert e [] = e::[] : nat list
+            because [insert nil] with (e) .
+
+            we know [1] : sorted (e::[]) = true : bool
+            because [sorted x] with (e) .
+
+            equality on ([0],[1])
+
+        case (x::xs): [IH] : forall e : nat . (sorted xs = true : bool) =>
+                                              (sorted (insert e xs) = true : bool) .
+            assume e : nat .
+            assume [H] : sorted (x::xs) = true : bool .
+
+            we know [0] : ((lt e x = true  : bool) and insert e (x::xs) = (e::x::xs) : nat list)
+            because [insert xs1] with (e,x,xs) .
+
+            we know ([0A],[0B]) because [0] .
+            we know [1] : (sorted (e::x::xs) = lt e x : bool) and
+                          (sorted (e::x::xs) = sorted (x::xs) : bool)
+            because [sorted xs] with (e,x,xs) .
+            we know ([1A],[1B]) because [1] .
+
+            equality on ([0B],[1B],[H])
+    QED.
+
+(**********************)
+(* sortedness of sort *)
+(**********************)
+Theorem [sorted of sort]:
+    Statement: forall xs : nat list . sorted (sort xs) = true : bool
+    Proof:
+        by induction on list:
+        case []:
+
+            equality on ([sorted nil],[sort nil])
+
+        case (x::xs): [IH] : sorted (sort xs) = true : bool .
+
+            we know [0] : sort (x::xs) = insert x (sort xs) : nat list
+            because [sort xs] with (x,xs) .
+
+            we know [1] : (sorted (insert x (sort xs)) = true : bool)
+            because [sorted of insert] with (sort xs,x,[IH]) .
+
+            equality on ([0],[1])
+    QED.
+
+(**********************)
+(* PERMUTATION PROOFS *)
+(**********************)
+(******************************)
+(* removing and inserted item *)
+(******************************)
+Theorem [remove of insert]:
+    Statement: forall xs : nat list . forall x : nat . remove x (insert x xs) = xs : nat list
+    Proof:
+        by induction on list:
+        case []:
+            assume x : nat .
+
+            we know [0] : insert x [] = x :: [] : nat list
+            because [insert nil] with (x) .
+            we know [1] : ((eq x x = true : bool) and (remove x (x::[]) = [] : nat list))
+            because [remove xs1] with (x,x,[]) .
+            we know ([1A],[1B]) because [1] .
+
+            equality on ([0],[1B])
+        case (x::xs): [IH] : forall x : nat . remove x (insert x xs) = xs : nat list .
+            assume x : nat .
+
+            we know [0] : ((lt x x = true  : bool) and insert x (x::xs) = (x::x::xs) : nat list)
+            because [insert xs1] with (x,x,xs) .
+            we know ([0A],[0B]) because [0] .
+
+            we know [1] : (eq x x = true : bool) and (remove x (x::x::xs) = (x::xs) : nat list)
+            because [remove xs1] with (x,x,(x::xs)) .
+            we know ([1A],[1B]) because [1] .
+
+            equality on ([0B],[1B])
+    QED.
+
+(***************************************)
+(* sorting only generates permutations *)
+(***************************************)
+Theorem [permutation of sort]:
+    Statement: forall xs : nat list . permutation xs (sort xs) = true : bool
+    Proof:
+        by induction on list:
+        case []:
+
+            equality on ([permutation nil nil],[sort nil])
+
+        case (x::xs): [IH] : permutation xs (sort xs) = true : bool .
+
+            we know [0] : sort (x::xs) = insert x (sort xs) : nat list
+            because [sort xs] with (x,xs) .
+
+            we know [1] : (permutation (x::xs) (insert x (sort xs)) = mem x (insert x (sort xs)) : bool) and
+                          (permutation (x::xs) (insert x (sort xs)) = permutation xs (remove x (insert x (sort xs))) : bool)
+            because [permutation xs ys] with (x,xs,(insert x (sort xs))) .
+            we know ([1A],[1B]) because [1] .
+
+            we know [2] : remove x (insert x (sort xs)) = sort xs : nat list
+            because [remove of insert] with ((sort xs),x) .
+
+            equality on ([0],[1B],[2],[IH])
+    QED.
+
+(*********************************)
+(* CORRECTNESS OF INSERTION SORT *)
+(*********************************)
+Theorem [correctness of sort]:
+    Statement: forall xs : nat list .
+               (sorted (sort xs) = true : bool) and (permutation xs (sort xs) = true : bool)
+    Proof:
+        assume xs : nat list .
+
+        we know [sorted xs] : sorted (sort xs) = true : bool
+        because [sorted of sort] with (xs) .
+
+        we know [permutation xs] : (permutation xs (sort xs) = true : bool)
+        because [permutation of sort] with (xs) .
+
+        (by [sorted xs] , by [permutation xs])
+    QED.

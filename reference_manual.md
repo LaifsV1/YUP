@@ -1,7 +1,7 @@
 Title:  Proof Checker Reference Manual  
 Author: Yu-Yang Lin    
 # Proof Checker Reference Manual #
-##### `version: 0.9.2.1` #####
+##### `version: 0.9.2.2` #####
 
 ## Table of Contents ##
 
