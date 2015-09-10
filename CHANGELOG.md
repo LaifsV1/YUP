@@ -3,11 +3,12 @@ This file will document changes of the Proof Checker tool.
 
 ## [0.9.2.2] - 2015-09-09
 ### Extra
-- Added sample proof `correctness_insert_sort.proof` for a correctness proof of insertion sort. I haven't checked the premises rigorously so the proof might not be entirely correct. In any case, the propositions are being correctly proven, even if the goals are wrong.
+- Added sample proof `correctness_insert_sort.proof` for a correctness proof of insertion sort. The proof is incomplete, but this way it shows syntax for `TODO`.
 ### Fixes
 - Fixed sprintf of lists. i.e. (%s) list => (%s list)
 - Fixed sprintf of arrow. i.e. %s -> %s => (%s -> %s)
 - Fixed sprintf of cons. i.e. %s :: %s => (%s :: %s)
+- Fixed bug with Alpha Equivalence error messages. Now it prints the user-input proposition position details rather than the expected proposition position details.
 
 ## [0.9.2.1] - 2015-09-06
 ### Fixes

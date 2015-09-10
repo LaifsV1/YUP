@@ -158,7 +158,7 @@ let rec alpha_equiv_prop ((_,a_prop) : prop) ((_,b_prop) : prop) :(unit option) 
 let alpha_equiv_prop_result (a : prop) (b : prop) :(unit result) =
   match alpha_equiv_prop a b with
   | Some () -> return ()
-  | None    -> Wrong (alpha_equiv_error a b,(getpos a))
+  | None    -> Wrong (alpha_equiv_error a b,(getpos b))
 
 
 (******************** LOOKUP FUNCTIONS ********************)
