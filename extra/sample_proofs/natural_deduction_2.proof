@@ -141,22 +141,3 @@ Theorem [not (P and not P)]:
         we know [negation] : Falsity because [not P] with ([P]) .
         by [negation]
     QED.
-
-
-(*============*)
-(*** EXTRAS ***)
-(*============*)
-
-(* Extra 1 *)
-(***********************************)
-(* Another take on excluded middle *)
-(***********************************)
-Theorem [excluded middle]:
-    Statement: ((P or (P => Falsity)) => Falsity) => (P => Falsity)
-    Proof:
-        assume [not (P or not P)] : (P or (P => Falsity)) => Falsity .
-        assume [P] : P .
-        we know [P or not P] : P or (P => Falsity) because by [P] on the left .
-        we know [absurd] : Falsity because [not (P or not P)] with ([P or not P]) .
-        by absurdity of [absurd]
-    QED.
