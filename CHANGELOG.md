@@ -1,6 +1,12 @@
 # Change Log
 This file will document changes of the Proof Checker tool.
 
+## [0.9.2.3] - 2015-10-16
+- Named the proof checker YUP. Meaning:
+	-  (jʌp) exclamation & noun. variant spelling of yep (yes).
+	-  YU-yang’s Proof-checker
+- TODO, modify makefile to reflect new name
+
 ## [0.9.2.2] - 2015-09-09
 ### Extra
 - Added sample proof `correctness_insert_sort.proof` for a correctness proof of insertion sort. The proof is incomplete, but this way it shows syntax for `TODO`.

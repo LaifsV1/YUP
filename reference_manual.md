@@ -1,7 +1,7 @@
-Title:  Proof Checker Reference Manual  
+Title:  YUP Reference Manual  
 Author: Yu-Yang Lin    
-# Proof Checker Reference Manual #
-##### `version: 0.9.2.2` #####
+# YUP Reference Manual #
+##### `version: 0.9.2.3` #####
 
 ## Table of Contents ##
 
@@ -25,7 +25,7 @@ Author: Yu-Yang Lin
 
 <a name="section1"></a>
 ## Introduction ##
-The Proof Checker is a command-line tool made to validate simple program-correctness proofs of functional programs using inductive and equational reasoning. By necessity, the checker was also made to deal with propositional logic.
+YUP is a command-line tool made to validate simple program-correctness proofs of functional programs using inductive and equational reasoning. By necessity, the checker was also made to deal with propositional logic.
 
 The aim of the Proof Checker is to provide a simple proof assistant for the purpose of teaching. As such, it has the following design aspects:
 
@@ -38,6 +38,11 @@ The aim of the Proof Checker is to provide a simple proof assistant for the purp
 The tool source is written in **OCaml**, using OCamllex and [Menhir](http://gallium.inria.fr/~fpottier/menhir/) for the parser, and was developed on a Windows machine. Proofs are validated through sequent calculus rules. Specifications for the rules can be seen in the [notes](notes.pdf).
 
 The Proof Checker was written by me (Yu-Yang Lin) under the supervision of Dr. Dan R. Ghica and Neel R. Krishnaswami for the purpose of teaching  Computer Science students about program-correctness proofs. Funding for the project was provided by the College of Engineering and Physical Science, University of Birmingham.
+
+Naming of the tool (YUP):
+
+-  (jʌp) exclamation & noun. variant spelling of yep (yes).
+-  YU-yang’s Proof-checker
 
 <a name="section2"></a>
 ## Usage ##
