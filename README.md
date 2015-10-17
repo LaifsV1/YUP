@@ -1,5 +1,5 @@
 # YUP Proof Checker
-##### `version: 0.9.2.3` #####
+##### `version: 0.9.2.4` #####
 YUP is a tool performs automatic checking of simple program-correctness proofs of functional programs through inductive and equational reasoning.
 
 The aim of the Proof Checker is to provide a simple proof assistant for the purpose of teaching. As such, it has the following design aspects:
@@ -12,7 +12,7 @@ For details on how the Checker works internally, read the [notes](/notes.pdf).
 
 ## Compiling
 
-To compile the tool, use the provided `src\MakeFile`. The compiled tool will be named `proof_checker.exe` by default.
+To compile the tool, use the provided `src\MakeFile`. The compiled tool will be named `yup.exe` by default.
 
 You will require GNU make, Menhir, `ocamllex`, and the OCaml batch compiler `ocamlc`.
 
@@ -24,10 +24,10 @@ You can compile the tool from Cygwin. I used [make for Windows](http://gnuwin32.
 
 ## Usage
 
-To use the tool, run `proof_checker.exe` from the command-line on a target proof file. By default, the extension for proof files is `.proof`.
+To use the tool, run `yup.exe` from the command-line on a target proof file. By default, the extension for proof files is `.proof`.
 e.g.
 
-    .\proof_checker.exe "testing\test_proof.proof"
+    .\yup.exe "testing\test_proof.proof"
 
 This should output a success message if the proof is valid, or output an error message with position data for where the checker failed.
 
@@ -43,5 +43,5 @@ To use the notepad++ mode, import the `.xml` file into notepad++, or place the f
 
 To use the emacs mode, add the following into you `.emacs` file:
 
-    (load "<path>/proof-checker-mode.el")
-    (add-to-list 'auto-mode-alist '("\\.proof$" . proof-checker-mode))
+    (load "<path>/yup-mode.el")
+    (add-to-list 'auto-mode-alist '("\\.proof$" . yup-mode))

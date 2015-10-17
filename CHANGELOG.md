@@ -1,5 +1,11 @@
 # Change Log
-This file will document changes of the Proof Checker tool.
+This file will document changes of YUP.
+
+## [0.9.2.4] - 2015-10-17
+- Fixed the Makefile. Reorganised it so it's pretty and has some structure rather than just being a wall of commands. 
+- Renamed the output file to `yup.exe`. Haven't changed the extension names though.
+- Renamed proof-checker-mode.el and proof-checker-mode.xml to yup.el and yup.xml respectively.
+- Updated README and reference manual to reflect naming of YUP
 
 ## [0.9.2.3] - 2015-10-16
 - Named the proof checker YUP. Meaning:

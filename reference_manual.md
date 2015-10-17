@@ -1,7 +1,7 @@
 Title:  YUP Reference Manual  
 Author: Yu-Yang Lin    
 # YUP Reference Manual #
-##### `version: 0.9.2.3` #####
+##### `version: 0.9.2.4` #####
 
 ## Table of Contents ##
 
@@ -48,7 +48,7 @@ Naming of the tool (YUP):
 ## Usage ##
 <a name="section2.1"></a>
 ### Compiling ###
-To use the tool, it must first be compiled. For this, use `src\Makefile` provided. The compiled tool will be named `proof_checker.exe` by default. 
+To use the tool, it must first be compiled. For this, use `src\Makefile` provided. The compiled tool will be named `yup.exe` by default. 
 
 Requirements for compilation are:
 
@@ -65,11 +65,11 @@ You can compile the tool from Cygwin. I used [make for Windows](http://gnuwin32.
 
 <a name="section2.3"></a>
 ### Using the tool ###
-To use the tool, run `proof_checker.exe` from a command-line console on a target proof file. By default, the extension for proof files is `.proof`.
+To use the tool, run `yup.exe` from a command-line console on a target proof file. By default, the extension for proof files is `.proof`.
 
 e.g.
 
-    .\proof_checker.exe "testing\test_proof.proof"
+    .\yup.exe "testing\test_proof.proof"
 
 This should output a success message if the proof is valid, or output an error message with position data for where the checker failed.
 

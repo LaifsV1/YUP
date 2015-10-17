@@ -2,8 +2,8 @@
 ;; author: Yu-Yang Lin (August 2015)
 ;; ---------------------------------
 ;; To use, add to your .emacs the following:
-;;    (load "<path>/proof-checker-mode.el")
-;;    (add-to-list 'auto-mode-alist '("\\.proof$" . proof-checker-mode))
+;;    (load "<path>/yup-mode.el")
+;;    (add-to-list 'auto-mode-alist '("\\.proof$" . yup-mode))
 
 ;; define categories of keywords
 (setq proof-toplevel '("Signatures" "Definitions" "Theorem" "Statement" "Proof" "QED" "Qed"))
@@ -45,8 +45,8 @@
         ))
 
 ;;;###autoload
-(define-derived-mode proof-checker-mode fundamental-mode
-  "proof-checker-mode"
+(define-derived-mode yup-mode fundamental-mode
+  "yup-mode"
   "Major mode for editing proofs for my Proof Checker"
 
   ;; add comment variables
@@ -57,7 +57,7 @@
   ;; set tab width and indent mode
   (setq tab-width 4)
   (setq indent-tabs-mode nil)
-  (define-key proof-checker-mode-map (kbd "TAB") 'tab-to-tab-stop)
+  (define-key yup-mode-map (kbd "TAB") 'tab-to-tab-stop)
 
   ;; set font-lock to multiline.
   ;; this is useful for comments, however, it's slower.
@@ -75,10 +75,10 @@
 (setq proof-proofs nil)
 
 ;; add the mode to the `features' list
-(provide 'proof-checker-mode)
+(provide 'yup-mode)
 
 ;; Local Variables:
 ;; coding: utf-8
 ;; End:
 
-;;; proof-checker-mode.el ends here
+;;; yup-mode.el ends here
