@@ -45,3 +45,5 @@ To use the emacs mode, add the following into you `.emacs` file:
 
     (load "<path>/yup-mode.el")
     (add-to-list 'auto-mode-alist '("\\.proof$" . yup-mode))
+
+**Warning:** Given the way notepad++ modes are created, I recommend using the emacs mode over the notepad++ as the notepad++ mode might not be accurate.

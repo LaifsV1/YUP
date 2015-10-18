@@ -372,16 +372,16 @@ There are four kinds of identifiers in the proof language:
 
 - **Type Variables** : 
 
-	apostrophe (`'`) followed by any number of alpha-numeric characters and underscores (`_`). e.g. `'a`
+	apostrophe (`'`) followed by any number of alpha-numeric characters, underscores (`_`), and apostrophes (`'`). e.g. `'a`
 - **Term Variables** : 
 
-	lower case letter (`a-z`) followed by any number of alpha-numeric characters and underscores (`_`). e.g. `append_list`
+	lower case letter (`a-z`) followed by any number of alpha-numeric characters, underscores (`_`), and apostrophes (`'`). e.g. `append_list`
 - **Proposition Variables** : 
 
-	upper case letter (`A-Z`) followed by any number of alpha-numeric characters and underscores (`_`). e.g. `A`
+	upper case letter (`A-Z`) followed by any number of alpha-numeric characters, underscores (`_`), and apostrophes (`'`). e.g. `A`
 - **Hypotheses** : 
 
-	any number of alpha-numeric characters `A-Z a-z 0-9` and parentheses `(` and `)` inside square brackets `[` and `]`. e.g. `[double negation elimination]`
+	any number of alpha-numeric characters `A-Z a-z 0-9`, parentheses `(` and `)`, and apostrophes (`'`) inside square brackets `[` and `]`. e.g. `[double negation elimination]`
 
 <a name="section3.2"></a>
 ### Organisation of Proof Files ###

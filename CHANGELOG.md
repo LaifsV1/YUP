@@ -1,6 +1,11 @@
 # Change Log
 This file will document changes of YUP.
 
+## [0.9.2.4] - 2015-10-18
+- Added apostrophes to all identifiers. Will test for inconsistencies.
+- Updated emacs mode, couldn't update notepad++ mode.
+- Added warning on README about using notepad++ mode.
+
 ## [0.9.2.4] - 2015-10-17
 - Fixed the Makefile. Reorganised it so it's pretty and has some structure rather than just being a wall of commands. 
 - Renamed the output file to `yup.exe`. Haven't changed the extension names though.

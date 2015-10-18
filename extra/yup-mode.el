@@ -30,10 +30,10 @@
         ("(\\*[\0-\377[:nonascii:]]*?\\*)" . font-lock-comment-face)
         ("\\[\\]"                          . font-lock-constant-face)
         ("\\:\\:"                          . font-lock-constant-face)
-        ("\\[[[:alnum:]_ ()]*?\\]"         . font-lock-function-name-face)
+        ("\\[[[:alnum:]_ ()']*?\\]"        . font-lock-function-name-face)
         ("=>"                              . font-lock-function-name-face)
         ("="                               . font-lock-function-name-face)
-        ("'[a-z][[:alnum:]_]*"             . font-lock-type-face)
+        ("'[a-z][[:alnum:]_']*"            . font-lock-type-face)
         ;; adding auto-generated regexp categories.
         (,proof-toplevel-regexp . font-lock-keyword-face)
         (,proof-types-regexp    . font-lock-type-face)
