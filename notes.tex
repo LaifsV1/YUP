@@ -1133,6 +1133,36 @@ Function signatures:
 \DisplayProof
 \]
 
+\section{Adding product types to the language}
+
+\subsection{Syntax grammar}
+
+\begin{center}
+\begin{tabular}{rll}
+(types)& $\tau$ ::= ... | $\tau \times \tau$
+\\
+(terms)& e ::= ... | (e , e)
+\end{tabular}
+\end{center}
+
+\subsection{Type checking syntax}
+
+\begin{center}
+\begin{tabular}{rll}
+(infer)& e ::= ... \\
+(check)& v ::= ... | (v,v) | e
+\end{tabular}
+\end{center}
+
+\subsection{Rule}
+
+\[
+\AxiomC{$\psi \vdash t_1 : \tau_1$}
+\AxiomC{$\psi \vdash t_2 : \tau_2$}
+\RightLabel{\quad (pairs)}
+\BinaryInfC{$\psi \vdash (t_1,t_2) : \tau_1 \times \tau_2$}
+\DisplayProof
+\]
 
 \bibliography{notes}
 \bibliographystyle{plain}

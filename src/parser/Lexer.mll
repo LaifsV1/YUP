@@ -19,7 +19,7 @@
 let var = ['a'-'z']['A'-'Z' 'a'-'z' '0'-'9' '_' '\'']*
 let hvar = '['['A'-'Z' 'a'-'z' '0'-'9' '_' ' ' '(' ')' '\'']*']'
 let pvar = ['A'-'Z']['A'-'Z' 'a'-'z' '0'-'9' '_' '\'']*
-let tpvar = '\''['a'-'z' '0'-'9' '_' '\'']*
+let tpvar = '_'['a'-'z' '0'-'9' '_' '\'']*
 let open_comment = "(*"
 let close_comment = "*)"
 let white = [' ' '\t']+

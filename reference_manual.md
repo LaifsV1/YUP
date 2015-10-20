@@ -1,7 +1,7 @@
 Title:  YUP Reference Manual  
 Author: Yu-Yang Lin    
 # YUP Reference Manual #
-##### `version: 0.9.2.4` #####
+##### `version: 0.9.2.6` #####
 
 ## Table of Contents ##
 
@@ -112,7 +112,7 @@ Proofs contain several data type categories which separate the proof files into 
 
 This data type contains the type of terms.
 
-- **Type Variables**: see `Identifiers` section.
+- **Fixed Type Variables**: see `Identifiers` section.
 - **Booleans**: `bool`
 - **Natural Numbers**: `nat`
 - **Lists**: `a list` where `a ` is a type. e.g. `nat list`
@@ -370,9 +370,12 @@ The top-level data type category contains the outermost hierarchical layer of th
 #### Identifiers ####
 There are four kinds of identifiers in the proof language:
 
-- **Type Variables** : 
+- **Fixed Type Variables** : 
 
-	apostrophe (`'`) followed by any number of alpha-numeric characters, underscores (`_`), and apostrophes (`'`). e.g. `'a`
+	underscore (`_`) followed by any number of alpha-numeric characters, underscores (`_`), and apostrophes (`'`). e.g. `_a`
+
+	These represent some unknown fixed type, not polymorphic types. i.e. `'a` in OCaml is not the same as `_a` in the YUP. This means that a function signature `_a -> _b` can only take a variable of type `_a`, and will only return a variable of type `_b`.
+
 - **Term Variables** : 
 
 	lower case letter (`a-z`) followed by any number of alpha-numeric characters, underscores (`_`), and apostrophes (`'`). e.g. `append_list`

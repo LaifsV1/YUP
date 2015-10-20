@@ -1,7 +1,14 @@
 # Change Log
 This file will document changes of YUP.
 
-## [0.9.2.4] - 2015-10-18
+## [0.9.2.6] - 2015-10-20
+- Changed syntax for "type variables" from `'` to `_`
+- Changed "type variables" to "fixed unknown type variables"
+- Updated manual to reflect change from "type variables" to "fixed type variables".
+- Updated sample proofs to reflect change from "type variables" to "fixed type variables".
+- Updated emacs and notepad++ modes to use `_` for fixed type variables.
+
+## [0.9.2.5] - 2015-10-18
 - Added apostrophes to all identifiers. Will test for inconsistencies.
 - Updated emacs mode, couldn't update notepad++ mode.
 - Added warning on README about using notepad++ mode.

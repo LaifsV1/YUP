@@ -1,0 +1,65 @@
+(* author: Yu-Yang Lin *)
+(* date: 22/08/2015 *)
+(* this is a proof for the involution of reversing a list of some fixed unknown type _a *)
+(* in this file, two theorems are proven, involution, and a lemma to prove involution *)
+
+Signatures:
+    append : _a list -> _a list -> _a list ;
+    rev    : _a list -> _a list ;
+
+Definitions:
+    [append nil] : forall xs : _a list . append [] xs = xs : _a list ;
+    [append xs]  : forall xs : _a list . forall x : _a . forall ys : _a list . append (x::xs) ys = x :: append xs ys : _a list ;
+    [rev nil]    : rev [] = [] : _a list ;
+    [rev xs]     : forall xs : _a list . forall x : _a . rev (x :: xs) = append (rev xs) (x :: []) : _a list ;
+
+Theorem [rev lemma] :
+    Statement: forall xs : _a list . forall x : _a . rev (append xs (x::[])) = x :: (rev xs) : _a list
+    Proof:
+
+        by induction on list :
+
+        case [] :
+
+            assume x : _a .
+
+            we know [step 1] : append [] (x :: []) = (x :: [])                 : _a list because [append nil] with (x::[]).
+            we know [step 2] : rev (x::[]) = append (rev []) (x :: [])         : _a list because [rev xs]     with ([],x).
+
+            equality on ([step 1],[step 2],[rev nil])
+
+        case (hd::tl) : [IH] : forall x : _a . rev (append tl (x::[])) = x :: (rev tl) : _a list .
+
+            assume x : _a .
+
+            we know [step 1] : append (hd::tl) (x::[]) = hd :: (append tl (x::[])) : _a list
+            because [append xs] with (tl,hd,(x::[])).
+            we know [step 2] : rev (hd :: (append tl (x::[]))) = append (rev (append tl (x::[]))) (hd :: [])  : _a list
+            because [rev xs] with (append tl (x::[]),hd).
+            we know [step 3] : append (x :: (rev tl)) (hd :: []) = x :: append (rev tl) (hd :: []) : _a list
+            because [append xs] with ((rev tl),x,(hd :: [])).
+            we know [step 4] : rev (hd::tl) = append (rev tl) (hd :: []) : _a list
+            because [rev xs] with (tl,hd).
+            we know [step 5] : rev (append tl (x::[])) = x :: (rev tl) : _a list
+            because [IH] with (x).
+
+            equality on ([step 1],[step 2],[step 3],[step 4],[step 5],[IH])
+    QED.
+
+Theorem [involution of rev] :
+    Statement: forall xs : _a list . rev (rev xs) = xs : _a list
+    Proof:
+
+        by induction on list :
+
+        case [] :
+
+            equality on ([rev nil])
+
+        case (hd :: tl) : [IH] .
+
+            we know [step 1] : rev (hd :: tl) = append (rev tl) (hd::[])             : _a list because [rev xs] with (tl,hd).
+            we know [step 2] : rev (append (rev tl) (hd::[])) = hd :: (rev (rev tl)) : _a list because [rev lemma] with (rev tl,hd) .
+
+            equality on ([step 1], [step 2], [IH])
+    QED.
