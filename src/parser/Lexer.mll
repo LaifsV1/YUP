@@ -32,6 +32,8 @@ rule read = parse
   | '}'             { CLOSE_CURLY }
   | '('             { OPEN_PAREN }
   | ')'             { CLOSE_PAREN }
+  | '<'             { OPEN_ANGLE_BRACKET }
+  | '>'             { CLOSE_ANGLE_BRACKET }
   | "[]"            { Nil_TERM }
   | "nil"           { Nil_TERM }
   | ':'             { COLON }
@@ -42,6 +44,7 @@ rule read = parse
   | "nat"           { Nat_TYPE }
   | "list"          { List_TYPE_OP }
   | "->"            { Arrow_TYPE_OP }
+  | '*'             { Pair_TYPE_OP }
   | "prop"          { Prop_TYPE }
   | "true"          { True_TERM }
   | "false"         { False_TERM }

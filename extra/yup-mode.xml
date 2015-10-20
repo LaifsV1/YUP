@@ -25,7 +25,7 @@
             <Keywords name="Folders in comment, middle"></Keywords>
             <Keywords name="Folders in comment, close"></Keywords>
             <Keywords name="Keywords1">Signatures&#x000D;&#x000A;Definitions&#x000D;&#x000A;Theorem</Keywords>
-            <Keywords name="Keywords2">&quot;bool&quot; &quot;nat&quot; &quot;list&quot; &quot;prop&quot; &quot;-&gt;&quot;</Keywords>
+            <Keywords name="Keywords2">&quot;bool&quot; &quot;nat&quot; &quot;list&quot; &quot;prop&quot; &quot;-&gt;&quot; &quot;*&quot;</Keywords>
             <Keywords name="Keywords3">Statement&#x000D;&#x000A;Proof&#x000D;&#x000A;Qed&#x000D;&#x000A;QED</Keywords>
             <Keywords name="Keywords4">&quot;[]&quot; &quot;nil&quot; &quot;true&quot; &quot;false&quot; &quot;zero&quot; &quot;suc&quot; &quot;::&quot;</Keywords>
             <Keywords name="Keywords5">&quot;Truth&quot; &quot;Falsity&quot; &quot;and&quot; &quot;or&quot; &quot;forall&quot; &quot;exists&quot; &quot;=&quot; &quot;=&gt;&quot;</Keywords>

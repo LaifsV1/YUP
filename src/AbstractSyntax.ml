@@ -8,7 +8,7 @@ type pos_range = (Lexing.position * Lexing.position)
 type var = string
 
 (* Types *)
-type tp = Bool | Nat | List of tp | Arrow of tp * tp | Prop | TypeVar of var
+type tp = Bool | Nat | List of tp | Arrow of tp * tp | Prop | TypeVar of var | PairType of tp * tp
 
 (* Terms *)
 (* f ( c_0 , ... , c_k ) where c_i : term *)
@@ -17,6 +17,7 @@ type term' = Var of var                  (*var*)
            | Boolean of bool             (*bool*)
            | Zero | Suc of term          (*nats*)
            | Nil  | Cons of term * term  (*lists*)
+           | Pair of term * term         (*pairs*)
 and term = pos_range * term'
 
 (* no position term *)
@@ -25,6 +26,7 @@ type npTerm = Var of var                      (*var*)
             | Boolean of bool                 (*bool*)
             | Zero | Suc of npTerm            (*nats*)
             | Nil  | Cons of npTerm * npTerm  (*lists*)
+            | Pair of npTerm * npTerm         (*pairs*)
 
 (* Propositional Hypotheses *)
 type prop' = Truth | Falsity            (*top and bot*)

@@ -1,0 +1,5 @@
+Signatures:
+    test : nat * nat list * nat -> nat -> nat;
+
+Definitions:
+    [test] : <(true :: []) :: [],suc zero> = <[],suc zero> : bool list list * nat;

@@ -1,7 +1,7 @@
 Title:  YUP Reference Manual  
 Author: Yu-Yang Lin    
 # YUP Reference Manual #
-##### `version: 0.9.2.6` #####
+##### `version: 0.9.3.0` #####
 
 ## Table of Contents ##
 
@@ -19,9 +19,11 @@ Author: Yu-Yang Lin
 		- [Top-Level](#section3.1.5)
 		- [Identifiers](#section3.1.6)
 	- [Organisation of Proof Files](#section3.2)
+	- [Precedence and Associativity](#section3.3)
 - [Examples](#section4)
 	- [Law of Excluded Middle](#section4.1)
 	- [Involution of Reversing a List](#section4.2) 
+- [Quick Reference](#section5)
 
 <a name="section1"></a>
 ## Introduction ##
@@ -114,21 +116,29 @@ This data type contains the type of terms.
 
 - **Fixed Type Variables**: see `Identifiers` section.
 - **Booleans**: `bool`
-- **Natural Numbers**: `nat`
+- **Natural Numbers**: `nat` 
 - **Lists**: `a list` where `a ` is a type. e.g. `nat list`
 - **Functions**: `a -> b` where `a` and `b` are types. e.g. `nat -> nat`
 - **Proposition Type**: `prop`
+- **Pair Types**: `a * b` where `a` and `b` are types. 
+
+	note that `*` is a left associative binary operator. 
+
+	e.g.
+
+	`a * b * c` is equivalent to `(a * b) * c` so, when providing an instance (term) of type `a * b * c`, you must provide `<<A,B>,C>` where `A : a`, `B : b` and `C : c`. 
 
 <a name="section3.1.2"></a>
 #### Terms ####
 
-This data type category contains terms which give values to the different existing types.
+This data type category contains terms, which are instances of (provide values for) types. e.g. `true` is an instance of `bool`.
 
 - **Term Variables**: see `Identifiers` section.
-- **Function Application**: term applied to another term. e.g. `reverse xs`, where `reverse` is a term variable of type `nat list-> nat list` and `xs` is a term variable of type `nat list`.
+- **Function Application**: a term applied to another term. e.g. `reverse xs`, where `reverse` is a term variable of type `nat list-> nat list` and `xs` is a term variable of type `nat list`.
 - **Boolean Terms**: `true` and `false` of type `bool`
 - **Natural Numbers**: `zero` and `suc n` where `n` is a term of type `nat`. e.g. `suc (suc zero)`.
 - **Lists**: `nil` or `[]` and `x :: xs` where `x` is a term of some type `a`, and `xs` is a list of the same type (`a list`).
+- **Pairs**: `<A,B>` where `A` and `B` are terms.
 
 <a name="section3.1.3"></a>
 #### Propositions ####
@@ -435,6 +445,30 @@ The `top-level` constructs simply feed into either of these contexts if they pas
 
 - **Comments**: comments are in `ML` style. Everything inside `(*` and `*)` is a comment.
 
+<a name="section3.3"></a>
+### Precedence and Associativity ###
+The following details precedence and associativity. The enumerations go from highest-precedence (top) to lowest (bottom). In every case, parenthesis denote the highest precedence operation (since it explicitly specifies association).
+
+- **Types**:
+	1. `*` (pair type constructor) - left associative
+	2. `list` (list type constructor) - non-associative
+	3. `->` (arrow/function type constructor) - right associative
+
+    e.g. `nat * nat list * nat -> nat -> nat` is equivalent to `(((nat * nat) list) * nat) -> (nat -> nat)`
+ 
+- **Terms**:
+	1. `::` (`list` term constructor) - right associative
+	2. `suc` (`nat` term constructor) - non-associative 
+
+	e.g. `suc a :: []` is equivalent to `suc (a :: [])` so it is an invalid expression. 
+- **Propositions**:
+	1. `and` (conjunction) - left associative
+	2. `or` (disjunction) - left associative
+	3. `=>` (implication) - right associative
+	4. `forall` and `exists` (quantifiers) - non-associative
+
+	e.g. `forall a : _a . exists b : _b . a or b and a => a` is equivalent to `forall a : _a . (exists b : _b . ((a or (b and a)) => a))`  
+
 <a name="section4"></a>
 ## Examples ##
 
@@ -547,3 +581,69 @@ Also note that this proof is not correct, and only serves as an example. For the
 Like the previous example, here we too have optional annotations; the inductive hypothesis `[inductive hypothesis]` doesn't need a proposition annotation. It is just there to make things clearer. 
 
 Note that even though it's redundant, if you do decide to give it an annotation, it must match against the expected proposition. If it doesn't, then the proof will fail on the incorrect annotation and give you the corresponding error message.
+
+<a name="section5"></a>
+## Quick Reference ##
+
+### Precedence and Associativity
+
+	(*** TYPES ***)
+	%right Arrow_TYPE_OP
+	%nonassoc List_TYPE_OP
+	%left Pair_TYPE_OP
+	
+	(*** TERMS ***)
+	%nonassoc Suc_TERM_OP
+	%right Cons_TERM_OP
+	
+	(*** PROPS ***)
+	%right Implies_PROP_OP     /* lowest precedence */
+	%left Or_PROP_OP           /* medium precedence */
+	%left And_PROP_OP          /* highest precedence */
+
+### Grammar
+
+	(*** TYPES ***)
+	type ::= type -> type  				(*arrow*)
+           | type list     				(*list*)
+           | type * type   				(*pair*)
+           | simple_type   		
+	simple_type ::= type_var    		(*fixed unknown type: _a*)
+           | bool | nat | prop  		(*primitives, note that*)
+           | ( type )           		(*parentheses*)
+
+	(*** TERMS ***)
+	term ::= term term          		(*application*) 
+           | term :: term       		(*list cons*)
+           | suc term          			(*nat suc*)
+           | simple_term
+	simple_term ::= term_var    		(*term variable: a*)
+           | true | false       		(*bool true and false*)
+           | nil                		(*list nil*)
+           | zero               		(*nat zero*)
+           | <term,term>        		(*pairs*)
+           | ( term )           		(*parentheses*)
+
+	(*** PROPOSITIONS ***)      note: prop=/=Prop
+	Prop ::= Prop => Prop       		(*implication*)
+           | Prop or Prop       		(*disjunction*)
+           | Prop and Prop      		(*conjunction*)
+           | term = term : type 		(*equality*)
+           | forall term : type . Prop 	(*universal*)
+		   | exists term : type . Prop  (*exitential*)
+           | { term }                   (*term propositions --predicates*)
+           | simple_Prop
+	simple_Prop ::= Prop_var            (*proposition variable: A*)
+           | Truth                      (*truth*)
+           | Falsity                    (*falsity*)
+	       | ( Prop )                   (*parentheses*)
+
+### Term Type Instances Examples
+
+- `f x : nat` if `f : (bool -> nat)` and `x : bool`
+- `true : bool` and `false : bool`
+- `a :: b :: [] : nat list` if `a : nat` and `b : nat`
+- `(true :: []) :: [] :: [] : bool list list`
+- `zero : nat`
+- `<A,B> : _a * _b` if `a : _a` and `b : _b` 
+- `<(true :: []) :: [],suc zero> : bool list list * nat`

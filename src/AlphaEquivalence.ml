@@ -23,6 +23,7 @@ let rec swap_term (x : var) (z : var) ((pos,t) : term) :(term) =
   | Suc n      -> pos , Suc (swap_term x z n)
   | Nil        -> pos , Nil
   | Cons (e,v) -> pos , Cons (swap_term x z e, swap_term x z v)
+  | Pair (v,v')-> pos , Pair (swap_term x z v, swap_term x z v')
 
 let rec swap_prop (x : var) (z : var) ((pos,a) : prop) :(prop) =
   match a with
@@ -49,6 +50,7 @@ let rec freevars_term ((pos,t_term) : term) :(var list) =
   | Suc n      -> freevars_term n
   | Nil        -> []
   | Cons (e,v) -> (freevars_term e) @ (freevars_term v)
+  | Pair (v,v')-> (freevars_term v) @ (freevars_term v')
 
 let rec freevars ((pos,a_prop) : prop) :(var list) =
   match a_prop with
@@ -73,6 +75,7 @@ let rec subs_term' (x : var) ((_,t) : term) ((pos,t') : term) :(term) =     (***
   | Suc n      -> pos , Suc (subs_term' x (pos,t) n)
   | Nil        -> pos , Nil
   | Cons (e,v) -> pos , Cons (subs_term' x (pos,t) e, subs_term' x (pos,t) v)
+  | Pair (v,v')-> pos , Pair (subs_term' x (pos,t) v, subs_term' x (pos,t) v')
 
 (* [x->t] a *)
 let rec subs_prop' (x : var) (t_term : term) ((pos,a) : prop) (fv : var list) :(prop) =
@@ -118,6 +121,9 @@ let rec alpha_equiv_term ((_,t) : term) ((_,e) : term) :(unit option) =
   | Cons (e,v) , Cons (e',v') -> and_also (alpha_equiv_term e e')                        (*Cons-equiv*)
                                           (alpha_equiv_term v v')
   | Cons _     , _            -> None
+  | Pair (v,v') , Pair (w,w') -> and_also (alpha_equiv_term v w)                         (*Pair-equiv*)
+                                          (alpha_equiv_term v' w')
+  | Pair _     , _            -> None
 
 (* prop alpha-equivalence - note: this function doesn't check well-formedness *)
 (* [notes: section 6.2] *)

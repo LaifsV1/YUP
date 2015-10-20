@@ -19,6 +19,7 @@
 %token Nat_TYPE
 %token List_TYPE_OP
 %token Arrow_TYPE_OP
+%token Pair_TYPE_OP
 %token Prop_TYPE
 
 (*** TERMS-TOKENS ***)
@@ -63,6 +64,7 @@
 %token <AbstractSyntax.var> TPVAR
 /*%token OPEN_BRACKET CLOSE_BRACKET*/
 %token OPEN_PAREN CLOSE_PAREN
+%token OPEN_ANGLE_BRACKET CLOSE_ANGLE_BRACKET
 %token OPEN_CURLY CLOSE_CURLY
 %token COLON COMMA SEMICOLON DOT
 %token Eq_OP
@@ -74,14 +76,17 @@
 
 (*** TYPES ***)
 %right Arrow_TYPE_OP
+%nonassoc List_TYPE_OP
+%left Pair_TYPE_OP
 
 (*** TERMS ***)
+%nonassoc Suc_TERM_OP
 %right Cons_TERM_OP
 
 (*** PROPS ***)
-%right Implies_PROP_OP          /* lowest precedence */
-%left Or_PROP_OP                /* medium precedence */
-%left And_PROP_OP               /* highest precedence */
+%right Implies_PROP_OP     /* lowest precedence */
+%left Or_PROP_OP           /* medium precedence */
+%left And_PROP_OP          /* highest precedence */
 
 /*=================================*/
 /*---- START SYMBOLS AND TYPES ----*/
@@ -150,6 +155,7 @@ complex_type:
 | simple_type                             { $1 }
 | complex_type Arrow_TYPE_OP complex_type { Arrow ($1,$3) }
 | complex_type List_TYPE_OP               { List $1 }
+| complex_type Pair_TYPE_OP complex_type  { PairType ($1,$3) }
 | type_errors                             { $1 }
 
 type_errors:
@@ -167,6 +173,8 @@ simple_term:
 | False_TERM                  { ($startpos , $endpos) , Boolean false }
 | Nil_TERM                    { ($startpos , $endpos) , Nil }
 | Zero_TERM                   { ($startpos , $endpos) , Zero }
+| OPEN_ANGLE_BRACKET term COMMA 
+  term CLOSE_ANGLE_BRACKET { ($startpos , $endpos) , Pair ($2,$4) } /*() has conflict with (term), AND, equality, and spine.*/
 | OPEN_PAREN term CLOSE_PAREN { $2 }
 
 term:

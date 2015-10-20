@@ -7,7 +7,7 @@
 
 ;; define categories of keywords
 (setq proof-toplevel '("Signatures" "Definitions" "Theorem" "Statement" "Proof" "QED" "Qed"))
-(setq proof-types    '("bool" "nat" "list" "prop"))
+(setq proof-types    '("bool" "nat" "list" "prop" "*"))
 (setq proof-terms    '("nil" "true" "false" "zero" "suc"))
 (setq proof-props    '("Truth" "Falsity" "and" "or" "forall" "exists"))
 (setq proof-proofs   '("tt" "by absurdity of" "since" "then either" "with" "on the left" "on the right"

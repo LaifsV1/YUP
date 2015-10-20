@@ -104,6 +104,10 @@ let rec compare_within (xs : 'a list)       (* list to compare within *)
 
 (* E[t] where t=f(c_0,...,c_k) and c_i in K *)
 (* returns: (term extracted , new var c) *)
+(* i.e. this finds a term, and extracts it to generate a d-rule with a new variable c*)
+(* note: though this might be safe, it's not side-effect free.*)
+(*       fresh_c () is called even if the rule does not succeed,*)
+(*       which means the counter is incremented even for unused fresh variables *)
 let rec expand_extract (t : npTerm) (k : k_set) :(drule option) =
   let c = fresh_c () in
   (match t with
@@ -123,7 +127,9 @@ let rec expand_extract (t : npTerm) (k : k_set) :(drule option) =
                               else or_else (expand_extract (Var x)  k)
                                            (expand_extract (Var xs) k)
    | Cons (x , xs)         -> or_else (expand_extract x  k)
-                                      (expand_extract xs k))
+                                      (expand_extract xs k)
+   | Pair (v , v')         -> or_else (expand_extract v  k)
+                                      (expand_extract v' k))
 
 (* s[t -> c] *)
 (* replaces all occurances of t' in t with c, returns None if nothing was found to match. *)
@@ -146,6 +152,11 @@ let rec expand_replace (t : npTerm) (t' : npTerm) (c : npTerm) :(npTerm option) 
                             | Some a , Some b -> Some (Cons (a,b))
                             | Some a , None   -> Some (Cons (a,xs))
                             | None   , Some b -> Some (Cons (x,b))
+                            | None   , None   -> None)
+        | Pair (v , v') -> (match expand_replace v t' c , expand_replace v' t' c with
+                            | Some a , Some b -> Some (Cons (a,b))
+                            | Some a , None   -> Some (Cons (a,v'))
+                            | None   , Some b -> Some (Cons (v,b))
                             | None   , None   -> None))
 
 (* replaces all occurances of t' in t with c, returns original t if nothing is replaced *)

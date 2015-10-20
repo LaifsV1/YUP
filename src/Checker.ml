@@ -28,6 +28,7 @@ let rec infer_term (psi : ctx) ((p,t) : term) :(tp result) =
   | Boolean (false) -> return Bool                                                       (*bool-false*)
   | Cons (v,v')     -> Wrong (inference_error,p)                                         (*list-hd::tl*)
   | Nil             -> Wrong (inference_error,p)                                         (*list-empty*)
+  | Pair (v,v')     -> Wrong (inference_error,p)                                         (*pairs*)
 
 (* term type checking [notes: section 2 and 3], (psi |- t <= tau) *)
 and check_term (psi : ctx) ((p,t) : term) (tau : tp) :(unit result) =
@@ -37,6 +38,9 @@ and check_term (psi : ctx) ((p,t) : term) (tau : tp) :(unit result) =
   | Cons (v,v') , tau'      -> Wrong (term_not_of_type (p,t) tau',p)
   | Nil         , List tau' -> return ()                                                 (*list-empty*)
   | Nil         , tau'      -> Wrong (term_not_of_type (p,t) tau',p)
+  | Pair (v,v') , PairType (t1,t2) -> (check_term psi v t1) >>                           (*pairs*)
+                                        (check_term psi v' t2)
+  | Pair (v,v') , tau'      -> Wrong (term_not_of_type (p,t) tau',p)
   | t'          , tau'      -> (infer_term psi (p,t')) >>=                               (*inference case*)
                                  (fun tau'' -> if tau'' = tau'
                                                then (return ())

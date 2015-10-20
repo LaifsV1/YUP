@@ -33,6 +33,7 @@ let rec depos_term ((_,t) : term) :(npTerm) =
   | Suc t       -> Suc (depos_term t)
   | Nil         -> Nil
   | Cons (x,xs) -> Cons (depos_term x, depos_term xs)
+  | Pair (v,v') -> Pair (depos_term v, depos_term v')
 
 let getpos ((p,a) : pos_range * 'a) :(pos_range) = p
 

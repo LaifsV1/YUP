@@ -52,6 +52,7 @@ let rec to_string_tp (tau : tp) :(string) =
   | Prop -> "prop"
   | Arrow (a,b)->  sprintf "(%s -> %s)" (to_string_tp a) (to_string_tp b)
   | TypeVar x  -> x
+  | PairType (a,b) -> sprintf "(%s , %s)" (to_string_tp a) (to_string_tp b)
 
 let rec to_string_term ((_,t) : term) :(string) =
   match t with
@@ -63,6 +64,7 @@ let rec to_string_term ((_,t) : term) :(string) =
   | Suc n         -> sprintf "(suc %s)" (to_string_term n)
   | Nil           -> "nil"
   | Cons (x,xs)   -> sprintf "(%s :: %s)" (to_string_term x) (to_string_term xs)
+  | Pair (v,v')   -> sprintf "(%s , %s)" (to_string_term v) (to_string_term v')
 
 let rec to_string_npterm (t : npTerm) :(string) =
   match t with
@@ -74,6 +76,7 @@ let rec to_string_npterm (t : npTerm) :(string) =
   | Suc n         -> sprintf "(suc %s)" (to_string_npterm n)
   | Nil           -> "nil"
   | Cons (x,xs)   -> sprintf "(%s :: %s)" (to_string_npterm x) (to_string_npterm xs)
+  | Pair (v,v')   -> sprintf "(%s , %s)" (to_string_npterm v) (to_string_npterm v')
 
 let rec to_string_prop ((p,a) : prop) :(string) =
   match a with
