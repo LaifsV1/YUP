@@ -19,6 +19,7 @@ type token =
   | SIGNATURES
   | SEMICOLON
   | Right_PROOF
+  | Quant_PROP_OP
   | QED
   | Prop_TYPE
   | Pair_TYPE_OP
@@ -27,7 +28,6 @@ type token =
   | Or_PROP_OP
   | OPEN_PAREN
   | OPEN_CURLY
-  | OPEN_ANGLE_BRACKET
   | Nil_TERM
   | Nat_TYPE
   | List_TYPE_OP
@@ -53,12 +53,12 @@ type token =
   | COLON
   | CLOSE_PAREN
   | CLOSE_CURLY
-  | CLOSE_ANGLE_BRACKET
   | By_PROOF
   | Bool_TYPE
   | Because_PROOF
   | Assume_PROOF
   | Arrow_TYPE_OP
+  | Apply_TERM_OP
   | And_PROP_OP
   | Absurd_PROOF
 

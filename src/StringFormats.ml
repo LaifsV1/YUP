@@ -52,7 +52,7 @@ let rec to_string_tp (tau : tp) :(string) =
   | Prop -> "prop"
   | Arrow (a,b)->  sprintf "(%s -> %s)" (to_string_tp a) (to_string_tp b)
   | TypeVar x  -> x
-  | PairType (a,b) -> sprintf "(%s , %s)" (to_string_tp a) (to_string_tp b)
+  | PairType (a,b) -> sprintf "(%s * %s)" (to_string_tp a) (to_string_tp b)
 
 let rec to_string_term ((_,t) : term) :(string) =
   match t with
@@ -100,7 +100,7 @@ let rec to_string_hs (hs : hvar list) :(string) =
   match hs with
   | []    -> ""
   | h::[] -> sprintf "%s" (to_string_hvar h)
-  | h::hs -> sprintf "%s , %s" (to_string_hvar h) (to_string_hs hs)
+  | h::hs -> sprintf "%s ; %s" (to_string_hvar h) (to_string_hs hs)
 
 let rec to_string_spine (sp : spine) =
   match sp with
@@ -109,13 +109,13 @@ let rec to_string_spine (sp : spine) =
               | SpineT t -> sprintf "%s" (to_string_term t)
               | SpineH h -> sprintf "%s" (to_string_hvar h))
   | s::sp -> (match s with
-              | SpineT t -> sprintf "%s , %s" (to_string_term t) (to_string_spine sp)
-              | SpineH h -> sprintf "%s , %s" (to_string_hvar h) (to_string_spine sp))
+              | SpineT t -> sprintf "%s ; %s" (to_string_term t) (to_string_spine sp)
+              | SpineH h -> sprintf "%s ; %s" (to_string_hvar h) (to_string_spine sp))
 
 let rec to_string_prop_instance (xs : prop_instance) :(string) =
   match xs with
   | []        -> ""
-  | (x,a)::xs ->  sprintf "%s is %s, %s" x (to_string_prop a) (to_string_prop_instance xs)
+  | (x,a)::xs ->  sprintf "%s is %s ; %s" x (to_string_prop a) (to_string_prop_instance xs)
 
 (*highest number of inputs is 5 so I had to add empty arguments*)
 let rec to_string_pf ((_,p) : pf) :(string) =
@@ -212,7 +212,7 @@ let hyp_of_type (h : hvar) (a : prop) (c : string) :(string) =
 let hyp_not_eq (h : hvar) (a : prop) (tau : tp) :(string) =
   hyp_of_type h a (sprintf "t=t:%s" (to_string_tp tau))
 
-let equality_error = "@[Expected hypothesis in the equality tuple, found none.@]"
+let equality_error = "@[Expected hypothesis in the equality hypothses sequence, found none.@]"
 
 let encountered_while (caller : string) (res : 'a result) :('a result) =
   match res with

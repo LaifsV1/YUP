@@ -26,16 +26,16 @@ Theorem [square root 2 is not rational]:
         we know [m over n] : over m n = sqrt_two : _num with n because [exists elim 1] .
 
         we know [m and n are not both even] : ({even m} and {even n} => Falsity)
-        because [B] with (m,n,[m over n]) .
+        because [B] with (m;n;[m over n]) .
 
         we know [2 times n squared equals m squared] : times two (square n) = square m : _num
-        because [C] with (m,n,[m over n]) .
+        because [C] with (m;n;[m over n]) .
 
-        we know [m is even] : {even m} because [1] with (m,n,[2 times n squared equals m squared]) .
+        we know [m is even] : {even m} because [1] with (m;n;[2 times n squared equals m squared]) .
         we know [m is even 2] : (times two (square n) = square m : _num) and {even m}
         because (by [2 times n squared equals m squared], by [m is even]) .
 
-        we know [n is even] : {even n} because [2] with (m,n,[m is even 2]) .
+        we know [n is even] : {even n} because [2] with (m;n;[m is even 2]) .
 
         we know [both m and n are even] : {even m} and {even n} because (by [m is even], by [n is even]) .
         we know [absurd] : Falsity because [m and n are not both even] with ([both m and n are even]) .

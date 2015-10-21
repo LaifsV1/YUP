@@ -89,7 +89,7 @@ Theorem [sorted of insert]:
             we know [1] : sorted (e::[]) = true : bool
             because [sorted x] with (e) .
 
-            equality on ([0],[1])
+            equality on ([0];[1])
 
         case (x::xs): [IH] : forall e : nat . (sorted xs = true : bool) =>
                                               (sorted (insert e xs) = true : bool) .
@@ -97,7 +97,7 @@ Theorem [sorted of insert]:
             assume [H] : sorted (x::xs) = true : bool .
 
             we know [0] : (lt e x = true : bool) => (sorted (e::x::xs) = sorted (x::xs) : bool)
-            because [sorted xs1] with (e,x,xs) .
+            because [sorted xs1] with (e;x;xs) .
 
             TODO
 
@@ -112,17 +112,17 @@ Theorem [sorted of sort]:
         by induction on list:
         case []:
 
-            equality on ([sorted nil],[sort nil])
+            equality on ([sorted nil];[sort nil])
 
         case (x::xs): [IH] : sorted (sort xs) = true : bool .
 
             we know [0] : sort (x::xs) = insert x (sort xs) : nat list
-            because [sort xs] with (x,xs) .
+            because [sort xs] with (x;xs) .
 
             we know [1] : (sorted (insert x (sort xs)) = true : bool)
-            because [sorted of insert] with (sort xs,x,[IH]) .
+            because [sorted of insert] with (sort xs;x;[IH]) .
 
-            equality on ([0],[1])
+            equality on ([0];[1])
     QED.
 
 (**********************)
@@ -137,12 +137,12 @@ Theorem [permutation of sort]:
         by induction on list:
         case []:
 
-            equality on ([permutation nil nil],[sort nil])
+            equality on ([permutation nil nil];[sort nil])
 
         case (x::xs): [IH] : permutation xs (sort xs) = true : bool .
 
             we know [0] : sort (x::xs) = insert x (sort xs) : nat list
-            because [sort xs] with (x,xs) .
+            because [sort xs] with (x;xs) .
 
             TODO
     QED.

@@ -32,8 +32,6 @@ rule read = parse
   | '}'             { CLOSE_CURLY }
   | '('             { OPEN_PAREN }
   | ')'             { CLOSE_PAREN }
-  | '<'             { OPEN_ANGLE_BRACKET }
-  | '>'             { CLOSE_ANGLE_BRACKET }
   | "[]"            { Nil_TERM }
   | "nil"           { Nil_TERM }
   | ':'             { COLON }

@@ -36,10 +36,10 @@ Theorem [notzero m plus n]:
             assume [H] : (notzero (suc m) = true : bool) and (notzero n = true : bool) .
 
             we know [plus suc m n] : plus (suc m) n = suc (plus m n) : nat
-            because [plus m] with (m,n) .
+            because [plus m] with (m;n) .
 
             we know [notzero suc plus m n] : notzero (suc (plus m n)) = true : bool
             because [notzero n] with (plus m n) .
 
-            equality on ([plus suc m n],[notzero suc plus m n])
+            equality on ([plus suc m n];[notzero suc plus m n])
     QED.

@@ -1,7 +1,7 @@
 Title:  YUP Reference Manual  
 Author: Yu-Yang Lin    
 # YUP Reference Manual #
-##### `version: 0.9.3.0` #####
+##### `version: 0.9.3.1` #####
 
 ## Table of Contents ##
 
@@ -20,9 +20,7 @@ Author: Yu-Yang Lin
 		- [Identifiers](#section3.1.6)
 	- [Organisation of Proof Files](#section3.2)
 	- [Precedence and Associativity](#section3.3)
-- [Examples](#section4)
-	- [Law of Excluded Middle](#section4.1)
-	- [Involution of Reversing a List](#section4.2) 
+- [Examples](#section4) 
 - [Quick Reference](#section5)
 
 <a name="section1"></a>
@@ -120,13 +118,7 @@ This data type contains the type of terms.
 - **Lists**: `a list` where `a ` is a type. e.g. `nat list`
 - **Functions**: `a -> b` where `a` and `b` are types. e.g. `nat -> nat`
 - **Proposition Type**: `prop`
-- **Pair Types**: `a * b` where `a` and `b` are types. 
-
-	note that `*` is a left associative binary operator. 
-
-	e.g.
-
-	`a * b * c` is equivalent to `(a * b) * c` so, when providing an instance (term) of type `a * b * c`, you must provide `<<A,B>,C>` where `A : a`, `B : b` and `C : c`. 
+- **Pair Types**: `a * b` where `a` and `b` are types. Since `*` is non-associative binary operation, you need to provide brackets to specify the association. 
 
 <a name="section3.1.2"></a>
 #### Terms ####
@@ -138,7 +130,7 @@ This data type category contains terms, which are instances of (provide values f
 - **Boolean Terms**: `true` and `false` of type `bool`
 - **Natural Numbers**: `zero` and `suc n` where `n` is a term of type `nat`. e.g. `suc (suc zero)`.
 - **Lists**: `nil` or `[]` and `x :: xs` where `x` is a term of some type `a`, and `xs` is a list of the same type (`a list`).
-- **Pairs**: `<A,B>` where `A` and `B` are terms.
+- **Pairs**: `a,b` where `a` and `b` are terms. Since `,` is a non-associative binary operator, you need to provide brackets to specify the association.
 
 <a name="section3.1.3"></a>
 #### Propositions ####
@@ -252,7 +244,13 @@ The proof data type is made up of a set of rules that allow us to prove proposit
 	where `p` is a proof for the proposition with the inductive variable replaced with `true`, and `q` is a proof for the proposition with the inductive variable replced with `false`.
 - **Equality**:
 
-	`equality on ([H_1],[H_2],...,[H_n])` where `[H_1]` to `[H_n]` are the hypotheses used to prove equality of the desired terms, which would be stated by the proof's goal or statement.
+	`equality on ([H_1] ; [H_2] ; ... ; [H_n])` where `[H_1]` to `[H_n]` are the hypotheses used to prove equality of the desired terms, which would be stated by the proof's goal or statement.
+
+	The premises provided for the equality must be in the form of a sequence of hypotheses. `equality on ([A] ; [B] ; [C])`, for instance, is using a sequence of hypotheses `[A]`, `[B]` and `[C]` as the premises for equality.
+
+	Given equality is done through a congruence closure, equalities that are used in other equalities can be eliminated by providing their premises to the enclosing equality.
+	
+	e.g. Given `we know [A] : A because equality on ([X];[Y])` and `we know [B] : B because equality on ([A])`, then we can say `we know [B] : B because equality on ([X];[Y])` and eliminate `[A]`.
 - **Hypothesis Labelling Clause**:
 
 		we know [A] : A because p . rest
@@ -264,13 +262,13 @@ The proof data type is made up of a set of rules that allow us to prove proposit
 	Note that you cannot give any proof after a `because` keyword. You can only give what is called a `simple proof`, `tt`, `(p , q)`, `p on left`, `q on right`, `equality on ([A],[B],[C])`, `by [H]`, `[H] with (a,[A])`, and `p therefore A`. i.e. no case elimination rules such as induction or disjunction elimination.
 - **With Clause**:
 
-		[H] with (a,b,c,[A],[B],C])
+		[H] with (a;b;c;[A];[B];C])
 
 	where `[H]` is a hypothesis labelling some proposition made of universal quantifiers or implications, and `a` to `c` are terms, while `[A]` to `[C]` are hypotheses.
 
 	The `with` clause is a form of elimination clause for universal quantifiers and implications. To eliminate a universal, provide a term that can replace the universal term variable. To eliminate an implication, provide a hypothesis which matches the proposition being eliminated.
 
-	Note that the elements we are providing for the elimination must be given inside a tuple, and in the correct order. i.e. When eliminating, you can only eliminate the outermost layer first. 
+	Note that the elements we are providing for the elimination must be given inside a sequence of statements, and in the correct order. i.e. When eliminating, you can only eliminate the outermost layer of quantifiers or implication first. 
 
 	For instance, to eliminate the following:
 
@@ -280,7 +278,7 @@ The proof data type is made up of a set of rules that allow us to prove proposit
 
 	Given: `[A] : A` and `y : nat`, we can do:
 
-		[Some Hypothesis] with ([A],y)	
+		[Some Hypothesis] with ([A];y)	
 - **Using Hypotheses - By Clause**:
 
 	`by [H]` where `[H]` is the hypothesis we want to use. Note that you must also include the `by` when combining this with a labelling clause. e.g.
@@ -293,15 +291,15 @@ The proof data type is made up of a set of rules that allow us to prove proposit
 	e.g. Given `[negation] : Falsity` we can do: `by [negation] therefore Falsity`
 - **Instantiation Clause**:
 
-		we get [new prop] : P instantiating [some prop] with (A is NewA,...) . rest
+		we get [new prop] : P instantiating [some prop] with (A is NewA ; ...) . rest
 
 	where `[new prop]` is a hyposthesis pointing at a proposition `P`, which is the result of instantiating proposition variables in `[some prop]` to some other given proposition variables. 
 
 	`rest` is a proof where `[new prop]` is in scope.
 
-	The values to instantiate are given in the tuple that follows the `with` keyword. The tuple must be in the form `A is NewA`, where `A` is an existing proposition variable in `[some prop]`, and `NewA` is the new proposition variable to replace `A`.
+	The values to instantiate are given in the sequence of substitution instructions that follows the `with` keyword. The instruction in the sequence must be in the form `A is NewA`, where `A` is an existing proposition variable in `[some prop]`, and `NewA` is the new proposition variable to replace `A`.
 
-	All propositions are replaced order; from the left of the tuple to the right.
+	All propositions are replaced order; from the left of the sequence to the right.
 - **Incomplete Proofs - TODO Keyword**:
 
 	To validate an incomplete proof, one can either put the missing part as a lemma/hypothesis in the preceding definition (similar to a postulate in Agda), or use the `TODO` keyword.
@@ -449,159 +447,67 @@ The `top-level` constructs simply feed into either of these contexts if they pas
 ### Precedence and Associativity ###
 The following details precedence and associativity. The enumerations go from highest-precedence (top) to lowest (bottom). In every case, parenthesis denote the highest precedence operation (since it explicitly specifies association).
 
+For all non-associative binary operators, you must provide brackets to specify associativity. e.g. `a,b,c,d` wont work, you have to group comma operands in pairs.
+
 - **Types**:
-	1. `*` (pair type constructor) - left associative
-	2. `list` (list type constructor) - non-associative
-	3. `->` (arrow/function type constructor) - right associative
+	1. `*` (pair type constructor) - non-associative binary op
+	2. `list` (list type constructor) - non-associative unary postfix op
+	3. `->` (arrow/function type constructor) - right associative binary op
 
     e.g. `nat * nat list * nat -> nat -> nat` is equivalent to `(((nat * nat) list) * nat) -> (nat -> nat)`
  
 - **Terms**:
-	1. `::` (`list` term constructor) - right associative
-	2. `suc` (`nat` term constructor) - non-associative 
+	1. function application - left associative
+	2. `::` (`list` term constructor) - right associative binary op
+	3. `suc` (`nat` term constructor) - non-associative unary prefix op
+	4. `,` (`*` term constructor) - non-associative binary op
 
 	e.g. `suc a :: []` is equivalent to `suc (a :: [])` so it is an invalid expression. 
 - **Propositions**:
-	1. `and` (conjunction) - left associative
-	2. `or` (disjunction) - left associative
-	3. `=>` (implication) - right associative
-	4. `forall` and `exists` (quantifiers) - non-associative
+	1. `and` (conjunction) - left associative binary op
+	2. `or` (disjunction) - left associative binary op
+	3. `=>` (implication) - right associative binary op
+	4. `forall` and `exists` (quantifiers) - non-associative unary prefix op
 
 	e.g. `forall a : _a . exists b : _b . a or b and a => a` is equivalent to `forall a : _a . (exists b : _b . ((a or (b and a)) => a))`  
 
 <a name="section4"></a>
 ## Examples ##
 
-These are shortened proofs. For complete proofs and more sample proofs, [extra/sample_proofs](/extra/sample_proofs).
-
-<a name="section4.1"></a>
-### Law of Excluded Middle ###
-	Signatures:
-	    P : prop ;
-
-	Definitions:
-    	[DNE] : ((P => Falsity) => Falsity) => P ;
-    	[not P] : ((P or (P => Falsity)) => Falsity) => (P => Falsity) ;
-    	[not not P] : ((P or (P => Falsity)) => Falsity) 
-						=> ((P => Falsity) => Falsity) ;
-
-	Theorem [not not (P or not P)]:
-	    Statement: ((P or (P => Falsity)) => Falsity ) => Falsity
-	    Proof:
-    	    assume [not (P or not P)] : (P or (P => Falsity)) => Falsity .
-        	we know [not P] : P => Falsity 
-				because [not P] with ([not (P or not P)]) .
-        	we know [not not P] : (P => Falsity) => Falsity 
-				because [not not P] with ([not (P or not P)]) .
-	        we know [P] : P because [DNE] with ([not not P]) .
-        	we know [negation] : Falsity because [not P] with ([P]) .
-        	by [negation]
-    	QED.
-
-	Theorem [excluded middle]:
-	    Statement: P or (P => Falsity)
-	    Proof:
-        	we get [New DNE] :
-	            (((P or (P => Falsity)) => Falsity) => Falsity) 
-					=> (P or (P => Falsity))
-	        instantiating [DNE] with (P is (P or (P => Falsity))) .
-        	[New DNE] with ([not not (P or not P)])
-    	QED.
-
-Note that many aspects of the proof are stylistic. For instance, to make it clearer, the proof for `[not not (P or not P)]` ends with `by [negation]`. This could be compacted since the last step is redundant. e.g.
-
-		we know [negation] : Falsity because [not P] with ([P]) .
-        by [negation]
-
-becomes
-
-		[not P] with ([P])
-
-However, this is not as clear as stating `by [negation]`. Another example of this can be seen with `[New DNE] with ([not not (P or not P)])`. Here, no final `by` step is used. If we wanted to make it clearer, we could annotate it with a `therefore` clause.
-
-		[New DNE] with ([not not (P or not P)])
-
-becomes
-
-		[New DNE] with ([not not (P or not P)]) therefore  P or (P => Falsity)
-
-Additionally, `hypotheses` generally have an optional annotation. In `we know` and `we get` clauses, this annotation is compulsory. In others, it might not be. For instance:
-
-		by [negation]
-
-becomes
-
-		by [negation] : Falsity
-
-with the optional annotation.
-
-Also note that this proof is not correct, and only serves as an example. For the actual proof, check the sample proofs. This one assume `[not not P]` to save space, which makes the proof redundant. Additionally, there is a much shorter proof in the sample files.
-
-<a name="section4.2"></a>
-### Involution of Reversing a List ###
-
-	Signatures:
-    	append : nat list -> nat list -> nat list ;
-    	rev    : nat list -> nat list ;
-
-	Definitions:
-	    [append nil] : forall xs : nat list . append [] xs = xs : nat list ;
-	    [append xs]  : forall xs : nat list . 
-						forall x : nat . 
-							forall ys : nat list . 
-								append (x::xs) ys = x :: append xs ys : nat list ;
-	    [rev nil]    : rev [] = [] : nat list ;
-    	[rev xs]     : forall xs : nat list . 
-						forall x : nat . 
-							rev (x :: xs) = append (rev xs) (x :: []) : nat list ;
-		[rev lemma]  : forall xs : nat list . 
-						forall x : nat . 
-							rev (append xs (x::[])) = x :: (rev xs) : nat list ;
-
-	Theorem [involution of rev] :
-	    Statement: forall xs : nat list . rev (rev xs) = xs : nat list
-	    Proof:
-	        by induction on list :
-	        
-			case [] :
-	            equality on ([rev nil])
-	        
-			case (hd :: tl) : [inductive hypothesis] .
-	            we know [step 1] : rev (hd :: tl) = 
-									append (rev tl) (hd::[]) : nat list 
-				because [rev xs] with (tl,hd).
-				
-				we know [step 2] : rev (append (rev tl) (hd::[])) = 
-									hd :: (rev (rev tl)) : nat list 
-				because [rev lemma] with (rev tl,hd) .
-	            
-				equality on ([step 1], [step 2], [inductive hypothesis])
-	    QED.
-
-Like the previous example, here we too have optional annotations; the inductive hypothesis `[inductive hypothesis]` doesn't need a proposition annotation. It is just there to make things clearer. 
-
-Note that even though it's redundant, if you do decide to give it an annotation, it must match against the expected proposition. If it doesn't, then the proof will fail on the incorrect annotation and give you the corresponding error message.
+For sample proofs, [extra/sample_proofs](/extra/sample_proofs).
 
 <a name="section5"></a>
 ## Quick Reference ##
 
 ### Precedence and Associativity
 
+	/*======================================*/
+	/*---- PRECEDENCE AND ASSOCIATIVITY ----*/
+	/*======================================*/
+		/*~~~~~~~~~~~~~~~~~~~*/
+		/* lowest precedence */
+		/*~~~~~~~~~~~~~~~~~~~*/
 	(*** TYPES ***)
-	%right Arrow_TYPE_OP
-	%nonassoc List_TYPE_OP
-	%left Pair_TYPE_OP
+	%right Arrow_TYPE_OP       (* binary  e.g. _a -> _b *)
+	%nonassoc List_TYPE_OP     (* postfix e.g. _a list  *)
+	%nonassoc Pair_TYPE_OP     (* binary  e.g. _a * _b  *)
 	
 	(*** TERMS ***)
-	%nonassoc Suc_TERM_OP
-	%right Cons_TERM_OP
+	%nonassoc COMMA            (* binary pairs, 	e.g. a , b : _a * _b    *)
+	%nonassoc Suc_TERM_OP      (* prefix nat-suc, 	e.g. suc(zero) : nat    *)
+	%right Cons_TERM_OP        (* binary list-cons, e.g. a :: nil : _a list *)
+	%left Apply_TERM_OP        (*        function application               *)
 	
 	(*** PROPS ***)
-	%right Implies_PROP_OP     /* lowest precedence */
-	%left Or_PROP_OP           /* medium precedence */
-	%left And_PROP_OP          /* highest precedence */
+	%nonassoc Quant_PROP_OP    (* prefix e.g. forall and exists *)
+	%right Implies_PROP_OP     (* binary e.g. A => B  *)
+	%left Or_PROP_OP           (* binary e.g. A or B  *)
+	%left And_PROP_OP          (* binary e.g. A and B *)
+		/*~~~~~~~~~~~~~~~~~~~~*/
+		/* highest precedence */          
+		/*~~~~~~~~~~~~~~~~~~~~*/
 
-### Grammar
+### Syntax Grammar
 
 	(*** TYPES ***)
 	type ::= type -> type  				(*arrow*)
@@ -616,12 +522,12 @@ Note that even though it's redundant, if you do decide to give it an annotation,
 	term ::= term term          		(*application*) 
            | term :: term       		(*list cons*)
            | suc term          			(*nat suc*)
+		   | term , term        		(*pairs*)
            | simple_term
 	simple_term ::= term_var    		(*term variable: a*)
            | true | false       		(*bool true and false*)
            | nil                		(*list nil*)
            | zero               		(*nat zero*)
-           | <term,term>        		(*pairs*)
            | ( term )           		(*parentheses*)
 
 	(*** PROPOSITIONS ***)      note: prop=/=Prop
@@ -645,5 +551,3 @@ Note that even though it's redundant, if you do decide to give it an annotation,
 - `a :: b :: [] : nat list` if `a : nat` and `b : nat`
 - `(true :: []) :: [] :: [] : bool list list`
 - `zero : nat`
-- `<A,B> : _a * _b` if `a : _a` and `b : _b` 
-- `<(true :: []) :: [],suc zero> : bool list list * nat`

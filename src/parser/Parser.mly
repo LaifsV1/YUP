@@ -27,12 +27,14 @@
 %token Nil_TERM
 %token Cons_TERM_OP
 %token Zero_TERM Suc_TERM_OP
+%token Apply_TERM_OP
 
 (*** PROPS-TOKENS ***)
 %token Truth_PROP Falsity_PROP
 %token And_PROP_OP Or_PROP_OP Implies_PROP_OP
 %token Forall_PROP
 %token Exists_PROP
+%token Quant_PROP_OP
 
 (*** PROOFS-TOKENS ***)
 %token TT_PROOF
@@ -64,7 +66,6 @@
 %token <AbstractSyntax.var> TPVAR
 /*%token OPEN_BRACKET CLOSE_BRACKET*/
 %token OPEN_PAREN CLOSE_PAREN
-%token OPEN_ANGLE_BRACKET CLOSE_ANGLE_BRACKET
 %token OPEN_CURLY CLOSE_CURLY
 %token COLON COMMA SEMICOLON DOT
 %token Eq_OP
@@ -73,20 +74,28 @@
 /*======================================*/
 /*---- PRECEDENCE AND ASSOCIATIVITY ----*/
 /*======================================*/
-
+	/*~~~~~~~~~~~~~~~~~~~*/
+	/* lowest precedence */
+	/*~~~~~~~~~~~~~~~~~~~*/
 (*** TYPES ***)
-%right Arrow_TYPE_OP
-%nonassoc List_TYPE_OP
-%left Pair_TYPE_OP
+%right Arrow_TYPE_OP       (* e.g. _a -> _b *)
+%nonassoc List_TYPE_OP     (* e.g. _a list  *)
+%nonassoc Pair_TYPE_OP     (* e.g. _a * _b  *)
 
 (*** TERMS ***)
-%nonassoc Suc_TERM_OP
-%right Cons_TERM_OP
+%nonassoc COMMA            (* pairs, 	 e.g. a , b : _a * _b    *)
+%nonassoc Suc_TERM_OP      (* nat-suc, 	 e.g. suc(zero) : nat    *)
+%right Cons_TERM_OP        (* list-cons, e.g. a :: nil : _a list *)
+%left Apply_TERM_OP        (* function application               *)
 
 (*** PROPS ***)
-%right Implies_PROP_OP     /* lowest precedence */
-%left Or_PROP_OP           /* medium precedence */
-%left And_PROP_OP          /* highest precedence */
+%nonassoc Quant_PROP_OP    (* e.g. forall and exists *)
+%right Implies_PROP_OP     (* e.g. A => B  *)
+%left Or_PROP_OP           (* e.g. A or B  *)
+%left And_PROP_OP          (* e.g. A and B *)
+	/*~~~~~~~~~~~~~~~~~~~~*/
+	/* highest precedence */          
+	/*~~~~~~~~~~~~~~~~~~~~*/
 
 /*=================================*/
 /*---- START SYMBOLS AND TYPES ----*/
@@ -173,13 +182,12 @@ simple_term:
 | False_TERM                  { ($startpos , $endpos) , Boolean false }
 | Nil_TERM                    { ($startpos , $endpos) , Nil }
 | Zero_TERM                   { ($startpos , $endpos) , Zero }
-| OPEN_ANGLE_BRACKET term COMMA 
-  term CLOSE_ANGLE_BRACKET { ($startpos , $endpos) , Pair ($2,$4) } /*() has conflict with (term), AND, equality, and spine.*/
 | OPEN_PAREN term CLOSE_PAREN { $2 }
 
 term:
 | simple_term            { $1 }
-| term simple_term       { ($startpos , $endpos) , App ($1,$2) }
+| term COMMA term        { ($startpos , $endpos) , Pair ($1,$3) }
+| term simple_term       { ($startpos , $endpos) , App ($1,$2) } %prec Apply_TERM_OP
 | term Cons_TERM_OP term { ($startpos , $endpos) , Cons ($1,$3) }
 | Suc_TERM_OP term       { ($startpos , $endpos) , Suc $2 }
 | term_errors            { $1 }
@@ -205,8 +213,8 @@ prop:
 | prop Or_PROP_OP prop                        { ($startpos , $endpos) , Or ($1,$3) }
 | prop And_PROP_OP prop                       { ($startpos , $endpos) , And ($1,$3) }
 | term Eq_OP term COLON complex_type          { ($startpos , $endpos) , Eq ($1,$3,$5) }
-| Forall_PROP VAR COLON complex_type DOT prop { ($startpos , $endpos) , Forall ($2,$4,$6) }
-| Exists_PROP VAR COLON complex_type DOT prop { ($startpos , $endpos) , Exists ($2,$4,$6) }
+| Forall_PROP VAR COLON complex_type DOT prop { ($startpos , $endpos) , Forall ($2,$4,$6) } %prec Quant_PROP_OP
+| Exists_PROP VAR COLON complex_type DOT prop { ($startpos , $endpos) , Exists ($2,$4,$6) } %prec Quant_PROP_OP
 | OPEN_CURLY term CLOSE_CURLY                 { ($startpos , $endpos) , TermProp $2 }
 | prop_errors                                 { $1 }
 
@@ -299,6 +307,7 @@ proof_errors:
 | WeGet_PROOF
   error { raise (parse_failure (pf_of_form "we-get clause" (proof_sf_Instantiate "[H']" "B" "[H] : A" "A is B" "p")) $startpos $endpos) }
 | error { raise (parse_failure ("proof: syntax error") $startpos $endpos) }
+
 h_pair:
 | h_var COMMA h_var              { ($1,$3) }
 | OPEN_PAREN h_pair CLOSE_PAREN  { $2 }
@@ -308,12 +317,12 @@ h_var:
 | OPEN_PAREN HVAR COLON prop CLOSE_PAREN  { ($2,Some $4) }
 eq_tuple:
 | h_var                 { $1 :: [] }
-| h_var COMMA eq_tuple  { $1 :: $3 }
+| h_var SEMICOLON eq_tuple  { $1 :: $3 }
 spine:
 | h_var             { SpineH $1 :: [] }
 | term              { SpineT $1 :: [] }
-| h_var COMMA spine { SpineH $1 :: $3 }
-| term COMMA spine  { SpineT $1 :: $3 }
+| h_var SEMICOLON spine { SpineH $1 :: $3 }
+| term SEMICOLON spine  { SpineT $1 :: $3 }
 propvar_tuple:
 | PVAR Is_PROOF prop CLOSE_PAREN         { ($1,$3) :: [] }
-| PVAR Is_PROOF prop COMMA propvar_tuple { ($1,$3) :: $5 }
+| PVAR Is_PROOF prop SEMICOLON propvar_tuple { ($1,$3) :: $5 }

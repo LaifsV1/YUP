@@ -3,6 +3,33 @@ This file will document changes of YUP.
 
 Will not enter "released" status until all parser problems are solved (which may never happen).
 
+## [0.9.3.1] - 2015-10-21
+### Fixes
+- Fixed pair term grammar that was causing pairs to always be expected over application; removed `term COMMA term` from `simple_term` and placed it in `complex_term`
+
+### Features
+- Changed `<a,b>` to just `a,b` by setting precedence of `,` in the parser.
+- Specified precedence for term application, pairs `,`, and quantifiers.
+- Changed associativity of `*` and `,` from `%left` to `%nonassoc%`.
+- Changed spines, equality, and instantiation tuples from `(a,b)` to `(a;b)` in the parser.
+- Added last token matched output to Parser error message in TopLevel.
+- Added better exception handling, and better exception messages to TopLevel.
+- Updated StringFormats to reflect all changes. 
+
+### Extra
+- Updated reference manual to reflect fix of pair grammar:
+	- Updated quick reference section
+- Updated reference manual to reflect change of pairs:
+	- `<a,b>` to `a,b`
+	- Updated precedence table and lexical conventions sections.
+- Updated reference manual to reflect change for spines, equality, and instantiation tuples:
+	- `with (a,b)` to `with (a;b)`
+	- `equality on (a,b)` to `equality on (a;b)`
+	- `(A is A',B is B')` to `(A is A';B is B')`
+	- Updated lexical conventions section.
+- Removed Example proofs from reference manual.
+- Updated all sample proofs.
+
 ## [0.9.3.0] - 2015-10-20
 ### Features
 - Added pairs to notes.

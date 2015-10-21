@@ -9,16 +9,16 @@
 (* Ra and not Ba therefore not (forall x . Rx => Bx)                       *)
 (***************************************************************************)
 Signatures:
-    raven  : 'bird -> prop ;
-    black  : 'bird -> prop ;
-    arthur : 'bird ;
+    raven  : _bird -> prop ;
+    black  : _bird -> prop ;
+    arthur : _bird ;
 
 Definitions:
     [arthur is a raven]   : {raven arthur} ;
     [arthur is not black] : {black arthur} => Falsity ;
 
 Theorem [not all ravens are black]:
-    Statement: (forall x : 'bird . {raven x} => {black x}) => Falsity
+    Statement: (forall x : _bird . {raven x} => {black x}) => Falsity
     Proof:
         assume [all ravens are black] : forall x : _bird . {raven x} => {black x} .
 
