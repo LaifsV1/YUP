@@ -95,7 +95,7 @@ let (>>=) x f =
   | Wrong (s,e) -> Wrong (s,e)
 let (>>) x y = x >>= (fun _ -> y)
 
-let success = ref 1
+let success = ref 0
 
 (* TopLevel Syntax *)
 type toplevel = Sig of ctx | Def of hyps | Theorem of var * pf * prop

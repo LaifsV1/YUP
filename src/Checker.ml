@@ -248,5 +248,5 @@ let rec check_pf (psi : ctx) (gamma : hyps) ((pf_pos,proof) : pf) ((prop_pos,pro
   | Todo , c -> print_newline ();                                                        (*TODO*)
                 printf "%s @." (incomplete_proof (prop_pos,c));
                 printf "    @[%s @] @." (line_sprintf (fst pf_pos) (snd pf_pos));
-                success := 0;
+                success := 1;
                 return ()

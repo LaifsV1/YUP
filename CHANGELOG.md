@@ -7,6 +7,7 @@ Will not enter "released" status until all parser problems are solved (which may
 ### Fixes
 - Fixed non-termination of parser. Something in the `toplevel` errors was causing an infinite loop when encountering sudden end of file. I couldn't work out what it was, so I deleted the whole thing.
 - Fixed bug with `checker.ml`. Hypothesis labelling clauses did not have their propositions checked, so you could write any proposition in a label, even if it didn't type check.
+- Result now follows Unix conventions, 0 for success, >0 for failures. Yet to add any failure codes.
 
 ### Extra
 - Fixed sample proof for involution on fixed types. 

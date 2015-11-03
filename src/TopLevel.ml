@@ -38,11 +38,11 @@ let _ =
       printf "    @[***Checking file...............";
       (match check_file (([],[]),new_proof) with
        | Ok () -> let i = !success in
-                  if i=1
+                  if i=0
                   then printf ".....[done]***@]"
                   else printf "    ***[done]***";
                   print_newline ();
-                  if i=1
+                  if i=0
                   then printf "    @[***VALIDATION SUCCESSFUL****@]"
                   else printf "    @[***VALIDATION SUCCESSFUL---INCOMPLETE PROOF(S) FOUND****@]" ;
                   print_newline ();
@@ -54,7 +54,7 @@ let _ =
                                 printf "@[%s @] @." msg;
                                 printf "    @[%s @] @." (line_sprintf p1 p2);
                                 print_newline ();
-                                0)
+                                1)
     with
     | ParseError (msg,(p1,p2)) -> let tok_error = Lexing.lexeme lexbuf in
                                   printf ".....[error]***@]";
@@ -64,28 +64,28 @@ let _ =
                                   printf "@[%s@] @." msg;
                                   printf "    @[%s @] @." (line_sprintf p1 p2);
                                   print_newline ();
-                                  0
+                                  1
     | SyntaxError (msg,(p1,p2)) -> printf ".....[error]***@]";
                                    print_newline ();
                                    printf "    @[[SYNTAX ERROR]:@] @. ";
                                    printf "@[%s @] @." msg;
                                    printf "    @[%s @] @." (line_sprintf p1 p2);
                                    print_newline ();
-                                   0
+                                   1
     | Parser.Error -> printf ".....[error]***@]";
                       print_newline ();
                       printf "    @[[SYNTAX ERROR]: couldn't parse file.@] @. ";
                       print_newline ();
-                      0
+                      1
   with
   | Sys_error msg -> printf ".....[error]!***@]";
                      print_newline ();
                      printf "    @[[SYSTEM ERROR]:@] @.";
                      printf "    @[%s @] @." msg;
                      print_newline ();
-                     0
+                     1
   | e -> printf ".....[error]!***@]";
          Printf.eprintf "[UNEXPECTED EXCEPTION] : %s \n" (Printexc.to_string e);
          Printf.eprintf "Please contact YUP maintainer";
          Printexc.print_backtrace stderr;
-         0
+         1
