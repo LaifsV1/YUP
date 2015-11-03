@@ -3,6 +3,14 @@ This file will document changes of YUP.
 
 Will not enter "released" status until all parser problems are solved (which may never happen).
 
+## [0.9.3.2] - 2015-11-03
+### Fixes
+- Fixed non-termination of parser. Something in the `toplevel` errors was causing an infinite loop when encountering sudden end of file. I couldn't work out what it was, so I deleted the whole thing.
+- Fixed bug with `checker.ml`. Hypothesis labelling clauses did not have their propositions checked, so you could write any proposition in a label, even if it didn't type check.
+
+### Extra
+- Fixed sample proof for involution on fixed types. 
+
 ## [0.9.3.1] - 2015-10-21
 ### Fixes
 - Fixed pair term grammar that was causing pairs to always be expected over application; removed `term COMMA term` from `simple_term` and placed it in `complex_term`

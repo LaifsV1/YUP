@@ -125,18 +125,6 @@ syntax_toplevel:
 | SIGNATURES COLON signatures   { Sig $3 }
 | DEFINITIONS COLON definitions { Def $3 }
 | THEOREM HVAR COLON STATEMENT COLON prop PROOF COLON proof QED DOT { Theorem ($2,$9,$6) }
-| syntax_toplevel_errors        { $1 }
-| error                         { raise (parse_failure "toplevel: files must use keywords 'Signatures' 'Definitions' or 'Theorem'" $startpos $endpos) }
-
-syntax_toplevel_errors:
-| SIGNATURES COLON              { raise (parse_failure "signatures: missing signatures" $startpos $endpos) }
-| DEFINITIONS COLON             { raise (parse_failure "definitions: missing definitions" $startpos $endpos) }
-| THEOREM HVAR COLON            { raise (parse_failure "theorem: missing statement and proof" $startpos $endpos) }
-| THEOREM COLON                 { raise (parse_failure "theorem: missing hypothesis label, must be in form '[ name ]'" $startpos $endpos) }
-| SIGNATURES error              { raise (parse_failure "signatures: incorrect syntax, must be in form 'Signatures: name : type ;'" $startpos $endpos) }
-| DEFINITIONS error             { raise (parse_failure "definitions: incorrect syntax, must be in form 'Definitions: name : type ;'" $startpos $endpos) }
-| THEOREM error  { raise (parse_failure "theorem: incorrect syntax, must be in form 'Theorem [label] : Statement : a Proof: p QED.'" $startpos $endpos) }
-| THEOREM HVAR COLON STATEMENT COLON prop PROOF COLON proof error { raise (parse_failure "theorem: missing QED.?" $startpos $endpos) }
 
 signatures:
 | VAR  COLON complex_type SEMICOLON signatures { ($1,$3)::$5 }
@@ -240,8 +228,8 @@ spf_errors:
 | h_var                { raise (parse_failure (pf_of_form "to use hypotheses," (proof_sf_By "[H]")) $startpos $endpos) }
 | OPEN_PAREN proof     { raise (parse_failure "proof: unmatched '('" $startpos $endpos) }
 | Absurd_PROOF error   { raise (parse_failure "proof: missing hypothesis after 'absurd'" $startpos $endpos) }
-| Equality_PROOF error { raise (parse_failure (pf_of_form "equality" (proof_sf_ByEq "([A],[B],[C])")) $startpos $endpos) }
-| h_var error          { raise (parse_failure (pf_of_form "with clause" (proof_sf_SpineApp "[H]" "(a,b,c)")) $startpos $endpos) }
+| Equality_PROOF error { raise (parse_failure (pf_of_form "equality" (proof_sf_ByEq "([A];[B];[C])")) $startpos $endpos) }
+| h_var error          { raise (parse_failure (pf_of_form "with clause" (proof_sf_SpineApp "[H]" "(a;b;c)")) $startpos $endpos) }
 proof:
 | simple_proof                                                { $1 }
 | WeKnow_PROOF h_pair Because_PROOF h_var DOT proof           { ($startpos , $endpos) , AndL ($2,$4,$6) }             (*changed syntax*)

@@ -23,27 +23,27 @@ Theorem [rev lemma] :
 
             assume x : _a .
 
-            we know [step 1] : append [] (x :: []) = (x :: [])                 : _a list because [append nil] with (x::[]).
-            we know [step 2] : rev (x::[]) = append (rev []) (x :: [])         : _a list because [rev xs]     with ([],x).
+            we know [step 1] : append [] (x :: []) = (x :: [])         : _a list because [append nil] with (x::[]).
+            we know [step 2] : rev (x::[]) = append (rev []) (x :: []) : _a list because [rev xs]     with ([];x).
 
-            equality on ([step 1],[step 2],[rev nil])
+            equality on ([step 1];[step 2];[rev nil])
 
         case (hd::tl) : [IH] : forall x : _a . rev (append tl (x::[])) = x :: (rev tl) : _a list .
 
             assume x : _a .
 
             we know [step 1] : append (hd::tl) (x::[]) = hd :: (append tl (x::[])) : _a list
-            because [append xs] with (tl,hd,(x::[])).
+            because [append xs] with (tl;hd;(x::[])).
             we know [step 2] : rev (hd :: (append tl (x::[]))) = append (rev (append tl (x::[]))) (hd :: [])  : _a list
-            because [rev xs] with (append tl (x::[]),hd).
+            because [rev xs] with (append tl (x::[]);hd).
             we know [step 3] : append (x :: (rev tl)) (hd :: []) = x :: append (rev tl) (hd :: []) : _a list
-            because [append xs] with ((rev tl),x,(hd :: [])).
+            because [append xs] with ((rev tl);x;(hd :: [])).
             we know [step 4] : rev (hd::tl) = append (rev tl) (hd :: []) : _a list
-            because [rev xs] with (tl,hd).
+            because [rev xs] with (tl;hd).
             we know [step 5] : rev (append tl (x::[])) = x :: (rev tl) : _a list
             because [IH] with (x).
 
-            equality on ([step 1],[step 2],[step 3],[step 4],[step 5],[IH])
+            equality on ([step 1];[step 2];[step 3];[step 4];[step 5];[IH])
     QED.
 
 Theorem [involution of rev] :
@@ -58,8 +58,8 @@ Theorem [involution of rev] :
 
         case (hd :: tl) : [IH] .
 
-            we know [step 1] : rev (hd :: tl) = append (rev tl) (hd::[])             : _a list because [rev xs] with (tl,hd).
-            we know [step 2] : rev (append (rev tl) (hd::[])) = hd :: (rev (rev tl)) : _a list because [rev lemma] with (rev tl,hd) .
+            we know [step 1] : rev (hd :: tl) = append (rev tl) (hd::[])             : _a list because [rev xs] with (tl;hd).
+            we know [step 2] : rev (append (rev tl) (hd::[])) = hd :: (rev (rev tl)) : _a list because [rev lemma] with (rev tl;hd) .
 
-            equality on ([step 1], [step 2], [IH])
+            equality on ([step 1];[step 2];[IH])
     QED.

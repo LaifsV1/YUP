@@ -230,9 +230,10 @@ let rec check_pf (psi : ctx) (gamma : hyps) ((pf_pos,proof) : pf) ((prop_pos,pro
   | ByEq hs , _ -> (encountered_while "evaluating 'by equality' clause")
                      (Wrong (proof_not_of_type (pf_pos,proof) (prop_pos,prop),pf_pos))
   | HypLabel (h,a,spf,p) , c -> (encountered_while ("evaluating 'we know "^h^" because' clause"))
-                                  ((check_pf psi gamma spf a) >>                         (*HypLabel*)
-                                     ((check_spf spf) >>
-                                        (check_pf psi ((h,a)::gamma) p (prop_pos,c))))
+                                  ((check_prop psi a) >>                                 (*HypLabel*)
+                                     ((check_pf psi gamma spf a) >>
+                                        ((check_spf spf) >>
+                                           (check_pf psi ((h,a)::gamma) p (prop_pos,c)))))
   | SpineApp (h,s)       , c -> (encountered_while "evaluating 'with' clause")           (*SpineApp*)
                                   ((lookup_hyps_result gamma h pf_pos) >>=
                                      (fun a ->

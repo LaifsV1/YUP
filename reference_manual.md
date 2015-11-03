@@ -1,7 +1,7 @@
 Title:  YUP Reference Manual  
 Author: Yu-Yang Lin    
 # YUP Reference Manual #
-##### `version: 0.9.3.1` #####
+##### `version: 0.9.3.2` #####
 
 ## Table of Contents ##
 

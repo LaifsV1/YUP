@@ -33,7 +33,7 @@
         ("\\[[[:alnum:]_ ()']*?\\]"        . font-lock-function-name-face)
         ("=>"                              . font-lock-function-name-face)
         ("="                               . font-lock-function-name-face)
-        ("_[a-z][[:alnum:]_']*"            . font-lock-type-face)
+        (" _[a-z][[:alnum:]_']*"           . font-lock-type-face)
         ;; adding auto-generated regexp categories.
         (,proof-toplevel-regexp . font-lock-keyword-face)
         (,proof-types-regexp    . font-lock-type-face)
