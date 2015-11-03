@@ -66,15 +66,15 @@ let rec check_prop (psi : ctx) ((p,prop) : prop) :(unit result) =
 
 (******************** APPLY SPINE FUNCTION ********************)
 (* [notes: section 9.2] *)
-let rec apply_spine (psi : ctx) (gamma : hyps) (s : spine) ((p,a) : prop) :(prop result) =
+let rec apply_spine (psi : ctx) (gamma : hyps) (s : spine) ((p,a) : prop) (spine_pos : pos_range) :(prop result) =
   match s , a with
   | []             , a                -> return (p,a)                                    (*id-spine-app*)
   | SpineH h :: s' , Implies (a,b)    -> (lookup_hyps_result gamma h p) >>=              (*implies-spine-app*)
                                            (fun a' -> (alpha_equiv_prop_result a a') >>
-                                                        (apply_spine psi gamma s' b))
+                                                        (apply_spine psi gamma s' b spine_pos))
   | SpineT t :: s' , Forall (x,tau,a) -> (check_term psi t tau) >>                       (*forall-spine-app*)
-                                           (apply_spine psi gamma s' (subs_prop x t a))
-  | sarg     :: s' , c                ->  Wrong (apply_spine_error sarg (p,a),p)
+                                           (apply_spine psi gamma s' (subs_prop x t a) spine_pos)
+  | sarg     :: s' , c                ->  Wrong (apply_spine_error sarg (p,a),spine_pos)
 
 
 (******************** CHECK SIMPLE-PROOFS FUNCTION ********************)
@@ -237,7 +237,7 @@ let rec check_pf (psi : ctx) (gamma : hyps) ((pf_pos,proof) : pf) ((prop_pos,pro
   | SpineApp (h,s)       , c -> (encountered_while "evaluating 'with' clause")           (*SpineApp*)
                                   ((lookup_hyps_result gamma h pf_pos) >>=
                                      (fun a ->
-                                      (apply_spine psi gamma s a) >>=
+                                      (apply_spine psi gamma s a pf_pos) >>=
                                         (fun b -> alpha_equiv_prop_result b (prop_pos,c))))
   | Instantiate (h',a,(h,d),xs,p) , c -> (encountered_while ("evaluating 'we get "^h'^" instantiating "^h^"' clause"))
                                            ((lookup_hyps_result gamma (h,d) pf_pos) >>=  (*Instantiate*)

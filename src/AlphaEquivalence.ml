@@ -161,6 +161,7 @@ let rec alpha_equiv_prop ((_,a_prop) : prop) ((_,b_prop) : prop) :(unit option) 
   | TermProp t1      , TermProp t2        -> (alpha_equiv_term t1 t2)
   | TermProp t       , _                  -> None
 
+(*first arg is correct, so if failure, error returns pos for second argument*)
 let alpha_equiv_prop_result (a : prop) (b : prop) :(unit result) =
   match alpha_equiv_prop a b with
   | Some () -> return ()
@@ -180,7 +181,9 @@ let lookup_hyps_result (gamma : hyps) ((h,a) : hvar) (p : pos_range) :(prop resu
         | None    -> return a')
    with Not_found -> Wrong (hyp_not_found (h,a),p))
 
+(*this flips the arguments around so (a : prop option) is the one being checked.*)
+(*if error, error returns pos of a*)
 let some_alpha_equiv_result (a : prop option) (b : prop) :(unit result) =
   match a with
   | None   -> return ()
-  | Some (p,a) -> alpha_equiv_prop_result (p,a) b
+  | Some (p,a) -> alpha_equiv_prop_result b (p,a)
