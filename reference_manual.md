@@ -16,6 +16,18 @@ Author: Yu-Yang Lin
 		- [Terms](#section3.1.2)
 		- [Propositions](#section3.1.3)
 		- [Proofs](#section3.1.4)
+			- [`Truth` intro](#section3.1.4.1)
+			- [`Falsity` elim](#section3.1.4.2)
+			- [`and`,`or`,`->` intro and elim](#section3.1.4.3)
+			- [`exists` and `forall` intro and elim](#section3.1.4.4) 
+			- [Induction on `list`,`nat`,`bool`](#section3.1.4.5)
+			- [`equality on` clause](#section3.1.4.6)
+			- [`we know` clause](#section3.1.4.7)
+			- [`with` clause](#section3.1.4.8)
+			- [`by` clause](#section3.1.4.9)
+			- [`therefore` clause](#section3.1.4.10)
+			- [`we get` clause](#section3.1.4.11)
+			- [`TODO` keyword]](#section3.1.4.12)
 		- [Top-Level](#section3.1.5)
 		- [Identifiers](#section3.1.6)
 	- [Organisation of Proof Files](#section3.2)
@@ -167,13 +179,13 @@ This data type category contains propositions, which are the type for proofs and
 
 The proof data type is made up of a set of rules that allow us to prove propositions. Proofs allow us to manipulate propositions, terms, and types in order to show a theorem holds. 
 
-- **Truth Introduction**: 
+- **Truth Introduction**:<a name="section3.1.4.1"></a> 
 
 	`tt` is the proof for a `Truth` proposition
-- **Falsity Elimination**: 
+- **Falsity Elimination**:<a name="section3.1.4.2"></a>
 
 	`by absurdity of [H]` where `[H]` is a hypothesis
-- **Conjunction Introduction**: 
+- **Conjunction Introduction**:<a name="section3.1.4.3"></a>
 
 	`(p , q)` where `p` and `q` are proofs.
 - **Conjunction Elimination**: 
@@ -203,7 +215,7 @@ The proof data type is made up of a set of rules that allow us to prove proposit
 	where `[B]` is a new hypothesis of type `B`, `[A to B]` is an existing hypothesis of type `A => B`, `[A]` an existing hypothesis of type `A`, and `rest` a proof where the new hypothesis `[B]` is in scope.
 
 	Note that this rule is actually the combination of two rules, a hypothesis labelling clause (`we know [H] because p`), and a `with` clause (`[H] with (a,b,c)`). This will be mentioned in more detail in their own sections.
-- **Existential Introduction**:
+- **Existential Introduction**:<a name="section3.1.4.4"></a>
 
 	`choose t . rest` where `t` is a term and `rest` is a proof where `t` is now replacing the variable.
 - **Existential Elimination**:
@@ -221,7 +233,7 @@ The proof data type is made up of a set of rules that allow us to prove proposit
 	where `[y A]` is a hypothesis of type `A` where all instances of `x` have been replaced with term `y` in `A`, `[A]` a hypothesis, and `rest` is a proof where `[y A]` is in scope.
 
 	Note that this rule is actually the combination of two rules, a hypothesis labelling clause (`we know [H] because p`), and a `with` clause (`[H] with (a,b,c)`). This will be mentioned in more detail in their own sections.
-- **Induction on Natural Numbers**:
+- **Induction on Natural Numbers**:<a name="section3.1.4.5"></a>
 
 		by induction on nat :
 		case zero : p
@@ -242,7 +254,7 @@ The proof data type is made up of a set of rules that allow us to prove proposit
 		case false : q
 
 	where `p` is a proof for the proposition with the inductive variable replaced with `true`, and `q` is a proof for the proposition with the inductive variable replced with `false`.
-- **Equality**:
+- **`equality on` - Proving Equality**:<a name="section3.1.4.6"></a>
 
 	`equality on ([H_1] ; [H_2] ; ... ; [H_n])` where `[H_1]` to `[H_n]` are the hypotheses used to prove equality of the desired terms, which would be stated by the proof's goal or statement.
 
@@ -251,7 +263,7 @@ The proof data type is made up of a set of rules that allow us to prove proposit
 	Given equality is done through a congruence closure, equalities that are used in other equalities can be eliminated by providing their premises to the enclosing equality.
 	
 	e.g. Given `we know [A] : A because equality on ([X];[Y])` and `we know [B] : B because equality on ([A])`, then we can say `we know [B] : B because equality on ([X];[Y])` and eliminate `[A]`.
-- **Hypothesis Labelling Clause**:
+- **`we know` - Hypothesis Labelling Clause**:<a name="section3.1.4.7"></a>
 
 		we know [A] : A because p . rest
 
@@ -260,7 +272,7 @@ The proof data type is made up of a set of rules that allow us to prove proposit
 	Given this rule is useful to keep moving forward in a proof, and use proven propositions later in the same proof, it's commonly paired with almost every rule in the proof data type.
 
 	Note that you cannot give any proof after a `because` keyword. You can only give what is called a `simple proof`, `tt`, `(p , q)`, `p on left`, `q on right`, `equality on ([A],[B],[C])`, `by [H]`, `[H] with (a,[A])`, and `p therefore A`. i.e. no case elimination rules such as induction or disjunction elimination.
-- **With Clause**:
+- **`with` Clause**:<a name="section3.1.4.8"></a>
 
 		[H] with (a;b;c;[A];[B];C])
 
@@ -279,17 +291,19 @@ The proof data type is made up of a set of rules that allow us to prove proposit
 	Given: `[A] : A` and `y : nat`, we can do:
 
 		[Some Hypothesis] with ([A];y)	
-- **Using Hypotheses - By Clause**:
+- **`by` Clause - Using Hypotheses**:<a name="section3.1.4.9"></a>
 
-	`by [H]` where `[H]` is the hypothesis we want to use. Note that you must also include the `by` when combining this with a labelling clause. e.g.
+		by [H] 
+
+	where `[H]` is the hypothesis we want to use. Note that you must also include the `by` when combining this with a labelling clause. e.g.
 
 		we know [A] : A because by [H] . p
-- **Therefore Clause**:
+- **`therefore` Clause**:<a name="section3.1.4.10"></a>
 
 	`p therefore A` where `p` is a proof of type `A`. This is mainly to label your proof with the proposition if it's confusing. 
 		
 	e.g. Given `[negation] : Falsity` we can do: `by [negation] therefore Falsity`
-- **Instantiation Clause**:
+- **`we get` Clause - Hypothesis Instantiation**:<a name="section3.1.4.11"></a>
 
 		we get [new prop] : P instantiating [some prop] with (A is NewA ; ...) . rest
 
@@ -300,7 +314,7 @@ The proof data type is made up of a set of rules that allow us to prove proposit
 	The values to instantiate are given in the sequence of substitution instructions that follows the `with` keyword. The instruction in the sequence must be in the form `A is NewA`, where `A` is an existing proposition variable in `[some prop]`, and `NewA` is the new proposition variable to replace `A`.
 
 	All propositions are replaced order; from the left of the sequence to the right.
-- **Incomplete Proofs - TODO Keyword**:
+- **`TODO` Keyword - Incomplete Proofs**:<a name="section3.1.4.12"></a>
 
 	To validate an incomplete proof, one can either put the missing part as a lemma/hypothesis in the preceding definition (similar to a postulate in Agda), or use the `TODO` keyword.
 
