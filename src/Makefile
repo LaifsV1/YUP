@@ -19,7 +19,7 @@ parser/Lexer.cmo : AbstractSyntax.cmo StringFormats.cmo parser/Parser.cmo parser
 parser/Lexer.ml : parser/Lexer.mll
 	ocamllex parser/Lexer.mll
 
-parser/Parser.cmo : AbstractSyntax.cmo StringFormats.cmo parser/Parser.mli parser/Parser.ml
+parser/Parser.cmo : AbstractSyntax.cmo StringFormats.cmo parser/Parser.mli
 	$(OCAMLC) -I parser/ AbstractSyntax.cmo StringFormats.cmo parser/Parser.mli parser/Parser.ml
 
 parser/Parser.ml : parser/Parser.mly
@@ -31,7 +31,10 @@ StringFormats.cmo : AbstractSyntax.cmo StringFormats.ml
 AbstractSyntax.cmo : AbstractSyntax.ml
 	$(OCAMLC) AbstractSyntax.ml
 	
+mostlyclean :
+	rm -f *.exe *.cmo *.cmi *~ *#
+	rm -f parser/*.cmo parser/*.cmi parser/*~ *# 
+	
 clean :
 	rm -f *.exe *.cmo *.cmi *~ *#
-	rm -f parser/*.cmo parser/*.cmi parser/*~ parser/Parser.ml parser/Lexer.ml *# 
-	
+	rm -f parser/*.cmo parser/*.cmi parser/Parser.ml parser/Lexer.ml parser/*~ *#

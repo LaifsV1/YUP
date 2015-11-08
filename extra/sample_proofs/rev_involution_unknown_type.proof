@@ -43,7 +43,7 @@ Theorem [rev lemma] :
             we know [step 5] : rev (append tl (x::[])) = x :: (rev tl) : _a list
             because [IH] with (x).
 
-            equality on ([step 1];[step 2];[step 3];[step 4];[step 5];[IH])
+            equality on ([step 1];[step 2];[step 3];[step 4];[step 5])
     QED.
 
 Theorem [involution of rev] :

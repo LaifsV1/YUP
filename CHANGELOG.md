@@ -3,6 +3,12 @@ This file will document changes of YUP.
 
 Will not enter "released" status until all parser problems are solved (which may never happen).
 
+## [0.9.3.3] - 2015-11-08
+### Fixes
+- Fixed bug with `equality on` in `checker.ml`.
+	- Bug Explanation: if there is one valid element in the spine, every error following it is ignored. This is because `Wrong equality_error` is used to denote an empty list (the accumulator). This means that invalid hypotheses are accepted, as long as they are in the tail of a valid element.
+	- Fix Explanation: within the innermost nested function, if the tail is `Wrong msg`, then `msg` is checked. If `msg = equality_error`, then the tail is empty, i.e. ignore the error is the head is valid. If `msg =/= error`, then return an error.
+
 ## [0.9.3.2] - 2015-11-03
 ### Fixes
 - Fixed non-termination of parser. Something in the `toplevel` errors was causing an infinite loop when encountering sudden end of file. I couldn't work out what it was, so I deleted the whole thing.

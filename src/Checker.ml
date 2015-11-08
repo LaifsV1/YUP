@@ -223,7 +223,9 @@ let rec check_pf (psi : ctx) (gamma : hyps) ((pf_pos,proof) : pf) ((prop_pos,pro
                                           | (pos,Eq (x,y,tau')) ->
                                              (match hs with
                                               | Ok hs -> return ((depos_term x,depos_term y)::hs)
-                                              | _     -> return [(depos_term x,depos_term y)])
+                                              | Wrong (message,some_position) ->
+                                                 if message = equality_error then return [(depos_term x,depos_term y)]
+                                                 else Wrong (message,some_position))
                                           | d -> Wrong (hyp_not_eq h d tau,pf_pos))) hs
                                      (Wrong (equality_error,pf_pos))) >>=
                                     (fun e -> cong_entails_result e (depos_term t,depos_term t') pf_pos))
