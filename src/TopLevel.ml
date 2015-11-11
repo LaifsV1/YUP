@@ -47,14 +47,14 @@ let _ =
                   else printf "    @[***VALIDATION SUCCESSFUL---INCOMPLETE PROOF(S) FOUND****@]" ;
                   print_newline ();
                   print_newline ();
-                  i
+                  exit i
        | Wrong (msg,(p1,p2)) -> printf ".....[error]***@]";
                                 print_newline ();
                                 printf "    @[[VALIDATION FAILURE]:@] @.";
                                 printf "@[%s @] @." msg;
                                 printf "    @[%s @] @." (line_sprintf p1 p2);
                                 print_newline ();
-                                1)
+                                exit 1)
     with
     | ParseError (msg,(p1,p2)) -> let tok_error = Lexing.lexeme lexbuf in
                                   printf ".....[error]***@]";
@@ -64,28 +64,28 @@ let _ =
                                   printf "@[%s@] @." msg;
                                   printf "    @[%s @] @." (line_sprintf p1 p2);
                                   print_newline ();
-                                  1
+                                  exit 1
     | SyntaxError (msg,(p1,p2)) -> printf ".....[error]***@]";
                                    print_newline ();
                                    printf "    @[[SYNTAX ERROR]:@] @. ";
                                    printf "@[%s @] @." msg;
                                    printf "    @[%s @] @." (line_sprintf p1 p2);
                                    print_newline ();
-                                   1
+                                   exit 1
     | Parser.Error -> printf ".....[error]***@]";
                       print_newline ();
                       printf "    @[[SYNTAX ERROR]: couldn't parse file.@] @. ";
                       print_newline ();
-                      1
+                      exit 1
   with
   | Sys_error msg -> printf ".....[error]!***@]";
                      print_newline ();
                      printf "    @[[SYSTEM ERROR]:@] @.";
                      printf "    @[%s @] @." msg;
                      print_newline ();
-                     1
+                     exit 1
   | e -> printf ".....[error]!***@]";
          Printf.eprintf "[UNEXPECTED EXCEPTION] : %s \n" (Printexc.to_string e);
          Printf.eprintf "Please contact YUP maintainer";
          Printexc.print_backtrace stderr;
-         1
+         exit 1
