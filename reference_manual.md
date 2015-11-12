@@ -81,7 +81,7 @@ To use the tool, run `yup.exe` from a command-line console on a target proof fil
 
 e.g.
 
-    .\yup.exe "testing\test_proof.proof"
+    ./yup.exe ../extra/sample_proofs/rev_involution.proof
 
 This should output a success message if the proof is valid, or output an error message with position data for where the checker failed.
 
@@ -106,7 +106,9 @@ While a failed proof might output:
     Encountered while evaluating 'by induction on list'.
       (line 106 , col 12) to (line 106 , col 34)
 
-In addition to printing to the console, the Proof Checker does actually return a value. This value should be `1` or `0` following Unix conventions for success and failure respectively. This is especially helpful for writing scripts that check a batch of proof files. 
+In addition to printing to the console, the Proof Checker does actually return a value. This value should be `0` or `1` following Unix conventions for success and failure respectively. This is especially helpful for writing scripts that check a batch of proof files. 
+
+You can also supply YUP with "--version", which outputs the version of YUP.
 
 Syntax for proof files can be seen in the sample proofs provided, you can find the proofs under [extra/sample_proofs](/extra/sample_proofs).
 

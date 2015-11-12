@@ -27,7 +27,7 @@ You can compile the tool from Cygwin. I used [make for Windows](http://gnuwin32.
 To use the tool, run `yup.exe` from the command-line on a target proof file. By default, the extension for proof files is `.proof`.
 e.g.
 
-    .\yup.exe "testing\test_proof.proof"
+    ./yup.exe ../extra/sample_proofs/rev_involution.proof
 
 This should output a success message if the proof is valid, or output an error message with position data for where the checker failed.
 
