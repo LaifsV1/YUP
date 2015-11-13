@@ -27,7 +27,7 @@ Author: Yu-Yang Lin
 			- [`by` clause](#section3.1.4.9)
 			- [`therefore` clause](#section3.1.4.10)
 			- [`we get` clause](#section3.1.4.11)
-			- [`TODO` keyword]](#section3.1.4.12)
+			- [`TODO` keyword](#section3.1.4.12)
 		- [Top-Level](#section3.1.5)
 		- [Identifiers](#section3.1.6)
 	- [Organisation of Proof Files](#section3.2)
