@@ -182,7 +182,11 @@ let term_not_function (e : term) (v : term) :(string) =
   let e_s = (to_string_term e) in
   sprintf "@[Term @,'%s' is not of type 'a->b' in @,'%s %s', @,you can only apply to functions.@]" e_s e_s (to_string_term v)
 
-let inference_error = "Internal error, you shouldn't have reached this error. Attempted to infer non-inferable type, please contact the maintainer of the checker."
+let cons_inference_error = "Couldn't infer the type, did you try using a list as a function?"
+let nil_inference_error = "Couldn't infer the type, did you try using a list as a function?"
+let nil_inference_error = "Couldn't infer the type, did you try using a pair as a function?"
+
+let internal_error = "Internal error, you shouldn't have reached this error. Attempted to infer non-inferable type, please contact the maintainer of the checker."
 
 let term_not_of_type (t : term) (tau : tp) :(string) =
   sprintf "@[Expected term of type @,'%s' but got term @,'%s' of different type.@]"

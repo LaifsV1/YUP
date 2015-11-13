@@ -1,5 +1,5 @@
 # YUP Proof Checker
-##### `version: 0.9.3.3` #####
+##### `version: 0.9.3.4` #####
 YUP is a tool performs automatic checking of simple program-correctness proofs of functional programs through inductive and equational reasoning.
 
 The aim of the Proof Checker is to provide a simple proof assistant for the purpose of teaching. As such, it has the following design aspects:

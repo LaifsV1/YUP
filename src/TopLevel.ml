@@ -23,7 +23,7 @@ let from_file file = Lexing.from_channel (open_in file);;
 let _ =
   try
     (*check for params other than file paths first*)
-    if Sys.argv.(1) = "--version" then (printf "    YUP version: 0.9.3.3 \n";exit 1)
+    if Sys.argv.(1) = "--version" then (printf "    YUP version: 0.9.3.4 \n";exit 1)
     else (
       (*assume param is a file path*)
       print_newline ();

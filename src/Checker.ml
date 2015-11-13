@@ -26,9 +26,9 @@ let rec infer_term (psi : ctx) ((p,t) : term) :(tp result) =
                      | _           -> Wrong (term_not_function e v,p))
   | Boolean (true)  -> return Bool                                                       (*bool-true*)
   | Boolean (false) -> return Bool                                                       (*bool-false*)
-  | Cons (v,v')     -> Wrong (inference_error,p)                                         (*list-hd::tl*)
-  | Nil             -> Wrong (inference_error,p)                                         (*list-empty*)
-  | Pair (v,v')     -> Wrong (inference_error,p)                                         (*pairs*)
+  | Cons (v,v')     -> Wrong (cons_inference_error,p)                                    (*list-hd::tl*)
+  | Nil             -> Wrong  (nil_inference_error,p)                                    (*list-empty*)
+  | Pair (v,v')     -> Wrong  (nil_inference_error,p)                                    (*pairs*)
 
 (* term type checking [notes: section 2 and 3], (psi |- t <= tau) *)
 and check_term (psi : ctx) ((p,t) : term) (tau : tp) :(unit result) =

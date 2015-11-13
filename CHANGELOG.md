@@ -3,6 +3,10 @@ This file will document changes of YUP.
 
 Will not enter "released" status until all parser problems are solved (which may never happen).
 
+## [0.9.3.4] - 2015-11-13
+### Fixes
+- Fixed bug with internal error messages, these shouldn't be internal and have been replaced with their corresponding type-check error message.
+
 ## [0.9.3.3] - 2015-11-08
 ### Fixes
 - Fixed bug with `equality on` in `checker.ml`.
