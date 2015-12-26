@@ -37,7 +37,7 @@ For more information, check the [reference manual](/reference_manual.md).
 
 ### Syntax Highlighting
 
-Under [extra](/extra), you can find a syntax highlight mode for notepad++ (`proof-checker-mode.xml`) and emacs (`proof-checker-mode.el`).
+Under [extra](/extra), you can find a syntax highlight mode for notepad++ (`proof-checker-mode.xml`), emacs (`proof-checker-mode.el`), and vim (`proof-checker-mode.vim`).
 
 To use the notepad++ mode, import the `.xml` file into notepad++, or place the file in the home path used by notepad++.
 
@@ -45,5 +45,7 @@ To use the emacs mode, add the following into you `.emacs` file:
 
     (load "<path>/yup-mode.el")
     (add-to-list 'auto-mode-alist '("\\.proof$" . yup-mode))
+
+To use the vim mode, add `yup-detect.vim` to the `~/.vim/ftdetect/` directory (you will need to create this directory if it doesn't already exist). Then add `yup.vim` to the `~/.vim/syntax/` directory (again, you will need to create directory this if it doesn't exist). Finally, make sure you have the line `syntax on` in your `~/.vimrc` file.
 
 **Warning:** Given the way notepad++ modes are created, I recommend using the emacs mode over the notepad++ as the notepad++ mode might not be accurate.
