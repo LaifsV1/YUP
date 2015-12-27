@@ -173,7 +173,7 @@ let ctx_not_found (x : var) :(string) =
   sprintf "@[Variable @,'%s' @,is not in scope (missing variable).@]" x
 
 let hyp_not_found (h : hvar) :(string) =
-  sprintf "@[Hypotehsis @,'%s' @,is not in scope (missing hypothesis).@]" (to_string_hvar h)
+  sprintf "@[Hypothesis @,'%s' @,is not in scope (missing hypothesis).@]" (to_string_hvar h)
 
 let etails_error ((t,t') : (npTerm * npTerm)) :(string) =
   sprintf "@[Could not prove term @,'%s' entails term @,'%s' in proof by equality.@]" (to_string_npterm t) (to_string_npterm t')
