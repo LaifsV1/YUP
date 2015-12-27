@@ -69,8 +69,8 @@ Theorem [P]:
 (****************************************************)
 (* prove not(P and not P)                           *)
 (*     1. assume (P and not P) H {1}                *)
-(*     2. | P                  or-elim 1 {1}        *)
-(*     3. | not P              or-elim 1 {1}        *)
+(*     2. | P                  and-elim 1 {1}        *)
+(*     3. | not P              and-elim 1 {1}        *)
 (*     4. not (P and not P)    by negation 1,2,3 {} *)
 (****************************************************)
 Theorem [not (P and not P)]:
