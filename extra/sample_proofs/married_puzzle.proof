@@ -1,0 +1,33 @@
+(* author: Yu-Yang Lin *)
+(* date: 13/07/2016 *)
+(* classical proof, only if you allow excluded middle *)
+
+Signatures:
+    anne       : _person ;
+    george     : _person ;
+    jack       : _person ;
+    married    : _person -> prop ;
+    looking_at : _person -> _person -> prop ;
+
+Definitions:
+    [jack looking at anne]   : {looking_at jack anne} ;
+    [anne looking at george] : {looking_at anne george} ;
+    [jack is married]        : {married jack} ;
+    [george is not]          : {married george} => Falsity ;
+    [excluded anne]          : {married anne} or ({married anne} => Falsity) ;
+
+Theorem [a married person is looking at an unmarried person]:
+    Statement: exists x : _person . exists y : _person . {married x} and {looking_at x y} and ({married y} => Falsity)
+    Proof:
+        since [excluded anne] : {married anne} or ({married anne} => Falsity) then either :
+        case on the left :
+            [anne is married] : {married anne} .
+            choose anne .
+            choose george .
+            ((by [anne is married], by [anne looking at george]), by [george is not])
+        case on the right :
+            [anne is not] : {married anne} => Falsity .
+            choose jack .
+            choose anne .
+            ((by [jack is married], by [jack looking at anne]), by [anne is not])
+    QED.
