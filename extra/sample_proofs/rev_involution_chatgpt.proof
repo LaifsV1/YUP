@@ -1,0 +1,91 @@
+(* author: Yu-Yang Lin *)
+(* date: 14/02/2023 *)
+(* this is a proof for the involution of reversing a list of nat *)
+(* in this file, I implement a proof provided by ChatGPT *)
+
+Signatures:
+    append : nat list -> nat list -> nat list ;
+    rev    : nat list -> nat list ;
+
+Definitions:
+    [append nil] : forall xs : nat list . append [] xs = xs : nat list ;
+    [append xs]  : forall xs : nat list . forall x : nat . forall ys : nat list . append (x::xs) ys = x :: append xs ys : nat list ;
+    [rev nil]    : rev [] = [] : nat list ;
+    [rev xs]     : forall xs : nat list . forall x : nat . rev (x :: xs) = append (rev xs) (x :: []) : nat list ;
+
+(****************************************************************************************************************************)
+(* ChatGPT solution:                                                                                                        *)
+(* Base Case:                                                                                                               *)
+(* LHS: rev ([] @ [x]) = rev [x] = [x]                                                                                      *) 
+(* RHS: x :: (rev []) = [x]                                                                                                 *)
+(* LHS = [x] = RHS                                                                                                          *)
+(*                                                                                                                          *)
+(* Inductive step: xs = y :: ys, assume that the lemma holds for ys, i.e., rev (ys @ [x]) = x :: (rev ys).                  *)
+(* rev (xs @ [x]) = rev (y :: (ys @ [x]))            -- Definition of xs                                                    *)
+(*                = (rev (ys @ [x])) @ [y]            -- Using the lemma: rev (x :: xs) = rev xs @ [x]                      *)
+(*                = (x :: (rev ys)) @ [y]             -- Inductive hypothesis: rev (ys @ [x]) = x :: (rev ys)               *)
+(*                = x :: ((rev ys) @ [y])             -- Associativity of list append                                       *)
+(*                = x :: (rev (y :: ys))              -- Definition of rev                                                  *)
+(*                = x :: (rev xs)                     -- Definition of xs                                                   *)
+(****************************************************************************************************************************)
+Theorem [rev lemma] :
+    Statement: forall x : nat . forall xs : nat list . rev (append xs (x::[])) = x :: (rev xs) : nat list
+    Proof:
+
+        assume x : nat .
+
+        by induction on list :
+
+        case [] :
+
+            we know [app x nil] : append [] (x :: []) = x :: []               : nat list because [append nil] with (x :: []).
+            we know [LHS 1] : rev (append [] (x :: [])) = rev (x :: [])       : nat list because equality on ([app x nil]).
+            we know [LHS 2] : rev (x :: []) = append (rev []) (x :: [])       : nat list because [rev xs] with ([];x).
+            we know [LHS 3] : append (rev []) (x :: []) = append [] (x :: []) : nat list because equality on ([rev nil]).
+            we know [LHS 4] : append [] (x :: []) = (x :: [])                 : nat list because [append nil] with (x :: []).
+            we know [RHS] : x :: (rev []) = (x :: [])                         : nat list because equality on ([rev nil]).
+
+            equality on ([LHS 1];[LHS 2];[LHS 3];[LHS 4];[RHS])
+            
+        case (y::ys) : [Inductive hypothesis] : rev (append ys (x::[])) = x :: (rev ys) : nat list .
+
+            we know [app xs x] : append (y::ys) (x::[]) = y::(append ys (x::[])) : nat list because [append xs] with (ys;y;x::[]).
+            we know [step 1] : rev (append (y::ys) (x::[])) = rev (y::(append ys (x::[]))) : nat list because equality on ([app xs x]).
+            we know [step 2] : rev (y::(append ys (x::[]))) = append (rev (append ys (x::[]))) (y::[]) : nat list because [rev xs] with (append ys (x::[]);y).
+            we know [step 3] : append (rev (append ys (x::[]))) (y::[]) = append (x::(rev ys)) (y::[]) : nat list because equality on ([Inductive hypothesis]).
+            we know [step 4] : append (x::(rev ys)) (y::[]) = x::(append (rev ys) (y::[])) : nat list because [append xs] with (rev ys;x;y::[]).
+            we know [rev y ys] : rev (y::ys) = append (rev ys) (y::[]) : nat list because [rev xs] with (ys;y).
+            we know [step 5] : x::(append (rev ys) (y::[])) = x::(rev (y::ys)) : nat list because equality on ([rev y ys]).
+
+            equality on ([step 1];[step 2];[step 3];[step 4];[step 5])
+    QED.
+
+(***************************************************************************************************)
+(* involution of rev : rev (rev xs) = xs                                                           *)
+(* -------------------------------------                                                           *)
+(* Induction on list:                                                                              *)
+(* Base:                                                                                           *)
+(*     rev (rev []) = []  --by equality                                                            *)
+(* Step:                                                                                           *)
+(*     rev (rev (hd :: tl))           --step 1 : by definition of rev on (hd::tl)                  *)
+(*     = rev (append (rev tl) [hd])   --step 2 : by rev-lemma; rev (append xs [x]) = x :: (rev xs) *)
+(*     = hd :: (rev (rev tl))         --step 3 : by Inductive Hypothesis                           *)
+(*     = hd :: tl                     --QED.                                                       *)
+(***************************************************************************************************)
+Theorem [involution of rev] :
+    Statement: forall xs : nat list . rev (rev xs) = xs : nat list
+    Proof:
+
+        by induction on list :
+
+        case [] :
+
+            equality on ([rev nil])
+
+        case (hd :: tl) : [inductive hypothesis] .
+
+            we know [step 1] : rev (hd :: tl) = append (rev tl) (hd::[])             : nat list because [rev xs]    with (tl;hd).
+            we know [step 2] : rev (append (rev tl) (hd::[])) = hd :: (rev (rev tl)) : nat list because [rev lemma] with (hd;rev tl) .
+
+            equality on ([step 1]; [step 2]; [inductive hypothesis])
+    QED.
